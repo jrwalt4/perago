@@ -1,9 +1,11 @@
 import * as React from 'react';
 import './App.css';
 
-const logo = require('./logo.svg');
+import {List} from '../common/List/List';
 
-class App extends React.Component<{}, null> {
+const logo = require('../../logo.svg');
+
+export class App extends React.Component<{}, null> {
   render() {
     return (
       <div className="App">
@@ -14,9 +16,8 @@ class App extends React.Component<{}, null> {
         <p className="App-intro">
           To get started, edit <code>src/App.tsx</code> and save to reload.
         </p>
+        <List items={['Reese', 'Matt']}/>
       </div>
     );
   }
 }
-
-export default App;
