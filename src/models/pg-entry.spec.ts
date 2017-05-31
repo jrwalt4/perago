@@ -1,19 +1,17 @@
-import { PgEntry, defaultEntry, createEntry, setStart } from './pg-entry';
+import { PgEntry, defaultEntry } from './pg-entry';
 
 it('Should create a default PgEntry', () => {
-  let e = new PgEntry;
-  expect(e.entryId).toEqual(defaultEntry.entryId);
+  let e = PgEntry.create();
+  expect(e.name).toEqual(defaultEntry.name);
 });
 
 it('Should create a new PgEntry with a cuid', () => {
-  let e = createEntry();
-  expect(e.entryId).not.toEqual('');
+  let e = PgEntry.create();
+  expect(e._id).not.toEqual('');
 });
 
 it('Should return a new PgEntry with the provided start date', () => {
-  let e = createEntry();
   let newStart = new Date();
-  let e2 = setStart(e, newStart);
-  expect(e2.start).toEqual(newStart);
-  expect(e).not.toEqual(e2);
+  let e = PgEntry.from({ start: newStart });
+  expect(e.start).toEqual(newStart);
 });
