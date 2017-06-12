@@ -10,6 +10,7 @@ import createBrowserHistory from 'history/createBrowserHistory';
 import { App } from './components/App/App';
 import { reducer } from './store/reducers/root-reducer';
 import { RootState } from './store/reducers/root-state';
+// import { reducers } from './store/reducers';
 import './index.css';
 
 export type CombinedState = {
