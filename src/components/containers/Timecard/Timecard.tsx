@@ -1,8 +1,8 @@
 import * as React from 'react';
 
-import { RootState } from '../../../reducers/root-state';
-import { PgEntry } from '../../../models/pg-entry';
-import { PropertyMap } from '../../../models/pg-types';
+import { RootState } from '../../../store/reducers/root-state';
+import { PgEntry } from '../../../store/models/pg-entry';
+import { PropertyMap } from '../../../store/models/pg-types';
 
 import './Timecard.css';
 
