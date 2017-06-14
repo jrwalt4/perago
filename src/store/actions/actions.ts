@@ -1,29 +1,14 @@
-import { Action } from 'redux';
 
-export const SET_TASK_NAME = 'SET_TASK_NAME';
-export interface SetTaskNameAction extends Action {
-    payload: {
-        taskId: string,
-        name: string
-    };
-}
-export function setTaskName(taskId: string, name: string): SetTaskNameAction {
-    return {
-        type: SET_TASK_NAME,
-        payload: { taskId, name }
-    };
-}
+type PgAction<T> = {
+  type: string
+  payload: T
+};
 
-export const SET_TASK_JOB = 'SET_TASK_JOB';
-export interface SetTaskJobAction extends Action {
-    payload: {
-        taskId: string,
-        jobId: string
-    };
-}
-export function setTaskJob(taskId: string, jobId: string): SetTaskJobAction {
-    return {
-        type: SET_TASK_JOB,
-        payload: { taskId, jobId }
-    };
-}
+export type SetTaskName = PgAction<{ _id: string, name: string }>;
+export const SetTaskName = 'SET_TASK_NAME';
+
+export type SetTaskJob = PgAction<{ _id: string, jobId: string }>;
+export const SetTaskJob = 'SET_TASK_JOB';
+
+export type SetTaskProject = PgAction<{ _id: string, projectId: string }>;
+export const SetTaskProject = 'SET_TASK_PROJECT';
