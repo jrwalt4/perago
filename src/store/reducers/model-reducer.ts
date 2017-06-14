@@ -1,7 +1,7 @@
 import { Action } from 'redux';
 
-import { PgModel } from '../models/pg-model';
-import * as actions from '../actions/actions';
+import { PgModel } from '../models';
+import * as actions from '../actions';
 
 export const initialState: PgModel = PgModel.from({
   entries: [
