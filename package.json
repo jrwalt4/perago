@@ -28,7 +28,6 @@
     "@types/react-router-redux": "^5.0.1",
     "@types/react-test-renderer": "^15.5.0",
     "enzyme": "^2.8.2",
-    "less": "^2.7.2",
     "react-scripts-ts": "1.4.0",
     "react-test-renderer": "^15.5.4"
   },
