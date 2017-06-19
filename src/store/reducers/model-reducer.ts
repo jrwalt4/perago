@@ -32,15 +32,15 @@ export const initialState: PgModel = PgModel.from({
   ]
 });
 
-export function modelReducer(state: PgModel = initialState, action: Action) {
+export function modelReducer(state: PgModel = initialState, action: Action): PgModel {
   switch (action.type) {
     case actions.SetTaskName: {
       let { _id, name } = (action as actions.SetTaskName).payload;
-      return state.setIn(['tasks', _id, 'name'], name);
+      return state.setIn(['tasks', _id, 'name'], name) as PgModel;
     }
     case actions.SetTaskProject: {
       let { _id, projectId } = (action as actions.SetTaskProject).payload;
-      return state.setIn(['tasks', _id, 'project'], projectId);
+      return state.setIn(['tasks', _id, 'project'], projectId) as PgModel;
     }
     default:
       return state;
