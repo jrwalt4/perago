@@ -1,7 +1,7 @@
 import * as React from 'react';
 
-export let PrimaryWindow = (props: React.Props<null>) => (
-  <div className="col-6">
+export let PrimaryWindow = (props: React.Props<null> & React.HTMLProps<null>) => (
+  <div className={props.className}>
     {props.children}
   </div>
 );

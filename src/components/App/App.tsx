@@ -22,11 +22,11 @@ export const App = () => (
     <Header />
     <div className="container-fluid">
       <div className="row">
-        <Sidebar />
-        <PrimaryWindow>
+        <Sidebar className="col-3 bg-info" />
+        <PrimaryWindow className="col-6">
           <ConnectedTimecard />
         </PrimaryWindow>
-        <Rightbar />
+        <Rightbar className="col-3 bg-warning" />
       </div>
     </div>
     <Footer />

@@ -1,7 +1,7 @@
 import * as React from 'react';
 
-export let Sidebar = () => (
-  <div className="col-3 bg-info">
+export let Sidebar = (props: React.HTMLProps<null>) => (
+  <div className={props.className}>
     <p>Sidebar</p>
   </div>
 );

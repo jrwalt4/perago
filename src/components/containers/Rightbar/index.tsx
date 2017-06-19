@@ -1,5 +1,5 @@
 import * as React from 'react';
 
-export let Rightbar = () => (
-  <div className="col-3 bg-warning" />
+export let Rightbar = (props: React.HTMLProps<null>) => (
+  <div className={props.className} />
 );

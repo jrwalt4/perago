@@ -6,7 +6,7 @@ import { PropertyMap } from '../../../store/models/pg-types';
 
 // import './Timecard.css';
 
-let propertyMap: PropertyMap<PgEntry, 'job' | 'duration' >[] = [
+let propertyMap: PropertyMap<PgEntry, 'job' | 'duration'>[] = [
   {
     name: 'job',
     alias: 'Job',
@@ -30,7 +30,7 @@ let propertyMap: PropertyMap<PgEntry, 'job' | 'duration' >[] = [
   }
 ];
 
-export function Timecard(props: RootState) {
+export let Timecard = (props: RootState) => {
   return (
     <table>
       <thead>
@@ -39,18 +39,16 @@ export function Timecard(props: RootState) {
         </tr>
       </thead>
       <tbody>
-        {props.model.entries.toArray().map((entry: PgEntry, i) => {
-          return (
-            <tr key={i}>
-              <td>Lookup Job</td>
-              <td>{entry.taskId}</td>
-              <td>{entry.start.getTime()}</td>
-              <td>{entry.end.getTime()}</td>
-              <td>{entry.end.getTime() - entry.start.getTime()}</td>
-            </tr>
-          );
-        })}
+        {props.model.entries.toArray().map((entry: PgEntry, i) => (
+          <tr key={entry._id}>
+            <td>Lookup Job</td>
+            <td>{entry.taskId}</td>
+            <td>{entry.start.getTime()}</td>
+            <td>{entry.end.getTime()}</td>
+            <td>{entry.end.getTime() - entry.start.getTime()}</td>
+          </tr>
+        ))}
       </tbody>
     </table>
   );
-}
+};
