@@ -4,7 +4,7 @@ import { RootState } from '../../../store/reducers/root-state';
 import { PgEntry } from '../../../store/models/pg-entry';
 import { PropertyMap } from '../../../store/models/pg-types';
 
-import './Timecard.css';
+// import './Timecard.css';
 
 let propertyMap: PropertyMap<PgEntry, 'job' | 'duration' >[] = [
   {
