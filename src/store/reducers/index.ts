@@ -5,3 +5,6 @@ export let reducers = {
   model: modelReducer,
   view: viewReducer
 };
+
+export { PgModelState } from './model-reducer';
+export { PgViewState } from './view-reducer';

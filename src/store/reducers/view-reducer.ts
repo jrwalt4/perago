@@ -1,12 +1,14 @@
 import { Action } from 'redux';
 
-export let initialView = {
+export let initialViewState = {
   selectedTask: '',
   selectedEntry: ''
 };
 
-export type PgView = typeof initialView;
+export type PgViewState = typeof initialViewState;
 
-export function viewReducer(state: PgView, action: Action): PgView {
-  return initialView;
+export function viewReducer(
+  state: PgViewState = initialViewState,
+  action: Action): PgViewState {
+  return state;
 }

@@ -11,11 +11,11 @@ import { Timecard } from '../containers/Timecard';
 import { Rightbar } from '../containers/Rightbar';
 import { Footer } from '../containers/Footer';
 
-import { CombinedState } from '../../index';
+import { PgAppState } from '../../index';
 
 import './App.css';
 
-let ConnectedTimecard = connect((state: CombinedState) => state.state)(Timecard);
+let ConnectedTimecard = connect((state: PgAppState) => state)(Timecard);
 
 export const App = () => (
   <div>

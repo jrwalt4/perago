@@ -8,15 +8,8 @@ import { ConnectedRouter, routerReducer, routerMiddleware, RouterState } from 'r
 import createBrowserHistory from 'history/createBrowserHistory';
 
 import { App } from './components/App/App';
-import { reducer } from './store/reducers/root-reducer';
-import { RootState } from './store/reducers/root-state';
-// import { reducers } from './store/reducers';
+import { reducers, PgModelState, PgViewState } from './store/reducers';
 import './index.css';
-
-export type CombinedState = {
-  state: RootState,
-  router: RouterState
-};
 
 let history = createBrowserHistory();
 
@@ -28,9 +21,15 @@ interface Window {
 declare let window: Window;
 let composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
-let store: Store<CombinedState> = createStore<CombinedState>(
-  combineReducers<CombinedState>({
-    state: reducer,
+export type PgAppState = {
+  model: PgModelState
+  view: PgViewState
+  router: RouterState
+};
+
+let store: Store<PgAppState> = createStore<PgAppState>(
+  combineReducers<PgAppState>({
+    ... reducers,
     router: routerReducer
   }),
   composeEnhancers(

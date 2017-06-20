@@ -3,7 +3,9 @@ import { Action } from 'redux';
 import { PgModel } from '../models';
 import * as actions from '../actions';
 
-export const initialState: PgModel = PgModel.from({
+export type PgModelState = PgModel;
+
+export const initialModelState: PgModelState = PgModel.from({
   entries: [
     {
       taskId: '1',
@@ -32,7 +34,9 @@ export const initialState: PgModel = PgModel.from({
   ]
 });
 
-export function modelReducer(state: PgModel = initialState, action: Action): PgModel {
+export function modelReducer(
+  state: PgModelState = initialModelState,
+  action: Action): PgModelState {
   switch (action.type) {
     case actions.SetTaskName: {
       let { _id, name } = (action as actions.SetTaskName).payload;
