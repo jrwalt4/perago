@@ -1,6 +1,6 @@
-table {
-  border-collapse: collapse;
+#Timecard {
+  width:100%;
 }
-td {
-  border:1px solid black;
+#Timecard td, th {
+  text-align: center;
 }

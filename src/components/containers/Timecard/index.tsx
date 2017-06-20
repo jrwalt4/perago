@@ -4,7 +4,7 @@ import { PgModelState, PgViewState } from '../../../store/reducers';
 import { PgEntry } from '../../../store/models';
 import { PropertyMap } from '../../../store/models/pg-types';
 
-// import './Timecard.css';
+import './Timecard.css';
 
 let propertyMap: PropertyMap<PgEntry, 'job' | 'duration'>[] = [
   {
@@ -31,7 +31,7 @@ let propertyMap: PropertyMap<PgEntry, 'job' | 'duration'>[] = [
 ];
 
 export let Timecard = (props: { model: PgModelState, view: PgViewState }) => (
-  <table>
+  <table id="Timecard">
     <thead>
       <tr>
         {propertyMap.map(({ alias }, i) => <th key={i}>{alias}</th>)}
