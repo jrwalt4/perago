@@ -1,6 +1,11 @@
-#Timecard {
+.Timecard {
   width:100%;
+  max-width:100%;
 }
-#Timecard td, th {
+.Timecard td, th {
   text-align: center;
+}
+
+.Timecard td {
+  font-size: 0.75rem;
 }

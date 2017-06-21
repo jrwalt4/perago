@@ -4,6 +4,8 @@ import { PgModelState, PgViewState } from '../../../store/reducers';
 import { PgEntry } from '../../../store/models';
 import { PropertyMap } from '../../../store/models/pg-types';
 
+import { DateField } from '../../common/DateField';
+
 import './Timecard.css';
 
 let propertyMap: PropertyMap<PgEntry, 'job' | 'duration'>[] = [
@@ -31,22 +33,22 @@ let propertyMap: PropertyMap<PgEntry, 'job' | 'duration'>[] = [
 ];
 
 export let Timecard = (props: { model: PgModelState, view: PgViewState }) => (
-  <table id="Timecard">
+  <table className="Timecard">
     <thead>
       <tr>
         {propertyMap.map(({ alias }, i) => <th key={i}>{alias}</th>)}
       </tr>
     </thead>
     <tbody>
-      {props.model.entries.toArray().map((entry: PgEntry, i) => (
+      {props.model.entries.map((entry: PgEntry, i) => (
         <tr key={entry._id}>
           <td>Lookup Job</td>
           <td>{entry.taskId}</td>
-          <td>{entry.start.getTime()}</td>
-          <td>{entry.end.getTime()}</td>
+          <td><DateField value={entry.start} format="h:mm a" /></td>
+          <td><DateField value={entry.end} format="h:mm a" /></td>
           <td>{entry.end.getTime() - entry.start.getTime()}</td>
         </tr>
-      ))}
+      )).toArray()}
     </tbody>
   </table>
 );
