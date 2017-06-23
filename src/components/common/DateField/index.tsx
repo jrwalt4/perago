@@ -4,6 +4,6 @@ import * as moment from 'moment';
 
 export let DateField = (props: { value: Date, format?: string }) => (
   <span>
-    {moment(props.value).format(props.format)}
+    {moment(props.value).format(props.format || 'd/M h:mm')}
   </span>
 );

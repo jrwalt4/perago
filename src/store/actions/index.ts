@@ -12,3 +12,6 @@ export const SetTaskJob = 'SET_TASK_JOB';
 
 export type SetTaskProject = PgAction<{ _id: string, projectId: string }>;
 export const SetTaskProject = 'SET_TASK_PROJECT';
+
+export type SelectEntry = PgAction<string>;
+export const SelectEntry = 'SELECT_ENTRY';
