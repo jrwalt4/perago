@@ -2,37 +2,9 @@ import { Action } from 'redux';
 
 import { PgModel } from '../models';
 import * as actions from '../actions';
+import { PgModelState, initialModelState } from './initial-model';
 
-export type PgModelState = PgModel;
-
-export const initialModelState: PgModelState = PgModel.from({
-  entries: [
-    {
-      taskId: '1',
-      _id: '2',
-      start: new Date,
-      end: new Date
-    },
-    {
-      taskId: '1',
-      _id: '3',
-      start: new Date,
-      end: new Date
-    },
-    {
-      taskId: '1',
-      _id: '4',
-      start: new Date,
-      end: new Date
-    }
-  ],
-  tasks: [
-    {
-      _id: '1',
-      name: 'nothing'
-    }
-  ]
-});
+export { PgModelState } from './initial-model';
 
 export function modelReducer(
   state: PgModelState = initialModelState,

@@ -5,6 +5,7 @@ import { PgEntry } from '../../../store/models';
 import { PropertyMap } from '../../../store/models/pg-types';
 
 import { DateField } from '../../common/DateField';
+import { DurationField } from '../../common/DurationField';
 
 import './Timecard.css';
 
@@ -43,10 +44,10 @@ export let Timecard = (props: { model: PgModelState, view: PgViewState }) => (
       {props.model.entries.map((entry: PgEntry, i) => (
         <tr key={entry._id}>
           <td>Lookup Job</td>
-          <td>{entry.taskId}</td>
+          <td>{props.model.tasks.getIn([entry.taskId, 'name'], 'unknown')}</td>
           <td><DateField value={entry.start} format="h:mm a" /></td>
           <td><DateField value={entry.end} format="h:mm a" /></td>
-          <td>{entry.end.getTime() - entry.start.getTime()}</td>
+          <td><DurationField from={entry.start} to={entry.end}/></td>
         </tr>
       )).toArray()}
     </tbody>
