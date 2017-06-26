@@ -4,6 +4,8 @@ import { connect } from 'react-redux';
 import { PgModelState, PgViewState } from '../../../store/reducers';
 import { PgAppState } from '../../../index';
 
+import './RecentEntries.css';
+
 type RecentEntryProps = {
   model: PgModelState
   view: PgViewState
