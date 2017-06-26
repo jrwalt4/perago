@@ -5,7 +5,7 @@ import { PgModelState, PgViewState } from '../../../store/reducers';
 import { PgAppState } from '../../../index';
 import { PgEntry } from '../../../store/models';
 import { PropertyMap } from '../../../store/models/pg-types';
-import { SelectEntry } from '../../../store/actions';
+import { selectEntry } from '../../../store/actions';
 
 import { DateField } from '../../common/DateField';
 import { DurationField } from '../../common/DurationField';
@@ -36,7 +36,12 @@ let propertyMap: PropertyMap<PgEntry, 'job' | 'duration'>[] = [
   }
 ];
 
-export let TimecardComponent = (props: { model: PgModelState, view: PgViewState } & React.HTMLAttributes<{}>) => (
+type TimecardComponentProps = {
+  model: PgModelState
+  view: PgViewState
+} & React.HTMLAttributes<{}>;
+
+export let TimecardComponent = (props: TimecardComponentProps) => (
   <table className="Timecard">
     <thead>
       <tr>
@@ -45,7 +50,7 @@ export let TimecardComponent = (props: { model: PgModelState, view: PgViewState 
     </thead>
     <tbody>
       {props.model.entries.map((entry: PgEntry, i) => (
-        <tr key={entry._id} onClick={props.onClick}>
+        <tr key={entry._id} onClick={props.onClick} data-id={entry._id}>
           <td>Lookup Job</td>
           <td>{props.model.tasks.getIn([entry.taskId, 'name'], 'unknown')}</td>
           <td><DateField value={entry.start} format="h:mm a" /></td>
@@ -60,10 +65,7 @@ export let TimecardComponent = (props: { model: PgModelState, view: PgViewState 
 export let Timecard = connect((state: PgAppState) => state, (dispatch) => {
   return {
     onClick: (ev: React.MouseEvent<React.ReactHTMLElement<HTMLTableRowElement>>) => {
-      dispatch({
-        type: SelectEntry,
-        payload: '2' // find a way to get tr.key
-      });
+      dispatch(selectEntry('2'));
     }
   };
 })(TimecardComponent);
