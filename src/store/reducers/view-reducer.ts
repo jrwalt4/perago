@@ -1,12 +1,18 @@
-import { PgAction, selectEntry } from '../actions';
+import { PgAction, selectEntry, setFilter } from '../actions';
 
-export let initialViewState = {
-  selectedTask: '',
-  selectedEntry: '',
-  recentTasks: ['1', '5']
+export type PgViewState = {
+  selectedTask: string
+  selectedEntry: string
+  recentTasks: string[]
+  filter: string
 };
 
-export type PgViewState = typeof initialViewState;
+export let initialViewState: PgViewState = {
+  selectedTask: '',
+  selectedEntry: '',
+  recentTasks: ['1', '5'],
+  filter: ''
+};
 
 export function viewReducer(
   state: PgViewState = initialViewState,
@@ -14,6 +20,8 @@ export function viewReducer(
   switch (action.type) {
     case selectEntry.Type:
       return Object.assign({}, state, { selectedEntry: action.payload });
+    case setFilter.Type:
+      return Object.assign({}, state, { filter: action.payload });
     default:
       return state;
   }
