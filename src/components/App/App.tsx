@@ -8,6 +8,8 @@ import { PrimaryWindow } from '../containers/PrimaryWindow';
 import { Timecard } from '../containers/Timecard';
 import { Rightbar } from '../containers/Rightbar';
 import { Footer } from '../containers/Footer';
+import { RecentEntries } from '../containers/RecentEntries';
+import { EntryDetail } from '../containers/EntryDetail';
 
 import './App.css';
 
@@ -16,11 +18,15 @@ export const App = () => (
     <Header />
     <div className="container-fluid">
       <div className="row">
-        <Sidebar className="col-3 bg-info" />
+        <Sidebar className="col-3 bg-info" title="Recent Tasks">
+          <RecentEntries />
+        </Sidebar>
         <PrimaryWindow className="col-6">
           <Timecard />
         </PrimaryWindow>
-        <Rightbar className="col-3 bg-warning" />
+        <Rightbar className="col-3 bg-warning" title="Entry Details">
+          <EntryDetail />
+        </Rightbar>
       </div>
     </div>
     <Footer />

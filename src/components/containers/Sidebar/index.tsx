@@ -1,10 +1,8 @@
 import * as React from 'react';
 
-import { RecentEntries } from '../RecentEntries';
-
-export let Sidebar = (props: React.HTMLProps<null>) => (
+export let Sidebar = (props: React.HTMLProps<HTMLDivElement>) => (
   <div className={props.className}>
-    <p>Recent Tasks</p>
-    <RecentEntries />
+    {props.title ? <h4>{props.title}</h4> : null}
+    {props.children}
   </div>
 );

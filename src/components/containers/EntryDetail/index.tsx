@@ -11,7 +11,6 @@ export let EntryDetailComponent = (props: PgAppState) => {
     let task = props.model.tasks.get(entry.taskId);
     return (
       <div>
-        <p>Entry Details</p>
         <label>Task:</label><span>{task && task.name}</span><br />
         <label>Start:</label><DateField value={entry.start} /><br />
         <label>End:</label><DateField value={entry.end} /><br />
@@ -20,7 +19,7 @@ export let EntryDetailComponent = (props: PgAppState) => {
   }
   return (
     <div>
-      <p>Entry Details</p><span>None Selected</span>
+      <span>None Selected</span>
     </div>
   );
 };
