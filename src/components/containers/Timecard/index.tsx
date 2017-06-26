@@ -42,7 +42,7 @@ type TimecardComponentProps = {
 } & React.HTMLAttributes<{}>;
 
 export let TimecardComponent = (props: TimecardComponentProps) => (
-  <table className="Timecard">
+  <table className="Timecard table table-sm table-hover">
     <thead>
       <tr>
         {propertyMap.map(({ name, alias }, i) => <th key={name}>{alias}</th>)}
