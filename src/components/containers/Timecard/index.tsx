@@ -42,7 +42,7 @@ type TimecardComponentProps = {
 } & React.HTMLAttributes<{}>;
 
 export let TimecardComponent = (props: TimecardComponentProps) => (
-  <table className="Timecard table table-sm table-hover">
+  <table className="Timecard table table-sm table-hover table-striped">
     <thead>
       <tr>
         {propertyMap.map(({ name, alias }, i) => <th key={name}>{alias}</th>)}
@@ -50,7 +50,8 @@ export let TimecardComponent = (props: TimecardComponentProps) => (
     </thead>
     <tbody>
       {props.model.entries.map((entry: PgEntry, i) => (
-        <tr key={entry._id} onClick={props.onClick} data-id={entry._id}>
+        <tr key={entry._id} onClick={props.onClick} data-id={entry._id} 
+        className={props.view.selectedEntry === entry._id ? 'table-info' : ''}>
           <td>Lookup Job</td>
           <td>{props.model.tasks.getIn([entry.taskId, 'name'], 'unknown')}</td>
           <td><DateField value={entry.start} format="h:mm a" /></td>
