@@ -8,7 +8,7 @@ export let EntryDetailComponent = (props: PgAppState) => {
   let entryID: string;
   if (entryID = props.view.selectedEntry) {
     let entry = props.model.entries.get(entryID);
-    let task = props.model.tasks.get(entryID);
+    let task = props.model.tasks.get(entry.taskId);
     return (
       <div>
         <p>Entry Details</p>

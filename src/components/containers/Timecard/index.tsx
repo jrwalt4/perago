@@ -64,8 +64,8 @@ export let TimecardComponent = (props: TimecardComponentProps) => (
 
 export let Timecard = connect((state: PgAppState) => state, (dispatch) => {
   return {
-    onClick: (ev: React.MouseEvent<React.ReactHTMLElement<HTMLTableRowElement>>) => {
-      dispatch(selectEntry('2'));
+    onClick: (ev: React.MouseEvent<HTMLTableRowElement>) => {
+      dispatch(selectEntry(ev.currentTarget.dataset.id || ''));
     }
   };
 })(TimecardComponent);

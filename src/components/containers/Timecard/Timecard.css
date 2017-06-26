@@ -9,3 +9,7 @@
 .Timecard td {
   font-size: 0.75rem;
 }
+
+.Timecard tr {
+  cursor: pointer
+}
