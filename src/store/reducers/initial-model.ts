@@ -8,7 +8,8 @@ export const initialModelState: PgModelState = PgModel.from({
       taskId: '1',
       _id: '2',
       start: new Date('2017-6-22 6:00'),
-      end: new Date('2017-6-22 8:00')
+      end: new Date('2017-6-22 8:00'),
+      notes: 'Talked to Jim'
     },
     {
       taskId: '1',

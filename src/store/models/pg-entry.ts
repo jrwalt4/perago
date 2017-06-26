@@ -5,7 +5,7 @@ import { RecordType, RecordTypeConstructor, PgBase } from './pg-types';
 
 export interface PgEntryBase extends PgBase {
   taskId: string;
-  name: string;
+  notes: string;
   start: Date;
   end: Date;
 }
@@ -13,7 +13,7 @@ export interface PgEntryBase extends PgBase {
 export const defaultEntry: PgEntryBase = {
   _id: '',
   taskId: '',
-  name: '',
+  notes: '',
   start: new Date(),
   end: new Date()
 };

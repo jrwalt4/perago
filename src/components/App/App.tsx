@@ -30,7 +30,7 @@ export const App = () => (
           <Timecard />
           </div>
         </PrimaryWindow>
-        <Rightbar className="col-3 bg-warning" title="Entry Details">
+        <Rightbar className="col-3 bg-warning" title="Details">
           <EntryDetail />
         </Rightbar>
       </div>

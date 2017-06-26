@@ -2,7 +2,7 @@ import { PgEntry, defaultEntry } from './pg-entry';
 
 it('Should create a default PgEntry', () => {
   let e = PgEntry.create();
-  expect(e.name).toEqual(defaultEntry.name);
+  expect(e._id).toEqual(defaultEntry._id);
 });
 
 it('Should create a new PgEntry with a cuid', () => {

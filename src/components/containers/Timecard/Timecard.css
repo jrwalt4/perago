@@ -2,7 +2,7 @@
   width:100%;
   max-width:100%;
 }
-.Timecard td, th {
+.Timecard td, .Timecard th {
   text-align: center;
 }
 
