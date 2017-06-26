@@ -21,7 +21,7 @@ export const App = () => (
         <Sidebar className="col-3 bg-info" title="Recent Tasks">
           <RecentEntries />
         </Sidebar>
-        <PrimaryWindow className="col-6">
+        <PrimaryWindow className="col-6" title="Timecard">
           <Timecard />
         </PrimaryWindow>
         <Rightbar className="col-3 bg-warning" title="Entry Details">
