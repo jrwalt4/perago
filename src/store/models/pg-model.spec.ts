@@ -18,8 +18,15 @@ describe('PgModel', () => {
         start: startTime
       }
     ];
+    
     let model = PgModel.from({ tasks, entries });
-    expect(model.entries.get(entryId).start).toBe(startTime);
-    expect(model.tasks.get(taskId).name).toBe(taskName);
+
+    let pgEntry = model.entries.get(entryId);
+    expect(pgEntry).not.toBeUndefined();
+    expect(pgEntry.start).toBe(startTime);
+
+    let pgTask = model.tasks.get(taskId);
+    expect(pgTask).not.toBeUndefined();
+    expect(pgTask.name).toBe(taskName);
   });
 });

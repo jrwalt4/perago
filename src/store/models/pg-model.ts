@@ -1,22 +1,22 @@
 import { Map, Record } from 'immutable';
 
-import { PgTask, PgTaskBase } from './pg-task';
-import { PgEntry, PgEntryBase } from './pg-entry';
-import { RecordType, RecordTypeConstructor, PgBase, ItemConstructor } from './pg-types';
+import { PgTask } from './pg-task';
+import { PgEntry } from './pg-entry';
+import { RecordType, RecordTypeConstructor } from './pg-types';
 
-export interface PgModelBase {
+export interface PgModel {
   tasks: Map<string, PgTask>;
   entries: Map<string, PgEntry>;
 }
 
-export const defaultModel: PgModelBase = {
+export const defaultModel: PgModel = {
   tasks: Map<string, PgTask>(),
   entries: Map<string, PgEntry>()
 };
 
 // tslint:disable-next-line:no-any
-const PgModelConstructor: RecordTypeConstructor<PgModelBase> = Record(defaultModel, 'PgModel') as any;
-export type PgModel = RecordType<PgModelBase>;
+const PgModelConstructor: RecordTypeConstructor<PgModel> = Record(defaultModel, 'PgModel') as any;
+export type PgModelRecord = RecordType<PgModel>;
 
 export namespace PgModel {
 
@@ -24,26 +24,42 @@ export namespace PgModel {
     return new PgModelConstructor();
   }
 
-  export function from({ tasks, entries }: { tasks: Partial<PgTaskBase>[], entries: Partial<PgEntryBase>[] }): PgModel {
-    let model = new PgModelConstructor();
-    model = model.set('tasks', buildMap<PgTaskBase>(tasks, PgTask));
-    model = model.set('entries', buildMap<PgEntryBase>(entries, PgEntry));
-    return model;
+  type PgModelInputs = {
+    tasks: Partial<PgTask>[],
+    entries: Partial<PgEntry>[]
+  };
+
+  export function from({ tasks, entries }: PgModelInputs | PgModel): PgModel {
+    if (Array.isArray(tasks) && Array.isArray(entries)) {
+      return new PgModelConstructor({
+        tasks: Map.of.apply(void 0, tasks.reduce((inputArray, task) => {
+          let pgTask = PgTask.from(task);
+          return inputArray.concat([pgTask._id, pgTask]);
+          // tslint:disable-next-line:align
+        }, new Array<string | PgTask>())),
+        entries: Map.of.apply(void 0, entries.reduce((inputArray, entry) => {
+          let pgEntry = PgEntry.from(entry);
+          return inputArray.concat([pgEntry._id, pgEntry]);
+          // tslint:disable-next-line:align
+        }, new Array<string | PgEntry>()))
+      });
+    }
+    return new PgModelConstructor({ tasks, entries } as PgModel);
   }
 
-  function buildMap<T extends PgBase>(
-    items: Partial<T>[],
-    itemConstructor: ItemConstructor<T>
-  ): Map<string, RecordType<T>> {
-    return items.reduce((map, item) => {
-      let itemRecord = itemConstructor.from(item);
-      return map.set(itemRecord._id, itemRecord);
-    // tslint:disable-next-line:align
-    }, Map<string, RecordType<T>>());
+  export function addTask(model: PgModel, task?: Partial<PgTask>): PgModel {
+    let pgTask = task == null ? PgTask.create() : PgTask.from(task);
+    return (PgModel.from(model) as PgModelRecord).setIn(['tasks', pgTask._id], pgTask) as PgModelRecord;
   }
 
-  export function addTask(model: PgModel, task?: PgTask): PgModel {
-    task = task || PgTask.create();
-    return model.setIn(['tasks', task._id], task) as PgModel;
+  export function setTaskName(model: PgModel, task: string | PgTask, name: string): PgModel {
+    let taskId = typeof task === 'string' ? task : task._id;
+    return (model as PgModelRecord).setIn(['tasks', taskId, 'name'], name) as PgModelRecord;
+  }
+
+  export function setTaskProject(model: PgModel, task: string | PgTask, project: string | PgTask): PgModel {
+    let taskId = typeof task === 'string' ? task : task._id;
+    let projectId = typeof project === 'string' ? project : project._id;
+    return (model as PgModelRecord).setIn(['tasks', taskId, 'parentTask'], projectId || project) as PgModelRecord;
   }
 }

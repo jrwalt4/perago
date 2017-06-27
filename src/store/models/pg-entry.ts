@@ -3,14 +3,14 @@ import { Record } from 'immutable';
 
 import { RecordType, RecordTypeConstructor, PgBase } from './pg-types';
 
-export interface PgEntryBase extends PgBase {
+export interface PgEntry extends PgBase {
   taskId: string;
   notes: string;
   start: Date;
   end: Date;
 }
 
-export const defaultEntry: PgEntryBase = {
+export const defaultEntry: PgEntry = {
   _id: '',
   taskId: '',
   notes: '',
@@ -21,8 +21,8 @@ export const defaultEntry: PgEntryBase = {
 // There is an error in the type definitnions for Immutable.Record,
 // so temporarily disable 'no-any' until Immutable v4 is released.
 // tslint:disable-next-line:no-any
-const PgEntryConstructor: RecordTypeConstructor<PgEntryBase> = Record(defaultEntry, 'PgEntry') as any;
-export type PgEntry = RecordType<PgEntryBase>;
+const PgEntryConstructor: RecordTypeConstructor<PgEntry> = Record(defaultEntry, 'PgEntry') as any;
+export type PgEntryRecord = RecordType<PgEntry>;
 
 export namespace PgEntry {
 
@@ -30,12 +30,12 @@ export namespace PgEntry {
     return new PgEntryConstructor({ _id: cuid() });
   }
 
-  export function from(props: Partial<PgEntryBase>): PgEntry {
+  export function from(props: Partial<PgEntry>): PgEntry {
     props._id = props._id || cuid();
     return new PgEntryConstructor(props);
   }
 
   export function setStart(entry: PgEntry, newStart: Date): PgEntry {
-    return entry.set('start', newStart);
+    return (PgEntry.from(entry) as PgEntryRecord).set('start', newStart);
   }
 }
