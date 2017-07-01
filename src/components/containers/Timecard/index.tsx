@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 
-import { PgModelState, PgViewState } from '../../../store/reducers';
+import { PgModelState } from '../../../store/reducers';
 import { PgAppState } from '../../../index';
 import { PgEntry } from '../../../store/models';
 import { PropertyMap } from '../../../store/models/pg-types';
-import { selectEntry } from '../../../store/actions';
+import { selectEntry, startTask } from '../../../store/actions';
 
 import { DateField } from '../../common/DateField';
 import { DurationField } from '../../common/DurationField';
@@ -40,8 +40,11 @@ let propertyMap: PropertyMap<PgEntry, 'job' | 'duration'>[] = [
 
 type TimecardComponentProps = {
   model: PgModelState
-  view: PgViewState
-} & React.HTMLAttributes<{}>;
+  selectedEntry: string
+  onSelectEntry: React.MouseEventHandler<HTMLElement>
+  onCopyEntry: React.MouseEventHandler<HTMLSpanElement>
+  onContinueEntry: React.MouseEventHandler<HTMLSpanElement>
+} & React.HTMLAttributes<HTMLTableElement>;
 
 export let TimecardComponent = (props: TimecardComponentProps) => (
   <table className="Timecard table table-sm table-hover table-striped">
@@ -52,24 +55,36 @@ export let TimecardComponent = (props: TimecardComponentProps) => (
     </thead>
     <tbody>
       {props.model.entries.map((entry: PgEntry, i) => (
-        <tr key={entry._id} onClick={props.onClick} data-id={entry._id} 
-        className={props.view.selectedEntry === entry._id ? 'table-info' : ''}>
+        <tr key={entry._id} onClick={props.onSelectEntry} data-id={entry._id}
+          className={props.selectedEntry === entry._id ? 'table-info' : ''}>
           <td>Lookup Job</td>
           <td>{props.model.tasks.getIn([entry.taskId, 'name'], 'unknown')}</td>
           <td><DateField value={entry.start} format="h:mm a" /></td>
           <td><DateField value={entry.end} format="h:mm a" /></td>
           <td><DurationField from={entry.start} to={entry.end} /></td>
-          <td className="Timecard-controls"><span className="fa fa-retweet"/><span className="fa fa-copy"/></td>
+          <td className="Timecard-controls">
+            <span className="fa fa-retweet" onClick={props.onContinueEntry} />
+            <span className="fa fa-copy" />
+          </td>
         </tr>
       )).toArray()}
     </tbody>
   </table>
 );
 
-export let Timecard = connect((state: PgAppState) => state, (dispatch) => {
-  return {
-    onClick: (ev: React.MouseEvent<HTMLTableRowElement>) => {
+export let Timecard = connect(
+  (state: PgAppState) => ({
+    model: state.model,
+    selectedEntry: state.view.selectedEntry
+  }),
+  (dispatch) => ({
+    onSelectEntry: (ev: React.MouseEvent<HTMLTableRowElement>) => {
       dispatch(selectEntry(ev.currentTarget.dataset.id || ''));
+    },
+    onContinueEntry: (ev: React.MouseEvent<HTMLSpanElement>) => {
+      dispatch(startTask(ev.currentTarget.dataset.id || ''));
+    },
+    onCopyEntry: (ev) => {
+      // do something
     }
-  };
-})(TimecardComponent);
+  }))(TimecardComponent);

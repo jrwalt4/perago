@@ -1,6 +1,7 @@
 export type PgModelAction =
   setTaskName.Action |
-  setTaskJob.Action;
+  setTaskJob.Action |
+  startTask.Action;
 
 export function setTaskName(taskId: string, name: string): setTaskName.Action {
   return {
@@ -42,4 +43,19 @@ export namespace setTaskJob {
     }
   };
   export const type = 'SET_TASK_JOB';
+}
+
+export function startTask(taskId: string): startTask.Action {
+  return {
+    type: 'START_TASK',
+    payload: taskId
+  };
+}
+
+export namespace startTask {
+  export type Action = {
+    type: 'START_TASK'
+    payload: string
+  };
+  export const type = 'START_TASK';
 }

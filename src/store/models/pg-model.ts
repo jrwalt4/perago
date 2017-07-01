@@ -62,4 +62,8 @@ export namespace PgModel {
     let projectId = typeof project === 'string' ? project : project._id;
     return (model as PgModelRecord).setIn(['tasks', taskId, 'parentTask'], projectId || project) as PgModelRecord;
   }
+
+  export function addEntry(model: PgModel, entry: PgEntry): PgModel {
+    return (model as PgModelRecord).setIn(['entries', entry._id], entry) as PgModelRecord;
+  }
 }
