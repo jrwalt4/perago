@@ -1,8 +1,8 @@
 export type PgModelAction =
-  setTaskName.Type |
-  setTaskJob.Type;
+  setTaskName.Action |
+  setTaskJob.Action;
 
-export function setTaskName(taskId: string, name: string): setTaskName.Type {
+export function setTaskName(taskId: string, name: string): setTaskName.Action {
   return {
     type: 'SET_TASK_NAME',
     payload: {
@@ -13,17 +13,17 @@ export function setTaskName(taskId: string, name: string): setTaskName.Type {
 }
 
 export namespace setTaskName {
-  export type Type = {
+  export type Action = {
     type: 'SET_TASK_NAME',
     payload: {
       _id: string
       name: string
     }
   };
-  export const Type = 'SET_TASK_NAME';
+  export const type = 'SET_TASK_NAME';
 }
 
-export function setTaskJob(taskId: string, jobId: string): setTaskJob.Type {
+export function setTaskJob(taskId: string, jobId: string): setTaskJob.Action {
   return {
     type: 'SET_TASK_JOB',
     payload: {
@@ -34,12 +34,12 @@ export function setTaskJob(taskId: string, jobId: string): setTaskJob.Type {
 }
 
 export namespace setTaskJob {
-  export type Type = {
+  export type Action = {
     type: 'SET_TASK_JOB'
     payload: {
       _id: string
       jobId: string
     }
   };
-  export const Type = 'SET_TASK_JOB';
+  export const type = 'SET_TASK_JOB';
 }

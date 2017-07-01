@@ -8,9 +8,9 @@ export function modelReducer(
   model: PgModelState = initialModelState,
   action: PgAction): PgModelState {
   switch (action.type) {
-    case setTaskName.Type:
+    case setTaskName.type:
       return PgModel.setTaskName(model, action.payload._id, name) as PgModel;
-    case setTaskJob.Type:
+    case setTaskJob.type:
       return PgModel.setTaskProject(model, action.payload._id, action.payload.jobId) as PgModel;
     default:
       return model;

@@ -1,9 +1,9 @@
 export type PgViewAction =
-  selectEntry.Type |
-  selectTask.Type |
-  setFilter.Type;
+  selectEntry.Action |
+  selectTask.Action |
+  setFilter.Action;
 
-export function selectEntry(entryId: string): selectEntry.Type {
+export function selectEntry(entryId: string): selectEntry.Action {
   return {
     type: 'SELECT_ENTRY',
     payload: entryId
@@ -11,14 +11,14 @@ export function selectEntry(entryId: string): selectEntry.Type {
 }
 
 export namespace selectEntry {
-  export type Type = {
+  export type Action = {
     type: 'SELECT_ENTRY',
     payload: string
   };
-  export const Type = 'SELECT_ENTRY';
+  export const type = 'SELECT_ENTRY';
 }
 
-export function selectTask(taskId: string): selectTask.Type {
+export function selectTask(taskId: string): selectTask.Action {
   return {
     type: 'SELECT_TASK',
     payload: taskId
@@ -26,14 +26,14 @@ export function selectTask(taskId: string): selectTask.Type {
 }
 
 export namespace selectTask {
-  export type Type = {
+  export type Action = {
     type: 'SELECT_TASK',
     payload: string
   };
-  export const Type = 'SELECT_TASK';
+  export const type = 'SELECT_TASK';
 }
 
-export function setFilter(filter: string): setFilter.Type {
+export function setFilter(filter: string): setFilter.Action {
   return {
     type: 'SET_FILTER',
     payload: filter
@@ -41,9 +41,9 @@ export function setFilter(filter: string): setFilter.Type {
 }
 
 export namespace setFilter {
-  export type Type = {
+  export type Action = {
     type: 'SET_FILTER'
     payload: string
   };
-  export const Type = 'SET_FILTER';
+  export const type = 'SET_FILTER';
 }

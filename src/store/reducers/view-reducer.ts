@@ -18,9 +18,9 @@ export function viewReducer(
   state: PgViewState = initialViewState,
   action: PgAction): PgViewState {
   switch (action.type) {
-    case selectEntry.Type:
+    case selectEntry.type:
       return Object.assign({}, state, { selectedEntry: action.payload });
-    case setFilter.Type:
+    case setFilter.type:
       return Object.assign({}, state, { filter: action.payload });
     default:
       return state;
