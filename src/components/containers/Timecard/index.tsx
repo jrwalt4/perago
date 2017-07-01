@@ -12,6 +12,8 @@ import { DurationField } from '../../common/DurationField';
 
 import './Timecard.css';
 
+import 'font-awesome/css/font-awesome.min.css';
+
 let propertyMap: PropertyMap<PgEntry, 'job' | 'duration'>[] = [
   {
     name: 'job',
@@ -57,6 +59,7 @@ export let TimecardComponent = (props: TimecardComponentProps) => (
           <td><DateField value={entry.start} format="h:mm a" /></td>
           <td><DateField value={entry.end} format="h:mm a" /></td>
           <td><DurationField from={entry.start} to={entry.end} /></td>
+          <td className="Timecard-controls"><span className="fa fa-retweet"/><span className="fa fa-copy"/></td>
         </tr>
       )).toArray()}
     </tbody>
