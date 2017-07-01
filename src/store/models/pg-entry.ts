@@ -30,9 +30,11 @@ export namespace PgEntry {
     return new PgEntryConstructor({ _id: cuid() });
   }
 
-  export function from(props: Partial<PgEntry>): PgEntry {
-    props._id = props._id || cuid();
-    return new PgEntryConstructor(props);
+  export function from(pgEntry: PgEntryRecord): PgEntryRecord;
+  export function from(props: Partial<PgEntry>): PgEntry;
+  export function from(propsOrEntry: PgEntryRecord | Partial<PgEntry>) {
+    let _id = propsOrEntry._id || cuid();
+    return new PgEntryConstructor({ _id, ...propsOrEntry });
   }
 
   export function setStart(entry: PgEntry, newStart: Date): PgEntry {
