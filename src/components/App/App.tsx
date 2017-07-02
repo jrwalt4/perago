@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { connect } from 'react-redux';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -11,8 +12,23 @@ import { Rightbar } from '../containers/Rightbar';
 import { Footer } from '../containers/Footer';
 import { RecentEntries } from '../containers/RecentEntries';
 import { EntryDetail } from '../containers/EntryDetail';
+import { startEditing } from '../../store/actions';
 
 import './App.css';
+
+type EditDetailsProps = {
+  onClick: React.MouseEventHandler<HTMLButtonElement>
+};
+const EditDetailsComponent = connect(
+  null,
+  (dispatch) => ({
+    onClick: () => {
+      dispatch(startEditing());
+    }
+  })
+)((props: EditDetailsProps) => (
+  <button className="col-3 btn btn-info fa fa-edit" onClick={props.onClick} />
+));
 
 export const App = () => (
   <div>
@@ -24,13 +40,14 @@ export const App = () => (
         </Sidebar>
         <PrimaryWindow className="col-6" title="Timecard">
           <div className="row">
-          <TimecardFilter />
+            <TimecardFilter />
           </div>
           <div className="row">
-          <Timecard />
+            <Timecard />
           </div>
         </PrimaryWindow>
-        <Rightbar className="col-3 bg-warning" title="Details">
+        <Rightbar className="col-3 bg-warning" title="Details"
+          editIcon={<EditDetailsComponent />}>
           <EntryDetail />
         </Rightbar>
       </div>
