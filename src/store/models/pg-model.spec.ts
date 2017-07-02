@@ -18,7 +18,7 @@ describe('PgModel', () => {
         start: startTime
       }
     ];
-    
+
     let model = PgModel.from({ tasks, entries });
 
     let pgEntry = model.entries.get(entryId);
@@ -28,5 +28,19 @@ describe('PgModel', () => {
     let pgTask = model.tasks.get(taskId);
     expect(pgTask).not.toBeUndefined();
     expect(pgTask.name).toBe(taskName);
+  });
+
+  it('Should return the active entries', () => {
+    let model = PgModel.from({
+      entries: [
+        { _id: '1', start: new Date, end: new Date },
+        { _id: '2', start: new Date },
+        { _id: '3', start: new Date, end: new Date }
+      ],
+      tasks: []
+    });
+    let activeEntries = PgModel.getActiveEntries(model);
+    expect(activeEntries.size).toEqual(1);
+    expect(activeEntries.get('2')).not.toBeUndefined();
   });
 });

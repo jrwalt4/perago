@@ -38,12 +38,19 @@ let propertyMap: PropertyMap<PgEntry, 'job' | 'duration'>[] = [
   }
 ];
 
+interface DataElement extends HTMLElement {
+  dataset: {
+    id: string,
+    taskId?: string
+  };
+}
+
 type TimecardComponentProps = {
   model: PgModelState
   selectedEntry: string
-  onSelectEntry: React.MouseEventHandler<HTMLElement>
-  onCopyEntry: React.MouseEventHandler<HTMLSpanElement>
-  onContinueEntry: React.MouseEventHandler<HTMLSpanElement>
+  onSelectEntry: React.MouseEventHandler<DataElement & HTMLTableRowElement>
+  onCopyEntry: React.MouseEventHandler<DataElement>
+  onContinueEntry: React.MouseEventHandler<DataElement>
 } & React.HTMLAttributes<HTMLTableElement>;
 
 export let TimecardComponent = (props: TimecardComponentProps) => (
@@ -55,7 +62,8 @@ export let TimecardComponent = (props: TimecardComponentProps) => (
     </thead>
     <tbody>
       {props.model.entries.map((entry: PgEntry, i) => (
-        <tr key={entry._id} onClick={props.onSelectEntry} data-id={entry._id}
+        <tr key={entry._id} onClick={props.onSelectEntry}
+          data-id={entry._id}
           className={props.selectedEntry === entry._id ? 'table-info' : ''}>
           <td>Lookup Job</td>
           <td>{props.model.tasks.getIn([entry.taskId, 'name'], 'unknown')}</td>
@@ -63,7 +71,7 @@ export let TimecardComponent = (props: TimecardComponentProps) => (
           <td><DateField value={entry.end} format="h:mm a" /></td>
           <td><DurationField from={entry.start} to={entry.end} /></td>
           <td className="Timecard-controls">
-            <span className="fa fa-retweet" onClick={props.onContinueEntry} />
+            <span className="fa fa-retweet" data-task-id={entry.taskId} onClick={props.onContinueEntry} />
             <span className="fa fa-copy" />
           </td>
         </tr>
@@ -78,11 +86,14 @@ export let Timecard = connect(
     selectedEntry: state.view.selectedEntry
   }),
   (dispatch) => ({
-    onSelectEntry: (ev: React.MouseEvent<HTMLTableRowElement>) => {
-      dispatch(selectEntry(ev.currentTarget.dataset.id || ''));
+    onSelectEntry: (ev: React.MouseEvent<DataElement>) => {
+      dispatch(selectEntry(ev.currentTarget.dataset.id));
     },
-    onContinueEntry: (ev: React.MouseEvent<HTMLSpanElement>) => {
-      dispatch(startTask(ev.currentTarget.dataset.id || ''));
+    onContinueEntry: (ev: React.MouseEvent<DataElement>) => {
+      let taskId = ev.currentTarget.dataset.taskId;
+      if (taskId) {
+        dispatch(startTask(taskId));
+      }
     },
     onCopyEntry: (ev) => {
       // do something

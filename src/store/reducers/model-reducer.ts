@@ -13,8 +13,9 @@ export function modelReducer(
     case setTaskJob.type:
       return PgModel.setTaskProject(model, action.payload._id, action.payload.jobId) as PgModel;
     case startTask.type:
+      let stoppedModel = PgModel.stopAllEntries(model);
       let newEntry = PgEntry.from({ taskId: action.payload, start: new Date() });
-      return PgModel.addEntry(model, newEntry);
+      return PgModel.addEntry(stoppedModel, newEntry);
     default:
       return model;
   }

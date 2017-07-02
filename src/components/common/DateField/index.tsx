@@ -2,8 +2,8 @@ import * as React from 'react';
 
 import * as moment from 'moment';
 
-export let DateField = (props: { value: Date, format?: string }) => (
+export let DateField = (props: { value?: Date, format?: string }) => (
   <span>
-    {moment(props.value).format(props.format || 'd/M h:mm')}
+    {props.value ? moment(props.value).format(props.format || 'd/M h:mm') : ''}
   </span>
 );

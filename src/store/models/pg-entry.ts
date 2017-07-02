@@ -6,16 +6,16 @@ import { RecordType, RecordTypeConstructor, PgBase } from './pg-types';
 export interface PgEntry extends PgBase {
   taskId: string;
   notes: string;
-  start: Date;
-  end: Date;
+  start: Date | undefined;
+  end: Date | undefined;
 }
 
 export const defaultEntry: PgEntry = {
   _id: '',
   taskId: '',
   notes: '',
-  start: new Date(),
-  end: new Date()
+  start: void 0,
+  end: void 0
 };
 
 // There is an error in the type definitnions for Immutable.Record,
@@ -26,8 +26,8 @@ export type PgEntryRecord = RecordType<PgEntry>;
 
 export namespace PgEntry {
 
-  export function create(): PgEntry {
-    return new PgEntryConstructor({ _id: cuid() });
+  export function create(startNow?: boolean): PgEntry {
+    return new PgEntryConstructor({ _id: cuid(), start: startNow ? new Date() : void 0 });
   }
 
   export function from(pgEntry: PgEntryRecord): PgEntryRecord;

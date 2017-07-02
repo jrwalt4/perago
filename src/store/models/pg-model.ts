@@ -66,4 +66,16 @@ export namespace PgModel {
   export function addEntry(model: PgModel, entry: PgEntry): PgModel {
     return (model as PgModelRecord).setIn(['entries', entry._id], entry) as PgModelRecord;
   }
+
+  export function getActiveEntries(model: PgModel): Map<string, PgEntry> {
+    return model.entries.filter((entry: PgEntry) => !entry.end) as Map<string, PgEntry>;
+  }
+
+  export function stopAllEntries(model: PgModel): PgModel {
+    return getActiveEntries(model).reduce(
+      (prevModel: PgModelRecord, entry: PgEntry) => {
+        return prevModel.setIn(['entries', entry._id, 'end'], new Date());
+      },
+      model as PgModelRecord) as PgModelRecord;
+  }
 }

@@ -1,7 +1,25 @@
+import { PgEntry } from '../models';
+
 export type PgModelAction =
+  createEntry.Action |
   setTaskName.Action |
   setTaskJob.Action |
   startTask.Action;
+
+export function createEntry(entry: Partial<PgEntry>): createEntry.Action {
+  return {
+    type: 'CREATE_ENTRY',
+    payload: entry
+  };
+}
+
+export namespace createEntry {
+  export type Action = {
+    type: 'CREATE_ENTRY',
+    payload: Partial<PgEntry>
+  };
+  export const type = 'CREATE_ENTRY';
+}
 
 export function setTaskName(taskId: string, name: string): setTaskName.Action {
   return {
