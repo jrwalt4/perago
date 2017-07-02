@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 
-import { PgAppState } from '../../../index';
+import { PgAppState } from '../../../store';
 import { DateField } from '../../common/DateField';
 import { DurationField } from '../../common/DurationField';
 

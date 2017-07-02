@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 
-import { PgModelState } from '../../../store/reducers';
-import { PgAppState } from '../../../index';
+import { PgAppState, PgModelState } from '../../../store';
 import { PgEntry } from '../../../store/models';
 import { PropertyMap } from '../../../store/models/pg-types';
 import { selectEntry, startTask } from '../../../store/actions';

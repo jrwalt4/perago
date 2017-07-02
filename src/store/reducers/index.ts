@@ -1,10 +1,13 @@
 import { modelReducer } from './model-reducer';
 import { viewReducer } from './view-reducer';
+import { routerReducer } from './router-reducer';
 
-export let reducers = {
+export const reducers = {
   model: modelReducer,
-  view: viewReducer
+  view: viewReducer,
+  router: routerReducer
 };
 
 export { PgModelState } from './model-reducer';
 export { PgViewState } from './view-reducer';
+export { PgRouterState, history, routerMiddleware } from './router-reducer';
