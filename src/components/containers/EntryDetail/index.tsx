@@ -1,17 +1,22 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 
-import { PgAppState } from '../../../store';
+import { PgAppState, PgModelState } from '../../../store';
 import { DateField } from '../../common/DateField';
 import { DurationField } from '../../common/DurationField';
 
 import './EntryDetail.css';
 
-export let EntryDetailComponent = (props: PgAppState) => {
-  let entryID: string;
-  if (entryID = props.view.selectedEntry) {
-    let entry = props.model.entries.get(entryID);
-    let task = props.model.tasks.get(entry.taskId);
+export type EntryDetailProps = {
+  selectedEntry: string
+  isEditing: boolean
+  model: PgModelState
+};
+
+export let EntryDetailComponent = ({ selectedEntry, isEditing, model }: EntryDetailProps) => {
+  if (selectedEntry) {
+    let entry = model.entries.get(selectedEntry);
+    let task = model.tasks.get(entry.taskId);
     return (
       <table className="EntryDetail table table-sm table-bordered">
         <tbody>
@@ -22,10 +27,10 @@ export let EntryDetailComponent = (props: PgAppState) => {
             <th>Task:</th><td>{task && task.name}</td>
           </tr>
           <tr>
-            <th>Start:</th><td><DateField value={entry.start} /></td>
+            <th>Start:</th><td><DateField value={entry.start} isEditing={isEditing} /></td>
           </tr>
           <tr>
-            <th>End:</th><td><DateField value={entry.end} /></td>
+            <th>End:</th><td><DateField value={entry.end} isEditing={isEditing} /></td>
           </tr>
           <tr>
             <th>Duration:</th><td><DurationField from={entry.start} to={entry.end} /></td>
@@ -44,4 +49,10 @@ export let EntryDetailComponent = (props: PgAppState) => {
   );
 };
 
-export let EntryDetail = connect((state: PgAppState) => state)(EntryDetailComponent);
+export let EntryDetail = connect(
+  ({ view, model }: PgAppState) => ({
+    selectedEntry: view.selectedEntry,
+    isEditing: view.isEditing,
+    model
+  })
+)(EntryDetailComponent);

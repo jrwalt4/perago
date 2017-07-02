@@ -89,6 +89,8 @@ export let Timecard = connect(
       dispatch(selectEntry(ev.currentTarget.dataset.id));
     },
     onContinueEntry: (ev: React.MouseEvent<DataElement>) => {
+      // prevent row from being selected
+      ev.stopPropagation();
       let taskId = ev.currentTarget.dataset.taskId;
       if (taskId) {
         dispatch(startTask(taskId));

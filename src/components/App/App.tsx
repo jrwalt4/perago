@@ -12,22 +12,27 @@ import { Rightbar } from '../containers/Rightbar';
 import { Footer } from '../containers/Footer';
 import { RecentEntries } from '../containers/RecentEntries';
 import { EntryDetail } from '../containers/EntryDetail';
-import { startEditing } from '../../store/actions';
+import { toggleEditing } from '../../store/actions';
+import { PgAppState } from '../../store';
 
 import './App.css';
 
 type EditDetailsProps = {
   onClick: React.MouseEventHandler<HTMLButtonElement>
+  isEditing: boolean
 };
 const EditDetailsComponent = connect(
-  null,
+  (state: PgAppState) => ({
+    isEditing: state.view.isEditing
+  }),
   (dispatch) => ({
     onClick: () => {
-      dispatch(startEditing());
+      dispatch(toggleEditing());
     }
   })
-)((props: EditDetailsProps) => (
-  <button className="col-3 btn btn-info fa fa-edit" onClick={props.onClick} />
+)(({ onClick, isEditing }: EditDetailsProps) => (
+  <button className={'btn btn-sm fa ' + (isEditing ? 'btn-success fa-check-square' : 'btn-info fa-edit')}
+    onClick={onClick} />
 ));
 
 export const App = () => (

@@ -18,7 +18,7 @@ export let DateField = ({ value, format, isEditing, onChange }: DateFieldProps) 
     );
   } else {
     return (
-      <input onChange={onChange} />
+      <input onChange={onChange} className="form-control"/>
     );
   }
 };
