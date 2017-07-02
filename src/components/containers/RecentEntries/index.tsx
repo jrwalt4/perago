@@ -2,7 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 
 import { PgModelState, PgViewState } from '../../../store/reducers';
-import { PgAppState } from '../../../index';
+import { PgAppState } from '../../../store';
 
 import './RecentEntries.css';
 

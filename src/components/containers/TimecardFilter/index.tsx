@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 
-import { PgAppState } from '../../../index';
+import { PgAppState } from '../../../store';
 import { setFilter } from '../../../store/actions';
 
 export type TimecardFilterProps = {
