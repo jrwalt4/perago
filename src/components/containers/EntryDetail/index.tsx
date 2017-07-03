@@ -2,6 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 
 import { PgAppState, PgModelState } from '../../../store';
+import { toggleEditing } from '../../../store/actions';
 import { DateField } from '../../common/DateField';
 import { DurationField } from '../../common/DurationField';
 
@@ -10,14 +11,27 @@ import './EntryDetail.css';
 export type EntryDetailProps = {
   selectedEntry: string
   isEditing: boolean
+  onToggleEditing: React.MouseEventHandler<HTMLButtonElement>
   model: PgModelState
 };
 
-export let EntryDetailComponent = ({ selectedEntry, isEditing, model }: EntryDetailProps) => {
+export let EntryDetailComponent = ({ selectedEntry, isEditing, model, onToggleEditing }: EntryDetailProps) => {
+  const header = (
+    <div className="row">
+      <div className="col-9">
+        <h4>Entry Details</h4>
+      </div>
+      <div className="col-3">
+        <button className={'btn btn-sm fa ' + (isEditing ? 'btn-success fa-check-square' : 'btn-info fa-edit')}
+          onClick={onToggleEditing} />
+      </div>
+    </div>
+  );
+  let body: JSX.Element;
   if (selectedEntry) {
     let entry = model.entries.get(selectedEntry);
     let task = model.tasks.get(entry.taskId);
-    return (
+    body = (
       <table className="EntryDetail table table-sm table-bordered">
         <tbody>
           <tr>
@@ -41,10 +55,17 @@ export let EntryDetailComponent = ({ selectedEntry, isEditing, model }: EntryDet
         </tbody>
       </table>
     );
+  } else {
+    body = (
+      <div>
+        <span>None Selected</span>
+      </div>
+    );
   }
   return (
     <div>
-      <span>None Selected</span>
+      {header}
+      {body}
     </div>
   );
 };
@@ -54,5 +75,10 @@ export let EntryDetail = connect(
     selectedEntry: view.selectedEntry,
     isEditing: view.isEditing,
     model
+  }),
+  (dispatch) => ({
+    onToggleEditing: () => {
+      dispatch(toggleEditing());
+    }
   })
 )(EntryDetailComponent);

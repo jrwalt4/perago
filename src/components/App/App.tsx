@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { connect } from 'react-redux';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -12,28 +11,8 @@ import { Rightbar } from '../containers/Rightbar';
 import { Footer } from '../containers/Footer';
 import { RecentEntries } from '../containers/RecentEntries';
 import { EntryDetail } from '../containers/EntryDetail';
-import { toggleEditing } from '../../store/actions';
-import { PgAppState } from '../../store';
 
 import './App.css';
-
-type EditDetailsProps = {
-  onClick: React.MouseEventHandler<HTMLButtonElement>
-  isEditing: boolean
-};
-const EditDetailsComponent = connect(
-  (state: PgAppState) => ({
-    isEditing: state.view.isEditing
-  }),
-  (dispatch) => ({
-    onClick: () => {
-      dispatch(toggleEditing());
-    }
-  })
-)(({ onClick, isEditing }: EditDetailsProps) => (
-  <button className={'btn btn-sm fa ' + (isEditing ? 'btn-success fa-check-square' : 'btn-info fa-edit')}
-    onClick={onClick} />
-));
 
 export const App = () => (
   <div>
@@ -51,8 +30,7 @@ export const App = () => (
             <Timecard />
           </div>
         </PrimaryWindow>
-        <Rightbar className="col-3 bg-warning" title="Details"
-          editIcon={<EditDetailsComponent />}>
+        <Rightbar className="col-3 bg-warning">
           <EntryDetail />
         </Rightbar>
       </div>
