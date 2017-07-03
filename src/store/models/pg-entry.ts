@@ -40,4 +40,32 @@ export namespace PgEntry {
   export function setStart(entry: PgEntry, newStart: Date): PgEntry {
     return (PgEntry.from(entry) as PgEntryRecord).set('start', newStart);
   }
+
+  const dateStringExp = /(\d{1,2})?[\\/-\s]+(\d{1,2})?[\\/-\s]+(\d{1,2})?/;
+  const timeStringExp = /([\d]{1,4}):?([\d]{1,2})?\s*(a|p)?m?/;
+
+  export function parseDateTimeString(dateTimeString: string, prevDate?: Date): string {
+    let dateMatch = dateStringExp.exec(dateTimeString);
+    let timeMatch = timeStringExp.exec(dateTimeString.replace(dateStringExp,''));
+    /*
+    return new Date(dateTimeString.replace(
+      dateTimeStringExp,
+      (match, dateMatch: string, timeMatch: string, meridianMatch: string) => {
+        const time:string = timeMatch.replace(
+          timeStringExp,
+          (match, hourMatch, minuteMatch) => {
+            return (hourMatch || '00') + ':' + (minuteMatch || '00');
+          });
+        let date: string;
+        if (dateMatch) {
+          date = dateMatch;
+        } else {
+          prevDate = prevDate || new Date();
+          date = [prevDate.getFullYear(), prevDate.getMonth() + 1, prevDate.getDate() +1].join('/');
+        }
+        return date + ' ' + time;
+      }))
+      //*/
+  }
+  window['parseDateTimeString'] = parseDateTimeString;
 }

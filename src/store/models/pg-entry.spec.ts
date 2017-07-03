@@ -1,3 +1,5 @@
+import * as moment from 'moment';
+
 import { PgEntry } from './pg-entry';
 
 it('Should create a new PgEntry with a cuid', () => {
@@ -16,3 +18,14 @@ it('Should return a new PgEntry with the provided start date', () => {
   let e = PgEntry.from({ start: newStart });
   expect(e.start).toEqual(newStart);
 });
+
+xit('Should parse a string representation of date and/or time', () => {
+  let testStrings = [
+    {pattern: '1:30', expectation: moment({hour:13, minutes:30}).toDate()},
+    {pattern: '130', expectation: moment({hour: 13, minutes:30}).toDate()},
+    {pattern: '1200', expectation: moment({hour:12}).toDate()}
+  ];
+  testStrings.forEach(({pattern, expectation})=>{
+    //expect(PgEntry.parseDateTimeString(pattern).getTime()).toEqual(expectation.getTime());
+  })
+})
