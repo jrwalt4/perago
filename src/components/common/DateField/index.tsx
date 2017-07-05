@@ -2,6 +2,8 @@ import * as React from 'react';
 
 import * as moment from 'moment';
 
+import './DateField.css';
+
 type DateFieldProps = {
   value: Date | undefined
   format?: string
@@ -12,13 +14,13 @@ type DateFieldProps = {
 export let DateField = ({ value, format, isEditing, onChange }: DateFieldProps) => {
   if (!isEditing) {
     return (
-      <span>
+      <span className="DateField">
         {value ? moment(value).format(format || 'd/M h:mm') : ''}
       </span>
     );
   } else {
     return (
-      <input onChange={onChange} className="form-control"/>
+      <input onChange={onChange} className="DateField form-control"/>
     );
   }
 };
