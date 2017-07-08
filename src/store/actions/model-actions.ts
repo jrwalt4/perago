@@ -4,7 +4,8 @@ export type PgModelAction =
   createEntry.Action |
   setTaskName.Action |
   setTaskJob.Action |
-  startTask.Action;
+  startTask.Action |
+  setEntryStart.Action;
 
 export function createEntry(entry: Partial<PgEntry>): createEntry.Action {
   return {
@@ -76,4 +77,25 @@ export namespace startTask {
     payload: string
   };
   export const type = 'START_TASK';
+}
+
+export function setEntryStart(entryId: string, time: Date | string): setEntryStart.Action {
+  return {
+    type: 'SET_ENTRY_START',
+    payload: {
+      _id: entryId,
+      start: time
+    }
+  };
+}
+
+export namespace setEntryStart {
+  export type Action = {
+    type: 'SET_ENTRY_START'
+    payload: {
+      _id: string
+      start: Date | string
+    }
+  };
+  export const type = 'SET_ENTRY_START';
 }

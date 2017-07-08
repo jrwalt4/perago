@@ -1,5 +1,7 @@
 import { Map, Record } from 'immutable';
 
+import * as moment from 'moment';
+
 import { PgTask } from './pg-task';
 import { PgEntry } from './pg-entry';
 import { RecordType, RecordTypeConstructor } from './pg-types';
@@ -77,5 +79,19 @@ export namespace PgModel {
         return prevModel.setIn(['entries', entry._id, 'end'], new Date());
       },
       model as PgModelRecord) as PgModelRecord;
+  }
+
+  export function setEntryStart(model: PgModel, entryId: string, start: Date | string): PgModel {
+    let startTime: Date = typeof start === 'string' ? PgEntry.parseTimeString(start) : start;
+    let entry = model.entries.get(entryId);
+    let newStartDate = entry.start || new Date();
+    let newStart = moment({
+      year: newStartDate.getFullYear(),
+      month: newStartDate.getMonth(),
+      date: newStartDate.getDate(),
+      hour: startTime.getHours(),
+      minute: startTime.getMinutes()
+    }).toDate();
+    return (model as PgModelRecord).setIn(['entries', entryId, 'start'], newStart) as PgModelRecord;
   }
 }

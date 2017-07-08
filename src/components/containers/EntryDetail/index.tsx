@@ -2,7 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 
 import { PgAppState, PgModelState } from '../../../store';
-import { toggleEditing } from '../../../store/actions';
+import { toggleEditing, setEntryStart } from '../../../store/actions';
 import { DateField } from '../../common/DateField';
 import { DurationField } from '../../common/DurationField';
 
@@ -13,9 +13,18 @@ export type EntryDetailProps = {
   isEditing: boolean
   onToggleEditing: React.MouseEventHandler<HTMLButtonElement>
   model: PgModelState
+  onSetStart?: React.FormEventHandler<HTMLInputElement>
+  onSetEnd?: React.FormEventHandler<HTMLInputElement>
 };
 
-export let EntryDetailComponent = ({ selectedEntry, isEditing, model, onToggleEditing }: EntryDetailProps) => {
+export let EntryDetailComponent = (
+  {
+    selectedEntry,
+    isEditing,
+    model,
+    onToggleEditing,
+    onSetStart
+  }: EntryDetailProps) => {
   const header = (
     <div className="row">
       <div className="col-9">
@@ -41,10 +50,18 @@ export let EntryDetailComponent = ({ selectedEntry, isEditing, model, onToggleEd
             <th>Task:</th><td>{task && task.name}</td>
           </tr>
           <tr>
-            <th>Start:</th><td><DateField value={entry.start} isEditing={isEditing} /></td>
+            <th>Start:</th>
+            <td>
+              <DateField value={entry.start} isEditing={isEditing}
+                onSetTime={onSetStart} _id={entry._id} />
+            </td>
           </tr>
           <tr>
-            <th>End:</th><td><DateField value={entry.end} isEditing={isEditing} /></td>
+            <th>End:</th>
+            <td>
+              <DateField value={entry.end} isEditing={isEditing} 
+                _id={entry._id}/>
+            </td>
           </tr>
           <tr>
             <th>Duration:</th><td><DurationField from={entry.start} to={entry.end} /></td>
@@ -79,6 +96,9 @@ export let EntryDetail = connect(
   (dispatch) => ({
     onToggleEditing: () => {
       dispatch(toggleEditing());
+    },
+    onSetStart: (ev: React.FormEvent<HTMLInputElement>) => {
+      dispatch(setEntryStart(ev.currentTarget.dataset.id as string, ev.currentTarget.value));
     }
   })
 )(EntryDetailComponent);
