@@ -9,7 +9,7 @@ it('Should create a new PgEntry with a cuid', () => {
 
 it('Should create a new PgEntry with the provided _id', () => {
   let _id = '12345';
-  let e = PgEntry.from({_id});
+  let e = PgEntry.from({ _id });
   expect(e._id).toEqual(_id);
 });
 
@@ -19,13 +19,17 @@ it('Should return a new PgEntry with the provided start date', () => {
   expect(e.start).toEqual(newStart);
 });
 
-xit('Should parse a string representation of date and/or time', () => {
+it('Should parse a string representation of date and/or time', () => {
   let testStrings = [
-    {pattern: '1:30', expectation: moment({hour:13, minutes:30}).toDate()},
-    {pattern: '130', expectation: moment({hour: 13, minutes:30}).toDate()},
-    {pattern: '1200', expectation: moment({hour:12}).toDate()}
+    { pattern: '1:30', expectation: moment({ hour: 13, minutes: 30 }).toDate() },
+    { pattern: '130', expectation: moment({ hour: 13, minutes: 30 }).toDate() },
+    { pattern: '130a', expectation: moment({ hour: 1, minutes: 30 }).toDate() },
+    { pattern: '13', expectation: moment({ hour: 13 }).toDate() },
+    { pattern: '730', expectation: moment({ hour: 7, minutes: 30 }).toDate() },
+    { pattern: '730p', expectation: moment({ hour: 19, minutes: 30 }).toDate() },
+    { pattern: '1200', expectation: moment({ hour: 12 }).toDate() }
   ];
-  testStrings.forEach(({pattern, expectation})=>{
-    //expect(PgEntry.parseDateTimeString(pattern).getTime()).toEqual(expectation.getTime());
-  })
-})
+  testStrings.forEach(({ pattern, expectation }) => {
+    expect(PgEntry.parseTimeString(pattern).getTime()).toEqual(expectation.getTime());
+  });
+});

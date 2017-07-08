@@ -1,6 +1,8 @@
 import * as cuid from 'cuid';
 import { Record } from 'immutable';
 
+import * as moment from 'moment';
+
 import { RecordType, RecordTypeConstructor, PgBase } from './pg-types';
 
 export interface PgEntry extends PgBase {
@@ -41,31 +43,60 @@ export namespace PgEntry {
     return (PgEntry.from(entry) as PgEntryRecord).set('start', newStart);
   }
 
-  const dateStringExp = /(\d{1,2})?[\\/-\s]+(\d{1,2})?[\\/-\s]+(\d{1,2})?/;
-  const timeStringExp = /([\d]{1,4}):?([\d]{1,2})?\s*(a|p)?m?/;
+  // const dateExp = /(\d{1,2})?[\\/-\s]+(\d{1,2})?[\\/-\s]+(\d{1,2})?/;
 
-  export function parseDateTimeString(dateTimeString: string, prevDate?: Date): string {
-    let dateMatch = dateStringExp.exec(dateTimeString);
-    let timeMatch = timeStringExp.exec(dateTimeString.replace(dateStringExp,''));
-    /*
-    return new Date(dateTimeString.replace(
-      dateTimeStringExp,
-      (match, dateMatch: string, timeMatch: string, meridianMatch: string) => {
-        const time:string = timeMatch.replace(
-          timeStringExp,
-          (match, hourMatch, minuteMatch) => {
-            return (hourMatch || '00') + ':' + (minuteMatch || '00');
-          });
-        let date: string;
-        if (dateMatch) {
-          date = dateMatch;
-        } else {
-          prevDate = prevDate || new Date();
-          date = [prevDate.getFullYear(), prevDate.getMonth() + 1, prevDate.getDate() +1].join('/');
-        }
-        return date + ' ' + time;
-      }))
-      //*/
+  export function parseDateString(dateString: string): Date {
+    // new Date(dateString.replace(dateExp, '$1/$2/$3')));
+    throw new Error('PgEntry.parseDateString() not implemented yet');
   }
-  window['parseDateTimeString'] = parseDateTimeString;
+
+  const timeExp = /([\d]{1,4})(:)?([\d]{1,2})?\s*(a|p)?m?/;
+
+  export function parseTimeString(timeString: string, prevDate?: Date): Date {
+    let execArray = timeExp.exec(timeString);
+    if (execArray) {
+      const [, hr, div, mn, mer] = execArray;
+      var hour = 0, minute = 0, meridian;
+      if (div) {
+        hour = Number.parseInt(hr);
+        minute = Number.parseInt(mn) || 0;
+      } else {
+        switch (hr.length) {
+          case 1:
+          case 2:
+            hour = Number.parseInt(hr);
+            break;
+          case 3:
+            hour = Number.parseInt(hr.substr(0, 1));
+            minute = Number.parseInt(hr.substr(1, 2));
+            break;
+          case 4:
+            hour = Number.parseInt(hr.substr(0, 2));
+            minute = Number.parseInt(hr.substr(2, 2));
+            break;
+          default:
+            hour = 0;
+            minute = 0;
+        }
+      }
+      if (!mer) {
+        if (hour >= 7 && hour < 12) {
+          meridian = 'a';
+        } else {
+          meridian = 'p';
+        }
+      } else {
+        meridian = mer;
+      }
+      if (meridian === 'p' && hour < 12) {
+        hour += 12;
+      }
+      return moment({
+        hour,
+        minute
+      }).toDate();
+    } else {
+      return new Date();
+    }
+  }
 }
