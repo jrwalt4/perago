@@ -93,4 +93,17 @@ export namespace PgModel {
     }).toDate();
     return (model as PgModelRecord).setIn(['entries', entryId, 'start'], newStart) as PgModelRecord;
   }
+
+  export function setEntryEndTime(model: PgModel, entryId: string, hour: number, minute: number = 0): PgModel {
+    let entry = model.entries.get(entryId);
+    let entryEnd = entry.end || new Date();
+    let newEnd = moment({
+      year: entryEnd.getFullYear(),
+      month: entryEnd.getMonth(),
+      date: entryEnd.getDate(),
+      hour,
+      minute
+    }).toDate();
+    return (model as PgModelRecord).setIn(['entries', entryId, 'end'], newEnd) as PgModelRecord;
+  }
 }

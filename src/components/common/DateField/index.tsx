@@ -13,6 +13,8 @@ type DateFieldProps = {
   onSetTime?: React.FormEventHandler<HTMLInputElement>
 };
 
+let noop = () => void 0;
+
 export let DateField = ({ _id, value, format, isEditing, onSetTime }: DateFieldProps) => {
   if (!isEditing) {
     return (
@@ -22,7 +24,7 @@ export let DateField = ({ _id, value, format, isEditing, onSetTime }: DateFieldP
     );
   } else {
     return (
-      <input data-id={_id || ''} onBlur={onSetTime} className="DateField form-control" />
+      <input data-id={_id || ''} onBlur={onSetTime || noop} className="DateField form-control" />
     );
   }
 };

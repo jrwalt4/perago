@@ -2,7 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 
 import { PgAppState, PgModelState } from '../../../store';
-import { toggleEditing, setEntryStartTime } from '../../../store/actions';
+import { toggleEditing, setEntryStartTime, setEntryEndTime } from '../../../store/actions';
 import { PgEntry } from '../../../store/models';
 import { DateField } from '../../common/DateField';
 import { DurationField } from '../../common/DurationField';
@@ -24,7 +24,8 @@ export let EntryDetailComponent = (
     isEditing,
     model,
     onToggleEditing,
-    onSetStart
+    onSetStart,
+    onSetEnd
   }: EntryDetailProps) => {
   const header = (
     <div className="row">
@@ -61,7 +62,7 @@ export let EntryDetailComponent = (
             <th>End:</th>
             <td>
               <DateField value={entry.end} isEditing={isEditing}
-                _id={entry._id} />
+                onSetTime={onSetEnd} _id={entry._id} />
             </td>
           </tr>
           <tr>
@@ -103,6 +104,13 @@ export let EntryDetail = connect(
       if (_id) {
         let { hour, minute } = PgEntry.parseTimeString(ev.currentTarget.value);
         dispatch(setEntryStartTime(_id, hour, minute));
+      }
+    },
+    onSetEnd: (ev: React.FormEvent<HTMLInputElement>) => {
+      let _id = ev.currentTarget.dataset.id;
+      if (_id) {
+        let { hour, minute } = PgEntry.parseTimeString(ev.currentTarget.value);
+        dispatch(setEntryEndTime(_id, hour, minute));
       }
     }
   })
