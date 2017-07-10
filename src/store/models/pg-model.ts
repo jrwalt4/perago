@@ -81,16 +81,15 @@ export namespace PgModel {
       model as PgModelRecord) as PgModelRecord;
   }
 
-  export function setEntryStart(model: PgModel, entryId: string, start: Date | string): PgModel {
-    let startTime: Date = typeof start === 'string' ? PgEntry.parseTimeString(start) : start;
+  export function setEntryStartTime(model: PgModel, entryId: string, hour: number, minute: number = 0): PgModel {
     let entry = model.entries.get(entryId);
-    let newStartDate = entry.start || new Date();
+    let entryStart = entry.start || new Date();
     let newStart = moment({
-      year: newStartDate.getFullYear(),
-      month: newStartDate.getMonth(),
-      date: newStartDate.getDate(),
-      hour: startTime.getHours(),
-      minute: startTime.getMinutes()
+      year: entryStart.getFullYear(),
+      month: entryStart.getMonth(),
+      date: entryStart.getDate(),
+      hour,
+      minute
     }).toDate();
     return (model as PgModelRecord).setIn(['entries', entryId, 'start'], newStart) as PgModelRecord;
   }

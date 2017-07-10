@@ -1,8 +1,6 @@
 import * as cuid from 'cuid';
 import { Record } from 'immutable';
 
-import * as moment from 'moment';
-
 import { RecordType, RecordTypeConstructor, PgBase } from './pg-types';
 
 export interface PgEntry extends PgBase {
@@ -52,7 +50,7 @@ export namespace PgEntry {
 
   const timeExp = /([\d]{1,4})(:)?([\d]{1,2})?\s*(a|p)?m?/;
 
-  export function parseTimeString(timeString: string, prevDate?: Date): Date {
+  export function parseTimeString(timeString: string): { hour: number, minute: number } {
     let execArray = timeExp.exec(timeString);
     if (execArray) {
       const [, hr, div, mn, mer] = execArray;
@@ -91,12 +89,9 @@ export namespace PgEntry {
       if (meridian === 'p' && hour < 12) {
         hour += 12;
       }
-      return moment({
-        hour,
-        minute
-      }).toDate();
+      return { hour, minute };
     } else {
-      return new Date();
+      throw new Error('Could not parse string: ' + timeString);
     }
   }
 }

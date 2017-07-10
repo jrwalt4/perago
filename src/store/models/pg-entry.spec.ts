@@ -1,5 +1,3 @@
-import * as moment from 'moment';
-
 import { PgEntry } from './pg-entry';
 
 it('Should create a new PgEntry with a cuid', () => {
@@ -21,15 +19,15 @@ it('Should return a new PgEntry with the provided start date', () => {
 
 it('Should parse a string representation of date and/or time', () => {
   let testStrings = [
-    { pattern: '1:30', expectation: moment({ hour: 13, minutes: 30 }).toDate() },
-    { pattern: '130', expectation: moment({ hour: 13, minutes: 30 }).toDate() },
-    { pattern: '130a', expectation: moment({ hour: 1, minutes: 30 }).toDate() },
-    { pattern: '13', expectation: moment({ hour: 13 }).toDate() },
-    { pattern: '730', expectation: moment({ hour: 7, minutes: 30 }).toDate() },
-    { pattern: '730p', expectation: moment({ hour: 19, minutes: 30 }).toDate() },
-    { pattern: '1200', expectation: moment({ hour: 12 }).toDate() }
+    { pattern: '1:30', expectation: { hour: 13, minute: 30 } },
+    { pattern: '130', expectation: { hour: 13, minute: 30 } },
+    { pattern: '130a', expectation: { hour: 1, minute: 30 } },
+    { pattern: '13', expectation: { hour: 13, minute: 0 } },
+    { pattern: '730', expectation: { hour: 7, minute: 30 } },
+    { pattern: '730p', expectation: { hour: 19, minute: 30 } },
+    { pattern: '1200', expectation: { hour: 12, minute: 0 } }
   ];
   testStrings.forEach(({ pattern, expectation }) => {
-    expect(PgEntry.parseTimeString(pattern).getTime()).toEqual(expectation.getTime());
+    expect(PgEntry.parseTimeString(pattern)).toEqual(expectation);
   });
 });
