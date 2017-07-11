@@ -31,7 +31,7 @@ export namespace PgModel {
     entries: Partial<PgEntry>[]
   };
 
-  export function from({ tasks, entries }: PgModelInputs | PgModel): PgModel {
+  export function from({ tasks, entries }: PgModelInputs | PgModel): PgModelRecord {
     if (Array.isArray(tasks) && Array.isArray(entries)) {
       return new PgModelConstructor({
         tasks: Map.of.apply(void 0, tasks.reduce((inputArray, task) => {
@@ -106,4 +106,22 @@ export namespace PgModel {
     }).toDate();
     return (model as PgModelRecord).setIn(['entries', entryId, 'end'], newEnd) as PgModelRecord;
   }
+
+  export function setEntryDate(model: PgModel, entryId: string, date: Date): PgModel;
+  export function setEntryDate(model: PgModelRecord, entryId: string, date: Date): PgModelRecord;
+  export function setEntryDate(model: PgModel | PgModelRecord, entryId: string, date: Date): PgModelRecord {
+    let entry = model.entries.get(entryId);
+    let oldStart = entry.start || new Date();
+    let newStart = moment(date).hour(oldStart.getHours()).minute(oldStart.getMinutes()).toDate();
+    let oldEnd = entry.end;
+    let newEnd = oldEnd ? moment(date).hour(oldEnd.getHours()).minute(oldEnd.getMinutes()).toDate() : void 0;
+    let pgModel: PgModelRecord = isModelRecord(model) ? model : PgModel.from(model);
+    let newEntry = PgEntry.setStart(entry, newStart);
+    newEntry = newEnd ? PgEntry.setEnd(newEntry, newEnd) : newEntry;
+    return pgModel.setIn(['entries', entryId], newEntry) as PgModelRecord;
+  }
+}
+
+function isModelRecord(model: PgModel | PgModelRecord): model is PgModelRecord {
+  return true;
 }

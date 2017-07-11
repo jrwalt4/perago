@@ -18,15 +18,17 @@ let noop = () => void 0;
 export class DateField extends React.Component<DateFieldProps, { value?: string }> {
   constructor(props: DateFieldProps) {
     super(props);
-    this.state = {
-      value: moment(props.value).format('h:mm a')
+    this.state = this.buildStateFromProps(props);
+  }
+
+  buildStateFromProps(props: DateFieldProps) {
+    return {
+      value: props.value ? moment(props.value).format('h:mm a') : ''
     };
   }
 
   componentWillReceiveProps(props: DateFieldProps) {
-    this.setState({
-      value: moment(props.value).format('h:mm a')
-    });
+    this.setState(this.buildStateFromProps(props));
   }
 
   handleTimeChange = (ev: React.FormEvent<HTMLInputElement>) => {

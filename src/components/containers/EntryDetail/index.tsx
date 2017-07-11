@@ -52,17 +52,20 @@ export let EntryDetailComponent = (
             <th>Task:</th><td>{task && task.name}</td>
           </tr>
           <tr>
+            <th>Date:</th><td><DateField value={entry.start} format="MMM / d"/></td>
+          </tr>
+          <tr>
             <th>Start:</th>
             <td>
               <DateField value={entry.start} isEditing={isEditing}
-                onSetTime={onSetStart} _id={entry._id} />
+                onSetTime={onSetStart} _id={entry._id} format="h:mm a"/>
             </td>
           </tr>
           <tr>
             <th>End:</th>
             <td>
               <DateField value={entry.end} isEditing={isEditing}
-                onSetTime={onSetEnd} _id={entry._id} />
+                onSetTime={onSetEnd} _id={entry._id} format="h:mm a"/>
             </td>
           </tr>
           <tr>

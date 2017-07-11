@@ -41,6 +41,10 @@ export namespace PgEntry {
     return (PgEntry.from(entry) as PgEntryRecord).set('start', newStart);
   }
 
+  export function setEnd(entry: PgEntry, newEnd: Date): PgEntry {
+    return (PgEntry.from(entry) as PgEntryRecord).set('end', newEnd);
+  }
+
   // const dateExp = /(\d{1,2})?[\\/-\s]+(\d{1,2})?[\\/-\s]+(\d{1,2})?/;
 
   export function parseDateString(dateString: string): Date {
