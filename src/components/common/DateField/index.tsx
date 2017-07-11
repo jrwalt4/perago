@@ -15,16 +15,41 @@ type DateFieldProps = {
 
 let noop = () => void 0;
 
-export let DateField = ({ _id, value, format, isEditing, onSetTime }: DateFieldProps) => {
-  if (!isEditing) {
-    return (
-      <span className="DateField" data-id={_id || ''}>
-        {value ? moment(value).format(format || 'd/M h:mm') : ''}
-      </span>
-    );
-  } else {
-    return (
-      <input data-id={_id || ''} onBlur={onSetTime || noop} className="DateField form-control" />
-    );
+export class DateField extends React.Component<DateFieldProps, { value?: string }> {
+  constructor(props: DateFieldProps) {
+    super(props);
+    this.state = {
+      value: moment(props.value).format('h:mm a')
+    };
+  }
+
+  componentWillReceiveProps(props: DateFieldProps) {
+    this.setState({
+      value: moment(props.value).format('h:mm a')
+    });
+  }
+
+  handleTimeChange = (ev: React.FormEvent<HTMLInputElement>) => {
+    this.setState({
+      value: ev.currentTarget.value
+    });
+  }
+
+  render() {
+    if (!this.props.isEditing) {
+      return (
+        <span className="DateField" data-id={this.props._id || ''}>
+          {this.props.value ? moment(this.props.value).format(this.props.format || 'd/M h:mm') : ''}
+        </span >
+      );
+    } else {
+      return (
+        <input data-id={this.props._id || ''}
+          onFocus={(ev) => ev.currentTarget.select()}
+          onChange={this.handleTimeChange}
+          onBlur={this.props.onSetTime || noop}
+          className="DateField form-control" value={this.state.value} />
+      );
+    }
   }
 };
