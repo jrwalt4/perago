@@ -6,7 +6,7 @@ import { RecordType, RecordTypeConstructor, PgBase } from './pg-types';
 export interface PgEntry extends PgBase {
   taskId: string;
   notes: string;
-  start: Date | undefined;
+  start: Date;
   end: Date | undefined;
 }
 
@@ -14,7 +14,7 @@ export const defaultEntry: PgEntry = {
   _id: '',
   taskId: '',
   notes: '',
-  start: void 0,
+  start: new Date(),
   end: void 0
 };
 
@@ -38,11 +38,11 @@ export namespace PgEntry {
   }
 
   export function setStart(entry: PgEntry, newStart: Date): PgEntry {
-    return (PgEntry.from(entry) as PgEntryRecord).set('start', newStart);
+    return (entry as PgEntryRecord).set('start', new Date(newStart.getTime()));
   }
 
   export function setEnd(entry: PgEntry, newEnd: Date): PgEntry {
-    return (PgEntry.from(entry) as PgEntryRecord).set('end', newEnd);
+    return (entry as PgEntryRecord).set('end', new Date(newEnd.getTime()));
   }
 
   // const dateExp = /(\d{1,2})?[\\/-\s]+(\d{1,2})?[\\/-\s]+(\d{1,2})?/;

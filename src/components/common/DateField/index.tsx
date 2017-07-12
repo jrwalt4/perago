@@ -6,16 +6,15 @@ import './DateField.css';
 
 type DateFieldProps = {
   _id?: string
-  value: Date | undefined
+  value: Date
   format?: string
   isEditing?: boolean
   onSetDate?: React.FormEventHandler<HTMLInputElement>
-  onSetTime?: React.FormEventHandler<HTMLInputElement>
 };
 
 let noop = () => void 0;
 
-export class DateField extends React.Component<DateFieldProps, { value?: string }> {
+export class DateField extends React.Component<DateFieldProps, { value: Date }> {
   constructor(props: DateFieldProps) {
     super(props);
     this.state = this.buildStateFromProps(props);
@@ -23,7 +22,7 @@ export class DateField extends React.Component<DateFieldProps, { value?: string 
 
   buildStateFromProps(props: DateFieldProps) {
     return {
-      value: props.value ? moment(props.value).format('h:mm a') : ''
+      value: props.value
     };
   }
 
@@ -31,9 +30,9 @@ export class DateField extends React.Component<DateFieldProps, { value?: string 
     this.setState(this.buildStateFromProps(props));
   }
 
-  handleTimeChange = (ev: React.FormEvent<HTMLInputElement>) => {
+  handleDateChange = (ev: React.FormEvent<HTMLInputElement>) => {
     this.setState({
-      value: ev.currentTarget.value
+      value: ev.currentTarget.valueAsDate
     });
   }
 
@@ -41,16 +40,17 @@ export class DateField extends React.Component<DateFieldProps, { value?: string 
     if (!this.props.isEditing) {
       return (
         <span className="DateField" data-id={this.props._id || ''}>
-          {this.props.value ? moment(this.props.value).format(this.props.format || 'd/M h:mm') : ''}
+          {this.props.value ? moment(this.props.value).format(this.props.format || 'M\\D') : ''}
         </span >
       );
     } else {
       return (
-        <input data-id={this.props._id || ''}
+        <input type="date"
+          data-id={this.props._id || ''}
           onFocus={(ev) => ev.currentTarget.select()}
-          onChange={this.handleTimeChange}
-          onBlur={this.props.onSetTime || noop}
-          className="DateField form-control" value={this.state.value} />
+          onChange={this.handleDateChange}
+          onBlur={this.props.onSetDate || noop}
+          className="DateField form-control" value={moment(this.state.value).format('YYYY-MM-DD')} />
       );
     }
   }

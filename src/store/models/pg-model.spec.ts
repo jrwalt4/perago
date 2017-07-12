@@ -43,4 +43,8 @@ describe('PgModel', () => {
     expect(activeEntries.size).toEqual(1);
     expect(activeEntries.get('2')).not.toBeUndefined();
   });
+
+  it('sets the date on both start and end', () => {
+    // 
+  });
 });

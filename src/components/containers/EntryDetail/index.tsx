@@ -2,9 +2,15 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 
 import { PgAppState, PgModelState } from '../../../store';
-import { toggleEditing, setEntryStartTime, setEntryEndTime } from '../../../store/actions';
+import {
+  toggleEditing,
+  setEntryStartTime,
+  setEntryEndTime,
+  setEntryDate
+} from '../../../store/actions';
 import { PgEntry } from '../../../store/models';
 import { DateField } from '../../common/DateField';
+import { TimeField } from '../../common/TimeField';
 import { DurationField } from '../../common/DurationField';
 
 import './EntryDetail.css';
@@ -16,6 +22,7 @@ export type EntryDetailProps = {
   model: PgModelState
   onSetStart?: React.FormEventHandler<HTMLInputElement>
   onSetEnd?: React.FormEventHandler<HTMLInputElement>
+  onSetDate?: React.FormEventHandler<HTMLInputElement>
 };
 
 export let EntryDetailComponent = (
@@ -25,7 +32,8 @@ export let EntryDetailComponent = (
     model,
     onToggleEditing,
     onSetStart,
-    onSetEnd
+    onSetEnd,
+    onSetDate
   }: EntryDetailProps) => {
   const header = (
     <div className="row">
@@ -52,20 +60,24 @@ export let EntryDetailComponent = (
             <th>Task:</th><td>{task && task.name}</td>
           </tr>
           <tr>
-            <th>Date:</th><td><DateField value={entry.start} format="MMM / d"/></td>
+            <th>Date:</th>
+            <td>
+              <DateField value={entry.start} isEditing={isEditing}
+                onSetDate={onSetDate} _id={entry._id} format="MMM / D" />
+            </td>
           </tr>
           <tr>
             <th>Start:</th>
             <td>
-              <DateField value={entry.start} isEditing={isEditing}
-                onSetTime={onSetStart} _id={entry._id} format="h:mm a"/>
+              <TimeField value={entry.start} isEditing={isEditing}
+                onSetTime={onSetStart} _id={entry._id} format="h:mm a" />
             </td>
           </tr>
           <tr>
             <th>End:</th>
             <td>
-              <DateField value={entry.end} isEditing={isEditing}
-                onSetTime={onSetEnd} _id={entry._id} format="h:mm a"/>
+              <TimeField value={entry.end} isEditing={isEditing}
+                onSetTime={onSetEnd} _id={entry._id} format="h:mm a" />
             </td>
           </tr>
           <tr>
@@ -114,6 +126,13 @@ export let EntryDetail = connect(
       if (_id) {
         let { hour, minute } = PgEntry.parseTimeString(ev.currentTarget.value);
         dispatch(setEntryEndTime(_id, hour, minute));
+      }
+    },
+    onSetDate: (ev: React.FormEvent<HTMLInputElement>) => {
+      let _id = ev.currentTarget.dataset.id;
+      if (_id && ev.currentTarget.valueAsDate) {
+        let newDate = ev.currentTarget.valueAsDate;
+        dispatch(setEntryDate(_id, newDate));
       }
     }
   })

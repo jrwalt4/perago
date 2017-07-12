@@ -1,7 +1,7 @@
 import { PgModel, PgEntry } from '../models';
 import {
   PgAction,
-  setTaskName, setTaskJob, startTask, setEntryStartTime, setEntryEndTime
+  setTaskName, setTaskJob, startTask, setEntryStartTime, setEntryEndTime, setEntryDate
 } from '../actions';
 import { PgModelState, initialModelState } from './initial-model';
 
@@ -26,6 +26,9 @@ export function modelReducer(
     case setEntryEndTime.type: {
       let { _id, hour, minute } = action.payload;
       return PgModel.setEntryEndTime(model, _id, hour, minute);
+    }
+    case setEntryDate.type: {
+      return PgModel.setEntryDate(model, action.payload._id, action.payload.date);
     }
     default:
       return model;

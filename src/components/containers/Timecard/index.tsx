@@ -6,7 +6,7 @@ import { PgEntry } from '../../../store/models';
 import { PropertyMap } from '../../../store/models/pg-types';
 import { selectEntry, startTask } from '../../../store/actions';
 
-import { DateField } from '../../common/DateField';
+import { TimeField } from '../../common/TimeField';
 import { DurationField } from '../../common/DurationField';
 
 import './Timecard.css';
@@ -66,8 +66,8 @@ export let TimecardComponent = (props: TimecardComponentProps) => (
           className={props.selectedEntry === entry._id ? 'table-info' : ''}>
           <td>Lookup Job</td>
           <td>{props.model.tasks.getIn([entry.taskId, 'name'], 'unknown')}</td>
-          <td><DateField value={entry.start} format="h:mm a" /></td>
-          <td><DateField value={entry.end} format="h:mm a" /></td>
+          <td><TimeField value={entry.start} format="h:mm a" /></td>
+          <td><TimeField value={entry.end} format="h:mm a" /></td>
           <td><DurationField from={entry.start} to={entry.end} /></td>
           <td className="Timecard-controls">
             <span className="fa fa-retweet" data-task-id={entry.taskId} onClick={props.onContinueEntry} />

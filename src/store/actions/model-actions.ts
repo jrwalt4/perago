@@ -6,7 +6,8 @@ export type PgModelAction =
   setTaskJob.Action |
   startTask.Action |
   setEntryStartTime.Action |
-  setEntryEndTime.Action;
+  setEntryEndTime.Action |
+  setEntryDate.Action;
 
 export function createEntry(entry: Partial<PgEntry>): createEntry.Action {
   return {
@@ -124,4 +125,25 @@ export namespace setEntryEndTime {
     }
   };
   export const type = 'SET_ENTRY_END_TIME';
+}
+
+export function setEntryDate(entryId: string, date: Date): setEntryDate.Action {
+  return {
+    type: 'SET_ENTRY_DATE',
+    payload: {
+      _id: entryId,
+      date
+    }
+  };
+}
+
+export namespace setEntryDate {
+  export type Action = {
+    type: 'SET_ENTRY_DATE'
+    payload: {
+      _id: string,
+      date: Date
+    }
+  };
+  export const type = 'SET_ENTRY_DATE';
 }
