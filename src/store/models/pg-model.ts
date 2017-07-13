@@ -3,7 +3,7 @@ import { Map, Record } from 'immutable';
 import * as moment from 'moment';
 
 import { PgTask } from './pg-task';
-import { PgEntry } from './pg-entry';
+import { PgEntry, PgEntryRecord } from './pg-entry';
 import { RecordType, RecordTypeConstructor } from './pg-types';
 
 export interface PgModel {
@@ -109,16 +109,27 @@ export namespace PgModel {
 
   export function setEntryDate(model: PgModel, entryId: string, date: Date): PgModel;
   export function setEntryDate(model: PgModelRecord, entryId: string, date: Date): PgModelRecord;
-  export function setEntryDate(model: PgModel | PgModelRecord, entryId: string, date: Date): PgModelRecord {
+  export function setEntryDate(model: PgModel | PgModelRecord, entryId: string, newDate: Date): PgModelRecord {
     let entry = model.entries.get(entryId);
-    let oldStart = entry.start || new Date();
-    let newStart = moment(date).hour(oldStart.getHours()).minute(oldStart.getMinutes()).toDate();
+    let { years, months, date } = moment(newDate).toObject();
+    let { hours: startHours, minutes: startMinutes } = moment(entry.start).toObject();
+    let newStart = moment({
+      years, months, date,
+      hours: startHours, minutes: startMinutes
+    }).toDate();
     let oldEnd = entry.end;
-    let newEnd = oldEnd ? moment(date).hour(oldEnd.getHours()).minute(oldEnd.getMinutes()).toDate() : void 0;
+    let newEnd: Date | undefined = void 0;
+    if (oldEnd) {
+      let { hours: endHours, minutes: endMinutes } = moment(oldEnd).toObject();
+      newEnd = moment({
+        years, months, date,
+        hours: endHours, minutes: endMinutes
+      }).toDate();
+    }
     let pgModel: PgModelRecord = isModelRecord(model) ? model : PgModel.from(model);
-    let newEntry = PgEntry.setStart(entry, newStart);
-    newEntry = newEnd ? PgEntry.setEnd(newEntry, newEnd) : newEntry;
-    return pgModel.setIn(['entries', entryId], newEntry) as PgModelRecord;
+    return pgModel.setIn(
+      ['entries', entryId],
+      (entry as PgEntryRecord).set('start', newStart).set('end', newEnd)) as PgModelRecord;
   }
 }
 
