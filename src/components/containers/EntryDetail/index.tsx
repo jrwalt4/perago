@@ -131,7 +131,7 @@ export let EntryDetail = connect(
     onSetDate: (ev: React.FormEvent<HTMLInputElement>) => {
       let _id = ev.currentTarget.dataset.id;
       if (_id && ev.currentTarget.valueAsDate) {
-        let newDate = ev.currentTarget.valueAsDate;
+        let newDate = new Date(ev.currentTarget.value + ' 00:00');
         dispatch(setEntryDate(_id, newDate));
       }
     }

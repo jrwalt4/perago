@@ -32,7 +32,7 @@ export class DateField extends React.Component<DateFieldProps, { value: Date }> 
 
   handleDateChange = (ev: React.FormEvent<HTMLInputElement>) => {
     this.setState({
-      value: ev.currentTarget.valueAsDate
+      value: new Date(ev.currentTarget.value + ' 00:00')
     });
   }
 
@@ -50,7 +50,8 @@ export class DateField extends React.Component<DateFieldProps, { value: Date }> 
           onFocus={(ev) => ev.currentTarget.select()}
           onChange={this.handleDateChange}
           onBlur={this.props.onSetDate || noop}
-          className="DateField form-control" value={moment(this.state.value).format('YYYY-MM-DD')} />
+          className="DateField form-control"
+          value={moment(this.state.value).format('YYYY-MM-DD')} />
       );
     }
   }
