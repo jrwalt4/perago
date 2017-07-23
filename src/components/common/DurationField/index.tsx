@@ -3,10 +3,10 @@ import * as React from 'react';
 import * as moment from 'moment';
 
 type DurationFieldProps = {
-  from?: Date
-  to?: Date
+  from: moment.MomentInput
+  to?: moment.MomentInput
 };
 
 export let DurationField = ({ from, to }: DurationFieldProps) => (
-  <span>{(from && to) ? moment.duration({ from, to }).humanize() : 'none'}</span>
+  <span>{to ? moment.duration({ from, to }).humanize() : 'ongoing'}</span>
 );

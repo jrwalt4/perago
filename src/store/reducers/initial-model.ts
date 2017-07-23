@@ -7,21 +7,21 @@ export const initialModelState: PgModelState = PgModel.from({
     {
       taskId: '1',
       _id: '2',
-      start: new Date('2017-6-22 6:00'),
-      end: new Date('2017-6-22 8:00'),
+      start: new Date('2017-06-22T06:00').getTime(),
+      end: new Date('2017-06-22T08:00').getTime(),
       notes: 'Talked to Jim'
     },
     {
       taskId: '1',
       _id: '3',
-      start: new Date('2017-6-22 8:00'),
-      end: new Date('2017-6-22 10:00')
+      start: new Date('2017-06-22T08:00').getTime(),
+      end: new Date('2017-06-22T10:00').getTime()
     },
     {
       taskId: '5',
       _id: '4',
-      start: new Date('2017-6-22 10:00'),
-      end: new Date('2017-6-22 12:00')
+      start: new Date('2017-06-22T10:00').getTime(),
+      end: new Date('2017-06-22T12:00').getTime()
     }
   ],
   tasks: [

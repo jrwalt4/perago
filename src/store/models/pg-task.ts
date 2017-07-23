@@ -25,17 +25,17 @@ const PgTaskConstructor: RecordTypeConstructor<PgTask> = Record(defaultTask, 'Pg
 export type PgTaskRecord = RecordType<PgTask>;
 
 export namespace PgTask {
-  export function create() {
+  export function create(): PgTaskRecord {
     return new PgTaskConstructor({ _id: cuid() });
   }
-  export function from(props: Partial<PgTask>): PgTask {
+  export function from(props: Partial<PgTask>): PgTaskRecord {
     props._id = props._id || cuid();
     return PgTaskConstructor(props);
   }
 
-  export function setParent(task: PgTask, parentTaskId: string): PgTask;
-  export function setParent(task: PgTask, parentTask: PgTask): PgTask;
-  export function setParent(task: PgTask, taskOrId: string | PgTask): PgTask {
+  export function setParent(task: PgTaskRecord, parentTaskId: string): PgTaskRecord;
+  export function setParent(task: PgTaskRecord, parentTask: PgTaskRecord): PgTaskRecord;
+  export function setParent(task: PgTaskRecord, taskOrId: string | PgTaskRecord): PgTaskRecord {
     let taskId = typeof taskOrId === 'string' ? taskOrId : taskOrId.parentTaskId;
     return (PgTask.from(task) as PgTaskRecord).set('parentTaskId', taskId);
   }

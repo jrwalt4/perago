@@ -1,3 +1,5 @@
+import { MomentInput } from 'moment';
+
 import { PgEntry } from '../models';
 
 export type PgModelAction =
@@ -127,7 +129,7 @@ export namespace setEntryEndTime {
   export const type = 'SET_ENTRY_END_TIME';
 }
 
-export function setEntryDate(entryId: string, date: Date): setEntryDate.Action {
+export function setEntryDate(entryId: string, date: MomentInput): setEntryDate.Action {
   return {
     type: 'SET_ENTRY_DATE',
     payload: {
@@ -142,7 +144,7 @@ export namespace setEntryDate {
     type: 'SET_ENTRY_DATE'
     payload: {
       _id: string,
-      date: Date
+      date: MomentInput
     }
   };
   export const type = 'SET_ENTRY_DATE';

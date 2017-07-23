@@ -6,7 +6,7 @@ import './TimeField.css';
 
 type TimeFieldProps = {
   _id?: string
-  value: Date | undefined
+  value: moment.MomentInput
   format?: string
   isEditing?: boolean
   onSetTime?: React.FormEventHandler<HTMLInputElement>
@@ -40,7 +40,7 @@ export class TimeField extends React.Component<TimeFieldProps, { value?: string 
     if (!this.props.isEditing) {
       return (
         <span className="TimeField" data-id={this.props._id || ''}>
-          {this.props.value ? moment(this.props.value).format(this.props.format || 'h:mm a') : ''}
+          {this.props.value ? moment(this.props.value).format(this.props.format || 'h:mm a') : ' - '}
         </span >
       );
     } else {

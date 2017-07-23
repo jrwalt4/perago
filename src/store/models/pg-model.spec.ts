@@ -3,7 +3,7 @@ import { PgModel } from './pg-model';
 describe('PgModel', () => {
   it('should create a PgModel', () => {
     let taskName = 'Task 1';
-    let startTime = new Date;
+    let startTime = Date.now();
     let taskId = '1';
     let entryId = '2';
     let tasks = [
@@ -31,11 +31,12 @@ describe('PgModel', () => {
   });
 
   it('Should return the active entries', () => {
+    const today = Date.now();
     let model = PgModel.from({
       entries: [
-        { _id: '1', start: new Date, end: new Date },
-        { _id: '2', start: new Date },
-        { _id: '3', start: new Date, end: new Date }
+        { _id: '1', start: today, end: today },
+        { _id: '2', start: today },
+        { _id: '3', start: today, end: today }
       ],
       tasks: []
     });

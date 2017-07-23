@@ -22,7 +22,7 @@ export type PgModelRecord = RecordType<PgModel>;
 
 export namespace PgModel {
 
-  export function create(): PgModel {
+  export function create(): PgModelRecord {
     return new PgModelConstructor();
   }
 
@@ -31,7 +31,8 @@ export namespace PgModel {
     entries: Partial<PgEntry>[]
   };
 
-  export function from({ tasks, entries }: PgModelInputs | PgModel): PgModelRecord {
+  export function from(model: PgModelInputs | PgModel): PgModelRecord {
+    let { tasks, entries } = model;
     if (Array.isArray(tasks) && Array.isArray(entries)) {
       return new PgModelConstructor({
         tasks: Map.of.apply(void 0, tasks.reduce((inputArray, task) => {
@@ -46,93 +47,80 @@ export namespace PgModel {
         }, new Array<string | PgEntry>()))
       });
     }
-    return new PgModelConstructor({ tasks, entries } as PgModel);
+    return isModelRecord(model) ? model : new PgModelConstructor({ tasks, entries } as PgModel);
   }
 
-  export function addTask(model: PgModel, task?: Partial<PgTask>): PgModel {
+  export function addTask(model: PgModelRecord, task?: Partial<PgTask>): PgModelRecord {
     let pgTask = task == null ? PgTask.create() : PgTask.from(task);
-    return (PgModel.from(model) as PgModelRecord).setIn(['tasks', pgTask._id], pgTask) as PgModelRecord;
+    return PgModel.from(model).setIn(['tasks', pgTask._id], pgTask);
   }
 
-  export function setTaskName(model: PgModel, task: string | PgTask, name: string): PgModel {
+  export function setTaskName(model: PgModelRecord, task: string | PgTask, name: string): PgModelRecord {
     let taskId = typeof task === 'string' ? task : task._id;
-    return (model as PgModelRecord).setIn(['tasks', taskId, 'name'], name) as PgModelRecord;
+    return (model as PgModelRecord).setIn(['tasks', taskId, 'name'], name);
   }
 
-  export function setTaskProject(model: PgModel, task: string | PgTask, project: string | PgTask): PgModel {
+  export function setTaskProject(model: PgModelRecord, task: string | PgTask, project: string | PgTask): PgModelRecord {
     let taskId = typeof task === 'string' ? task : task._id;
     let projectId = typeof project === 'string' ? project : project._id;
-    return (model as PgModelRecord).setIn(['tasks', taskId, 'parentTask'], projectId || project) as PgModelRecord;
+    return (model as PgModelRecord).setIn(['tasks', taskId, 'parentTask'], projectId || project);
   }
 
-  export function addEntry(model: PgModel, entry: PgEntry): PgModel {
-    return (model as PgModelRecord).setIn(['entries', entry._id], entry) as PgModelRecord;
+  export function addEntry(model: PgModelRecord, entry: PgEntry): PgModelRecord {
+    return (model as PgModelRecord).setIn(['entries', entry._id], entry);
   }
 
-  export function getActiveEntries(model: PgModel): Map<string, PgEntry> {
+  export function getActiveEntries(model: PgModelRecord): Map<string, PgEntry> {
     return model.entries.filter((entry: PgEntry) => !entry.end) as Map<string, PgEntry>;
   }
 
-  export function stopAllEntries(model: PgModel): PgModel {
+  export function stopAllEntries(model: PgModelRecord): PgModelRecord {
     return getActiveEntries(model).reduce(
       (prevModel: PgModelRecord, entry: PgEntry) => {
         return prevModel.setIn(['entries', entry._id, 'end'], new Date());
       },
-      model as PgModelRecord) as PgModelRecord;
+      model);
   }
 
-  export function setEntryStartTime(model: PgModel, entryId: string, hour: number, minute: number = 0): PgModel {
+  export function setEntryStartTime(
+    model: PgModelRecord, entryId: string, hour: number, minute: number = 0
+  ): PgModelRecord {
     let entry = model.entries.get(entryId);
-    let entryStart = entry.start || new Date();
+    let entryStart = new Date(entry.start);
     let newStart = moment({
       year: entryStart.getFullYear(),
       month: entryStart.getMonth(),
       date: entryStart.getDate(),
       hour,
       minute
-    }).toDate();
-    return (model as PgModelRecord).setIn(['entries', entryId, 'start'], newStart) as PgModelRecord;
+    }).valueOf();
+    return model.setIn(['entries', entryId, 'start'], newStart);
   }
 
-  export function setEntryEndTime(model: PgModel, entryId: string, hour: number, minute: number = 0): PgModel {
+  export function setEntryEndTime(
+    model: PgModelRecord, entryId: string, hour: number, minute: number = 0
+  ): PgModelRecord {
     let entry = model.entries.get(entryId);
-    let entryEnd = entry.end || new Date();
+    let entryEnd = entry.end ? new Date(entry.end) : new Date();
     let newEnd = moment({
       year: entryEnd.getFullYear(),
       month: entryEnd.getMonth(),
       date: entryEnd.getDate(),
       hour,
       minute
-    }).toDate();
-    return (model as PgModelRecord).setIn(['entries', entryId, 'end'], newEnd) as PgModelRecord;
+    }).valueOf();
+    return model.setIn(['entries', entryId, 'end'], newEnd);
   }
 
-  export function setEntryDate(model: PgModel, entryId: string, date: Date): PgModel;
-  export function setEntryDate(model: PgModelRecord, entryId: string, date: Date): PgModelRecord;
-  export function setEntryDate(model: PgModel | PgModelRecord, entryId: string, newDate: Date): PgModelRecord {
-    let entry = model.entries.get(entryId);
-    let { years, months, date } = moment(newDate).toObject();
-    let { hours: startHours, minutes: startMinutes } = moment(entry.start).toObject();
-    let newStart = moment({
-      years, months, date,
-      hours: startHours, minutes: startMinutes
-    }).toDate();
-    let oldEnd = entry.end;
-    let newEnd: Date | undefined = void 0;
-    if (oldEnd) {
-      let { hours: endHours, minutes: endMinutes } = moment(oldEnd).toObject();
-      newEnd = moment({
-        years, months, date,
-        hours: endHours, minutes: endMinutes
-      }).toDate();
-    }
-    let pgModel: PgModelRecord = isModelRecord(model) ? model : PgModel.from(model);
-    return pgModel.setIn(
-      ['entries', entryId],
-      (entry as PgEntryRecord).set('start', newStart).set('end', newEnd)) as PgModelRecord;
+  export function setEntryDate(model: PgModelRecord, entryId: string, date: moment.MomentInput): PgModelRecord {
+    let entry = (model.entries.get(entryId) as PgEntryRecord).withMutations((e) => {
+      return PgEntry.setEndDate(PgEntry.setStartDate(e, date), date);
+    });
+    return model.setIn(['entries', entryId], entry);
   }
-}
 
-function isModelRecord(model: PgModel | PgModelRecord): model is PgModelRecord {
-  return true;
+  // tslint:disable-next-line:no-any
+  function isModelRecord(model: any): model is PgModelRecord {
+    return model && model.entries != null && model.tasks != null && ('setIn' in model);
+  }
 }

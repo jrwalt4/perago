@@ -6,7 +6,7 @@ import './DateField.css';
 
 type DateFieldProps = {
   _id?: string
-  value: Date
+  value: moment.MomentInput
   format?: string
   isEditing?: boolean
   onSetDate?: React.FormEventHandler<HTMLInputElement>
@@ -14,7 +14,7 @@ type DateFieldProps = {
 
 let noop = () => void 0;
 
-export class DateField extends React.Component<DateFieldProps, { value: Date }> {
+export class DateField extends React.Component<DateFieldProps, { value: moment.MomentInput }> {
   constructor(props: DateFieldProps) {
     super(props);
     this.state = this.buildStateFromProps(props);

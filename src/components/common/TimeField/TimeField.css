@@ -1,3 +1,7 @@
 .TimeField {
   padding: 0.3em;
 }
+
+input.TimeField {
+  width:6em;
+}

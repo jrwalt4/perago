@@ -130,9 +130,8 @@ export let EntryDetail = connect(
     },
     onSetDate: (ev: React.FormEvent<HTMLInputElement>) => {
       let _id = ev.currentTarget.dataset.id;
-      if (_id && ev.currentTarget.valueAsDate) {
-        let newDate = new Date(ev.currentTarget.value + ' 00:00');
-        dispatch(setEntryDate(_id, newDate));
+      if (_id && PgEntry.isValidDateTime(ev.currentTarget.value)) { // make sure we have a valid date
+        dispatch(setEntryDate(_id, ev.currentTarget.value));
       }
     }
   })
