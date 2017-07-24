@@ -63,7 +63,7 @@ export let EntryDetailComponent = (
             <th>Date:</th>
             <td>
               <DateField value={entry.start} isEditing={isEditing}
-                onSetDate={onSetDate} _id={entry._id} format="MMM / D" />
+                onSetDate={onSetDate} _id={entry._id} format="MMM D" />
             </td>
           </tr>
           <tr>

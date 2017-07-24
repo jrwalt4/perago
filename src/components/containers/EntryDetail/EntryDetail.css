@@ -1,8 +1,13 @@
+.EntryDetail {
+  position: relative;
+}
 .EntryDetail th {
   text-align: right;
   width: 40%;
+  max-width: 40%;
 }
 
 .EntryDetail td {
   width: 60%;
+  max-width: 60%;
 }

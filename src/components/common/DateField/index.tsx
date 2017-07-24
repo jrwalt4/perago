@@ -14,7 +14,7 @@ type DateFieldProps = {
 
 let noop = () => void 0;
 
-export class DateField extends React.Component<DateFieldProps, { value: moment.MomentInput }> {
+export class DateField extends React.Component<DateFieldProps, { value: string }> {
   constructor(props: DateFieldProps) {
     super(props);
     this.state = this.buildStateFromProps(props);
@@ -22,7 +22,7 @@ export class DateField extends React.Component<DateFieldProps, { value: moment.M
 
   buildStateFromProps(props: DateFieldProps) {
     return {
-      value: props.value
+      value: moment(props.value).format('YYYY-MM-DD')
     };
   }
 
@@ -32,7 +32,7 @@ export class DateField extends React.Component<DateFieldProps, { value: moment.M
 
   handleDateChange = (ev: React.FormEvent<HTMLInputElement>) => {
     this.setState({
-      value: new Date(ev.currentTarget.value + ' 00:00')
+      value: ev.currentTarget.value
     });
   }
 
@@ -40,7 +40,7 @@ export class DateField extends React.Component<DateFieldProps, { value: moment.M
     if (!this.props.isEditing) {
       return (
         <span className="DateField" data-id={this.props._id || ''}>
-          {this.props.value ? moment(this.props.value).format(this.props.format || 'M\\D') : ''}
+          {this.props.value ? moment(this.props.value).format(this.props.format || 'M D') : ''}
         </span >
       );
     } else {
@@ -51,7 +51,7 @@ export class DateField extends React.Component<DateFieldProps, { value: moment.M
           onChange={this.handleDateChange}
           onBlur={this.props.onSetDate || noop}
           className="DateField form-control"
-          value={moment(this.state.value).format('YYYY-MM-DD')} />
+          value={this.state.value} />
       );
     }
   }

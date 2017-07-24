@@ -1,7 +1,12 @@
-.DateField {
-  padding: 0.3em;
+.DateField, input.DateField {
+  position:relative;
+  width: 7em;
+  padding: 0;
 }
 
-input.DateField {
-  width: 6em;
+input.DateField:hover, input.DateField:focus {
+  left: 1em;
+  margin-left: -2em;
+  width: 9em;
+  z-index: 100;
 }
