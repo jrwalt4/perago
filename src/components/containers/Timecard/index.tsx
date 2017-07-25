@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { PgAppState, PgModelState } from '../../../store';
 import { PgEntry } from '../../../store/models';
 import { PropertyMap } from '../../../store/models/pg-types';
-import { selectEntry, startTask } from '../../../store/actions';
+import { selectEntry, startTask, createEntry, deleteEntry } from '../../../store/actions';
 
 import { TimeField } from '../../common/TimeField';
 import { DurationField } from '../../common/DurationField';
@@ -50,6 +50,8 @@ type TimecardComponentProps = {
   onSelectEntry: React.MouseEventHandler<DataElement & HTMLTableRowElement>
   onCopyEntry: React.MouseEventHandler<DataElement>
   onContinueEntry: React.MouseEventHandler<DataElement>
+  onNewEntry: React.MouseEventHandler<HTMLButtonElement>
+  onDeleteEntry: React.MouseEventHandler<DataElement>
 } & React.HTMLAttributes<HTMLTableElement>;
 
 export let TimecardComponent = (props: TimecardComponentProps) => (
@@ -71,11 +73,16 @@ export let TimecardComponent = (props: TimecardComponentProps) => (
           <td><DurationField from={entry.start} to={entry.end} /></td>
           <td className="Timecard-controls">
             <span className="fa fa-retweet" data-task-id={entry.taskId} onClick={props.onContinueEntry} />
-            <span className="fa fa-copy" />
+            <span className="fa fa-trash" data-id={entry._id} onClick={props.onDeleteEntry} />
           </td>
         </tr>
       )).toArray()}
     </tbody>
+    <tfoot>
+      <tr>
+        <td><button className="btn btn-sm btn-primary fa fa-plus" onClick={props.onNewEntry} /></td>
+      </tr>
+    </tfoot>
   </table>
 );
 
@@ -86,6 +93,7 @@ export let Timecard = connect(
   }),
   (dispatch) => ({
     onSelectEntry: (ev: React.MouseEvent<DataElement>) => {
+      ev.stopPropagation();
       dispatch(selectEntry(ev.currentTarget.dataset.id));
     },
     onContinueEntry: (ev: React.MouseEvent<DataElement>) => {
@@ -96,7 +104,15 @@ export let Timecard = connect(
         dispatch(startTask(taskId));
       }
     },
-    onCopyEntry: (ev) => {
-      // do something
+    onDeleteEntry: (ev: React.MouseEvent<DataElement>) => {
+      // prevent row from being selected
+      ev.stopPropagation();
+      let entryId = ev.currentTarget.dataset.id;
+      if (entryId) {
+        dispatch(deleteEntry(entryId));
+      }
+    },
+    onNewEntry: (ev) => {
+      dispatch(createEntry({ start: Date.now() }));
     }
   }))(TimecardComponent);

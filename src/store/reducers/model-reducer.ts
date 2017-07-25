@@ -1,7 +1,7 @@
 import { PgModel, PgEntry } from '../models';
 import { PgModelRecord } from '../models/pg-model';
 import {
-  PgAction,
+  PgAction, createEntry, deleteEntry,
   setTaskName, setTaskJob, startTask, setEntryStartTime, setEntryEndTime, setEntryDate
 } from '../actions';
 import { PgModelState, initialModelState } from './initial-model';
@@ -9,9 +9,13 @@ import { PgModelState, initialModelState } from './initial-model';
 export { PgModelState } from './initial-model';
 
 export function modelReducer(
-  model: PgModelState = initialModelState,
+  model: PgModelRecord = initialModelState as PgModelRecord,
   action: PgAction): PgModelState {
   switch (action.type) {
+    case createEntry.type:
+      return PgModel.addEntry(model, PgEntry.from(action.payload));
+    case deleteEntry.type:
+      return PgModel.deleteEntry(model, action.payload);
     case setTaskName.type:
       return PgModel.setTaskName(model as PgModelRecord, action.payload._id, name);
     case setTaskJob.type:

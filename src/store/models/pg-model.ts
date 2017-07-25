@@ -77,7 +77,12 @@ export namespace PgModel {
   }
 
   export function addEntry(model: PgModelRecord, entry: PgEntry): PgModelRecord {
-    return (model as PgModelRecord).setIn(['entries', entry._id], entry);
+    return model.setIn(['entries', entry._id], entry);
+  }
+
+  export function deleteEntry(model: PgModelRecord, entry: PgEntry | string): PgModelRecord {
+    let _id: string = typeof entry === 'string' ? entry : entry._id;
+    return model.deleteIn(['entries', _id]);
   }
 
   export function getActiveEntries(model: PgModelRecord): Map<string, PgEntry> {

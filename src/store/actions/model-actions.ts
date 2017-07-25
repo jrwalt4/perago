@@ -4,6 +4,7 @@ import { PgEntry } from '../models';
 
 export type PgModelAction =
   createEntry.Action |
+  deleteEntry.Action |
   setTaskName.Action |
   setTaskJob.Action |
   startTask.Action |
@@ -24,6 +25,21 @@ export namespace createEntry {
     payload: Partial<PgEntry>
   };
   export const type = 'CREATE_ENTRY';
+}
+
+export function deleteEntry(entryId: string): deleteEntry.Action {
+  return {
+    type: 'DELETE_ENTRY',
+    payload: entryId
+  };
+}
+
+export namespace deleteEntry {
+  export type Action = {
+    type: 'DELETE_ENTRY',
+    payload: string
+  };
+  export const type = 'DELETE_ENTRY';
 }
 
 export function setTaskName(taskId: string, name: string): setTaskName.Action {

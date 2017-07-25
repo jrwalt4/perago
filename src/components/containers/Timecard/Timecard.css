@@ -20,7 +20,7 @@
   max-width: 6em;
 }
 
-.Timecard-controls span {
+.Timecard-controls * {
   padding: 0 0.3em;
 }
 
@@ -28,8 +28,12 @@
   visibility: visible;
 }
 
-.Timecard-controls span:hover {
+.Timecard-controls *:hover {
   position: relative;
   font-size: 1.2em;
   font-weight: bold;
+}
+
+.Timecard button {
+  cursor: pointer;
 }

@@ -8,5 +8,5 @@ type DurationFieldProps = {
 };
 
 export let DurationField = ({ from, to }: DurationFieldProps) => (
-  <span>{to ? moment.duration({ from, to }).humanize() : 'ongoing'}</span>
+  <span>{to ? moment.duration({ from, to }).humanize() : moment(from).toNow(true)}</span>
 );

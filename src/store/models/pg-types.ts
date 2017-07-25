@@ -14,6 +14,7 @@ export interface RecordInstance<RType> {
   setIn(path: string[], value: any): this;
   setIn<V>(path: string[], value: V): this;
   getIn<V>(path: string[]): V;
+  deleteIn(path: string[]): this;
   // tslint:disable-next-line:no-any
   withMutations(mutator: (p: this) => any): this;
   asMutable(): this;
