@@ -97,6 +97,12 @@ export namespace PgModel {
       model);
   }
 
+  export function setEntryTask(model: PgModelRecord, entry: string | PgEntry, task: string | PgTask): PgModelRecord {
+    let entryId: string = typeof entry === 'string' ? entry : entry._id;
+    let taskId: string = typeof task === 'string' ? task : task._id;
+    return model.setIn(['entries', entryId, 'taskId'], taskId);
+  }
+
   export function setEntryStartTime(
     model: PgModelRecord, entryId: string, hour: number, minute: number = 0
   ): PgModelRecord {

@@ -78,7 +78,7 @@ export class TimecardComponent extends React.Component<TimecardComponentProps, {
         <tbody>
           {this.props.model.entries.map((entry: PgEntry, i) => (
             <tr key={entry._id} onClick={this.props.onSelectEntry}
-              data-id={entry._id}
+              data-id={entry._id} title={entry._id}
               className={this.props.selectedEntry === entry._id ? 'table-info' : ''}>
               <td>Lookup Job</td>
               <td>{this.props.model.tasks.getIn([entry.taskId, 'name'], 'unknown')}</td>

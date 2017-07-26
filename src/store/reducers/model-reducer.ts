@@ -1,7 +1,7 @@
 import { PgModel, PgEntry } from '../models';
 import { PgModelRecord } from '../models/pg-model';
 import {
-  PgAction, createEntry, deleteEntry,
+  PgAction, createEntry, deleteEntry, setEntryTask,
   setTaskName, setTaskJob, startTask, setEntryStartTime, setEntryEndTime, setEntryDate
 } from '../actions';
 import { PgModelState, initialModelState } from './initial-model';
@@ -24,6 +24,8 @@ export function modelReducer(
       let stoppedModel = PgModel.stopAllEntries(model as PgModelRecord);
       let newEntry = PgEntry.createAndStart().set('taskId', action.payload);
       return PgModel.addEntry(stoppedModel, newEntry);
+    case setEntryTask.type:
+      return PgModel.setEntryTask(model, action.payload._id, action.payload.taskId);
     case setEntryStartTime.type: {
       let { _id, hour, minute } = action.payload;
       return PgModel.setEntryStartTime(model as PgModelRecord, _id, hour, minute);

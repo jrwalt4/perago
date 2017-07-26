@@ -1,4 +1,7 @@
-import { PgAction, selectEntry, setFilter, startEditing, toggleEditing } from '../actions';
+import {
+  PgAction, selectEntry, setFilter, startEditing,
+  toggleEditing, startTask, setEntryTask
+} from '../actions';
 
 export type PgViewState = {
   selectedTask: string
@@ -22,12 +25,17 @@ export function viewReducer(
   switch (action.type) {
     case selectEntry.type:
       return Object.assign({}, state, { selectedEntry: action.payload });
+    case startTask.type:
+    case setEntryTask.type:
+      let newTask = typeof action.payload === 'string' ? action.payload : action.payload.taskId;
+      let newRecentTasks = [newTask, ...state.recentTasks.filter((taskId) => taskId !== action.payload)];
+      return Object.assign({}, state, { recentTasks: newRecentTasks });
     case setFilter.type:
       return Object.assign({}, state, { filter: action.payload });
     case startEditing.type:
-      return Object.assign({}, state, {isEditing: true});
+      return Object.assign({}, state, { isEditing: true });
     case toggleEditing.type:
-      return Object.assign({}, state, {isEditing: !state.isEditing});
+      return Object.assign({}, state, { isEditing: !state.isEditing });
     default:
       return state;
   }

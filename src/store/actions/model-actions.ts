@@ -8,6 +8,7 @@ export type PgModelAction =
   setTaskName.Action |
   setTaskJob.Action |
   startTask.Action |
+  setEntryTask.Action |
   setEntryStartTime.Action |
   setEntryEndTime.Action |
   setEntryDate.Action;
@@ -97,6 +98,27 @@ export namespace startTask {
     payload: string
   };
   export const type = 'START_TASK';
+}
+
+export function setEntryTask(entryId: string, taskId: string): setEntryTask.Action {
+  return {
+    type: 'SET_ENTRY_TASK',
+    payload: {
+      _id: entryId,
+      taskId
+    }
+  };
+}
+
+export namespace setEntryTask {
+  export type Action = {
+    type: 'SET_ENTRY_TASK'
+    payload: {
+      _id: string
+      taskId: string
+    }
+  };
+  export const type = 'SET_ENTRY_TASK';
 }
 
 export function setEntryStartTime(entryId: string, hour: number, minute: number = 0): setEntryStartTime.Action {
