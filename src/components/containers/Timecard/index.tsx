@@ -47,6 +47,7 @@ interface DataElement extends HTMLElement {
 type TimecardComponentProps = {
   model: PgModelState
   selectedEntry: string
+  deselectEntry: () => void
   onSelectEntry: React.MouseEventHandler<DataElement & HTMLTableRowElement>
   onCopyEntry: React.MouseEventHandler<DataElement>
   onContinueEntry: React.MouseEventHandler<DataElement>
@@ -54,37 +55,52 @@ type TimecardComponentProps = {
   onDeleteEntry: React.MouseEventHandler<DataElement>
 } & React.HTMLAttributes<HTMLTableElement>;
 
-export let TimecardComponent = (props: TimecardComponentProps) => (
-  <table className="Timecard table table-sm table-hover table-striped">
-    <thead>
-      <tr>
-        {propertyMap.map(({ name, alias }, i) => <th key={name}>{alias}</th>)}
-      </tr>
-    </thead>
-    <tbody>
-      {props.model.entries.map((entry: PgEntry, i) => (
-        <tr key={entry._id} onClick={props.onSelectEntry}
-          data-id={entry._id}
-          className={props.selectedEntry === entry._id ? 'table-info' : ''}>
-          <td>Lookup Job</td>
-          <td>{props.model.tasks.getIn([entry.taskId, 'name'], 'unknown')}</td>
-          <td><TimeField value={entry.start} format="h:mm a" /></td>
-          <td><TimeField value={entry.end} format="h:mm a" /></td>
-          <td><DurationField from={entry.start} to={entry.end} /></td>
-          <td className="Timecard-controls">
-            <span className="fa fa-retweet" data-task-id={entry.taskId} onClick={props.onContinueEntry} />
-            <span className="fa fa-trash" data-id={entry._id} onClick={props.onDeleteEntry} />
-          </td>
-        </tr>
-      )).toArray()}
-    </tbody>
-    <tfoot>
-      <tr>
-        <td><button className="btn btn-sm btn-primary fa fa-plus" onClick={props.onNewEntry} /></td>
-      </tr>
-    </tfoot>
-  </table>
-);
+export class TimecardComponent extends React.Component<TimecardComponentProps, {}> {
+  componentWillMount() {
+    document.addEventListener('keyup', this.handleKeyPress);
+  }
+  componentWillUnmount() {
+    document.removeEventListener('keyup', this.handleKeyPress);
+  }
+  handleKeyPress = (ev: KeyboardEvent) => {
+    if (ev.keyCode === 27) {
+      this.props.deselectEntry();
+    }
+  }
+  render() {
+    return (
+      <table className="Timecard table table-sm table-hover table-striped">
+        <thead>
+          <tr>
+            {propertyMap.map(({ name, alias }, i) => <th key={name}>{alias}</th>)}
+          </tr>
+        </thead>
+        <tbody>
+          {this.props.model.entries.map((entry: PgEntry, i) => (
+            <tr key={entry._id} onClick={this.props.onSelectEntry}
+              data-id={entry._id}
+              className={this.props.selectedEntry === entry._id ? 'table-info' : ''}>
+              <td>Lookup Job</td>
+              <td>{this.props.model.tasks.getIn([entry.taskId, 'name'], 'unknown')}</td>
+              <td><TimeField value={entry.start} format="h:mm a" /></td>
+              <td><TimeField value={entry.end} format="h:mm a" /></td>
+              <td><DurationField from={entry.start} to={entry.end} /></td>
+              <td className="Timecard-controls">
+                <span className="fa fa-retweet" data-task-id={entry.taskId} onClick={this.props.onContinueEntry} />
+                <span className="fa fa-trash" data-id={entry._id} onClick={this.props.onDeleteEntry} />
+              </td>
+            </tr>
+          )).toArray()}
+        </tbody>
+        <tfoot>
+          <tr>
+            <td><button className="btn btn-sm btn-primary fa fa-plus" onClick={this.props.onNewEntry} /></td>
+          </tr>
+        </tfoot>
+      </table>
+    );
+  }
+}
 
 export let Timecard = connect(
   (state: PgAppState) => ({
@@ -92,6 +108,9 @@ export let Timecard = connect(
     selectedEntry: state.view.selectedEntry
   }),
   (dispatch) => ({
+    deselectEntry: () => {
+      dispatch(selectEntry(''));
+    },
     onSelectEntry: (ev: React.MouseEvent<DataElement>) => {
       ev.stopPropagation();
       dispatch(selectEntry(ev.currentTarget.dataset.id));
