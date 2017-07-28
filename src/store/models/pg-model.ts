@@ -5,15 +5,18 @@ import * as moment from 'moment';
 import { PgTask } from './pg-task';
 import { PgEntry, PgEntryRecord } from './pg-entry';
 import { RecordType, RecordTypeConstructor } from './pg-types';
+import { PgProject } from './pg-project';
 
 export interface PgModel {
   tasks: Map<string, PgTask>;
   entries: Map<string, PgEntry>;
+  projects: Map<string, PgProject>;
 }
 
 export const defaultModel: PgModel = {
   tasks: Map<string, PgTask>(),
-  entries: Map<string, PgEntry>()
+  entries: Map<string, PgEntry>(),
+  projects: Map<string, PgProject>()
 };
 
 // tslint:disable-next-line:no-any
@@ -28,12 +31,14 @@ export namespace PgModel {
 
   type PgModelInputs = {
     tasks: Partial<PgTask>[],
-    entries: Partial<PgEntry>[]
+    entries: Partial<PgEntry>[],
+    projects?: Partial<PgProject>[]
   };
 
   export function from(model: PgModelInputs | PgModel): PgModelRecord {
-    let { tasks, entries } = model;
-    if (Array.isArray(tasks) && Array.isArray(entries)) {
+    let { tasks, entries, projects } = model;
+    projects = projects || [];
+    if (Array.isArray(tasks) && Array.isArray(entries) && Array.isArray(projects)) {
       return new PgModelConstructor({
         tasks: Map.of.apply(void 0, tasks.reduce((inputArray, task) => {
           let pgTask = PgTask.from(task);
@@ -44,10 +49,15 @@ export namespace PgModel {
           let pgEntry = PgEntry.from(entry);
           return inputArray.concat([pgEntry._id, pgEntry]);
           // tslint:disable-next-line:align
-        }, new Array<string | PgEntry>()))
+        }, new Array<string | PgEntry>())),
+        projects: Map.of.apply(void 0, projects.reduce((inputArray, project) => {
+          let pgProject = PgProject.from(project);
+          return inputArray.concat([pgProject._id, pgProject]);
+        // tslint:disable-next-line:align
+        }, new Array<string | PgProject>()))
       });
     }
-    return isModelRecord(model) ? model : new PgModelConstructor({ tasks, entries } as PgModel);
+    return isModelRecord(model) ? model : new PgModelConstructor({ tasks, entries, projects } as PgModel);
   }
 
   export function addTask(model: PgModelRecord, task?: Partial<PgTask>): PgModelRecord {
