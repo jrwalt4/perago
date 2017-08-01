@@ -5,7 +5,6 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { Header } from '../containers/Header';
 import { Sidebar } from '../containers/Sidebar';
 import { PrimaryWindow } from '../containers/PrimaryWindow';
-import { TimecardFilter } from '../containers/TimecardFilter';
 import { Timecard } from '../containers/Timecard';
 import { Rightbar } from '../containers/Rightbar';
 import { Footer } from '../containers/Footer';
@@ -19,13 +18,10 @@ export const App = () => (
     <Header />
     <div className="container-fluid">
       <div className="row">
-        <Sidebar className="col-3 bg-info" title="Recent Tasks">
+        <Sidebar className="col-2 bg-info" title="Recent Tasks">
           <RecentEntries />
         </Sidebar>
-        <PrimaryWindow className="col-6" title="Timecard">
-          <div className="row">
-            <TimecardFilter />
-          </div>
+        <PrimaryWindow className="col-7" title="Timecard">
           <div className="row">
             <Timecard />
           </div>

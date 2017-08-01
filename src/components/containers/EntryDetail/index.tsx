@@ -11,6 +11,7 @@ import {
 import { PgEntry } from '../../../store/models';
 import { DateField } from '../../common/DateField';
 import { TimeField } from '../../common/TimeField';
+import { TaskField } from '../../common/TaskField';
 import { DurationField } from '../../common/DurationField';
 
 import './EntryDetail.css';
@@ -57,7 +58,8 @@ export let EntryDetailComponent = (
             <th>Job:</th><td>Lookup Job</td>
           </tr>
           <tr>
-            <th>Task:</th><td>{task && task.name}</td>
+            <th>Task:</th>
+            <td><TaskField task={task} isEditing={isEditing} /></td>
           </tr>
           <tr>
             <th>Date:</th>

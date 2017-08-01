@@ -1,24 +1,27 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 
-import { PgModelState, PgViewState } from '../../../store/reducers';
+import { PgTask } from '../../../store/models';
 import { PgAppState } from '../../../store';
 
 import './RecentEntries.css';
 
 type RecentEntryProps = {
-  model: PgModelState
-  view: PgViewState
+  recentTasks: PgTask[]
 };
 
-let RecentEntriesComponent = ({ model, view }: RecentEntryProps) => (
+let RecentEntriesComponent = ({ recentTasks }: RecentEntryProps) => (
   <ul className="RecentEntries">
     {
-      view.recentTasks.map((taskId) => (
-        <li key={taskId}>{model.tasks.getIn([taskId, 'name'], 'Unknown')}</li>
+      recentTasks.map((task) => (
+        <li key={task._id}>{task.name || 'Unknown'}</li>
       ))
     }
   </ul>
 );
 
-export let RecentEntries = connect((state: PgAppState) => state)(RecentEntriesComponent);
+export let RecentEntries = connect(({ model, view }: PgAppState) => {
+  return {
+    recentTasks: view.recentTasks.map((taskId) => model.tasks.get(taskId))
+  };
+})(RecentEntriesComponent);
