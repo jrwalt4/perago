@@ -1,14 +1,16 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
+import { Options, Option } from 'react-select';
 
 import { PgAppState, PgModelState } from '../../../store';
 import {
   toggleEditing,
+  setEntryTask,
   setEntryStartTime,
   setEntryEndTime,
   setEntryDate
 } from '../../../store/actions';
-import { PgEntry } from '../../../store/models';
+import { PgEntry, PgTask } from '../../../store/models';
 import { DateField } from '../../common/DateField';
 import { TimeField } from '../../common/TimeField';
 import { TaskField } from '../../common/TaskField';
@@ -18,6 +20,8 @@ import './EntryDetail.css';
 
 export type EntryDetailProps = {
   selectedEntry: string
+  selectableTasks: Options
+  setTask: (entry: string, task: string) => void
   isEditing: boolean
   onToggleEditing: React.MouseEventHandler<HTMLButtonElement>
   model: PgModelState
@@ -29,6 +33,8 @@ export type EntryDetailProps = {
 export let EntryDetailComponent = (
   {
     selectedEntry,
+    selectableTasks,
+    setTask,
     isEditing,
     model,
     onToggleEditing,
@@ -59,7 +65,8 @@ export let EntryDetailComponent = (
           </tr>
           <tr>
             <th>Task:</th>
-            <td><TaskField task={task} isEditing={isEditing} /></td>
+            <td><TaskField task={task} isEditing={isEditing} selectableTasks={selectableTasks}
+              onChange={({ value }: Option) => { if (value) { setTask(entry._id, value as string); } }} /></td>
           </tr>
           <tr>
             <th>Date:</th>
@@ -109,12 +116,16 @@ export let EntryDetailComponent = (
 export let EntryDetail = connect(
   ({ view, model }: PgAppState) => ({
     selectedEntry: view.selectedEntry,
+    selectableTasks: model.tasks.map((task: PgTask) => ({ value: task._id, label: task.name })).toArray(),
     isEditing: view.isEditing,
     model
   }),
   (dispatch) => ({
     onToggleEditing: () => {
       dispatch(toggleEditing());
+    },
+    setTask: (entry: string, task: string) => {
+      dispatch(setEntryTask(entry, task));
     },
     onSetStart: (ev: React.FormEvent<HTMLInputElement>) => {
       let _id = ev.currentTarget.dataset.id;
