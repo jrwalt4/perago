@@ -19,7 +19,11 @@ export function TaskField({ task, isEditing, selectableTasks, onChange }: TaskFi
     let taskId = task && task._id;
     let taskName = task ? task.name : '-';
     if (isEditing) {
-        return <Select value={taskId} options={selectableTasks} clearable={false} onChange={onChange} />;
+        return (
+            <Select value={taskId} options={selectableTasks} clearable={false}
+                noResultsText={<i>no task</i>}
+                onChange={onChange} ignoreCase={true} />
+        );
     }
     return <span>{taskName}</span>;
 }

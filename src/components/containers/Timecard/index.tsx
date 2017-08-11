@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { PgAppState, PgModelState } from '../../../store';
 import { PgEntry } from '../../../store/models';
 import { PropertyMap } from '../../../store/models/pg-types';
-import { selectEntry, startTask, createEntry, deleteEntry } from '../../../store/actions';
+import { selectEntry, stopEditing, startTask, createEntry, deleteEntry } from '../../../store/actions';
 
 import { TimeField } from '../../common/TimeField';
 import { DurationField } from '../../common/DurationField';
@@ -111,6 +111,7 @@ export let Timecard = connect(
   (dispatch) => ({
     deselectEntry: () => {
       dispatch(selectEntry(''));
+      dispatch(stopEditing());
     },
     onSelectEntry: (ev: React.MouseEvent<DataElement>) => {
       ev.stopPropagation();

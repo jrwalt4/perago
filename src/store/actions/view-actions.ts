@@ -3,6 +3,7 @@ export type PgViewAction =
   selectTask.Action |
   setFilter.Action |
   startEditing.Action |
+  stopEditing.Action |
   toggleEditing.Action;
 
 export function selectEntry(entryId: string): selectEntry.Action {
@@ -61,6 +62,19 @@ export namespace startEditing {
     type: 'START_EDITING'
   };
   export const type = 'START_EDITING';
+}
+
+export function stopEditing(): stopEditing.Action {
+  return {
+    type: 'STOP_EDITING'
+  };
+}
+
+export namespace stopEditing {
+  export type Action = {
+    type: 'STOP_EDITING'
+  };
+  export const type = 'STOP_EDITING';
 }
 
 export function toggleEditing(): toggleEditing.Action {

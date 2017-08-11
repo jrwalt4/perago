@@ -13,7 +13,7 @@ export function modelReducer(
   action: PgAction): PgModelState {
   switch (action.type) {
     case createEntry.type:
-      return PgModel.addEntry(model, PgEntry.from(action.payload));
+      return PgModel.addEntry(PgModel.stopAllEntries(model), PgEntry.from(action.payload));
     case deleteEntry.type:
       return PgModel.deleteEntry(model, action.payload);
     case setTaskName.type:
