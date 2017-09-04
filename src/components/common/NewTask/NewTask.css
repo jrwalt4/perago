@@ -12,8 +12,16 @@
   top: 5em;
   left: 5em;
   right: 8em;
-  bottom: 8em;
   background: rgb(250, 250, 250);
   border-radius: 0.5em;
   padding: 2em;
+}
+
+.NewTask-control-container {
+  text-align: right;
+}
+.NewTask-control {
+  margin: 0.5em;
+  bottom: 0;
+  right: 0;
 }

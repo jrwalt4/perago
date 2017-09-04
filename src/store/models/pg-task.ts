@@ -29,8 +29,10 @@ export namespace PgTask {
     return new PgTaskConstructor({ _id: cuid() });
   }
   export function from(props: Partial<PgTask>): PgTaskRecord {
-    props._id = props._id || cuid();
-    return PgTaskConstructor(props);
+    return PgTaskConstructor({
+      ...props,
+      _id: props._id || cuid(),
+    });
   }
 
   export function setParent(task: PgTaskRecord, parentTaskId: string): PgTaskRecord;

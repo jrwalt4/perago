@@ -53,16 +53,15 @@ export namespace PgModel {
         projects: Map.of.apply(void 0, projects.reduce((inputArray, project) => {
           let pgProject = PgProject.from(project);
           return inputArray.concat([pgProject._id, pgProject]);
-        // tslint:disable-next-line:align
+          // tslint:disable-next-line:align
         }, new Array<string | PgProject>()))
       });
     }
     return isModelRecord(model) ? model : new PgModelConstructor({ tasks, entries, projects } as PgModel);
   }
 
-  export function addTask(model: PgModelRecord, task?: Partial<PgTask>): PgModelRecord {
-    let pgTask = task == null ? PgTask.create() : PgTask.from(task);
-    return PgModel.from(model).setIn(['tasks', pgTask._id], pgTask);
+  export function addTask(model: PgModelRecord, task: PgTask): PgModelRecord {
+    return (model as PgModelRecord).setIn(['tasks', task._id], task);
   }
 
   export function setTaskName(model: PgModelRecord, task: string | PgTask, name: string): PgModelRecord {

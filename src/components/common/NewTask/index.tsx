@@ -2,7 +2,6 @@ import * as React from 'react';
 import { connect, Dispatch } from 'react-redux';
 import { Option } from 'react-select';
 import Modal, { ReactModalProps } from 'react-modal';
-Modal.setAppElement('#root');
 
 import { PgAppState } from '../../../store';
 import { PgTask } from '../../../store/models';
@@ -21,6 +20,7 @@ interface NewTaskDispatchProps {
 
 export type NewTaskProps = {
   defaultName?: string;
+  requestClose?(): void;
 } & ReactModalProps;
 
 export type NewTaskOwnProps = NewTaskProps & NewTaskDispatchProps;
@@ -43,29 +43,55 @@ export class NewTaskComponent extends React.Component<NewTaskOwnProps, NewTaskSt
       newTaskName: props.defaultName
     });
   }
+  setTaskName = ({ currentTarget }: React.FormEvent<HTMLInputElement>) => {
+    this.setState({
+      newTaskName: currentTarget.value
+    });
+  }
   setParentTask = ({ value }: Option) => {
     this.setState({
       newTaskParentId: value as string
     });
   }
+  onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    this.props.createNewTask({
+      name: this.state.newTaskName,
+      parentTaskId: this.state.newTaskParentId
+    });
+    if (this.props.requestClose) {
+      this.props.requestClose();
+    }
+  }
   render() {
-    return (
-      <Modal isOpen={this.props.isOpen} contentLabel="New Task"
-        overlayClassName="NewTask-overlay" className="NewTask-content">
-        <form>
-          <div className="form-group">
-            <label htmlFor="name">Task Name</label>
-            <input type="text" name="name" className="form-control"
-              defaultValue={this.state.newTaskName} />
-          </div>
-          <div className="form-group">
-            <label htmlFor="parent">Parent Task</label>
-            <TaskField isEditing={true} taskId={this.state.newTaskParentId}
-              onChange={this.setParentTask} />
-          </div>
-        </form>
-      </Modal>
-    );
+    if (this.props.isOpen) {
+      return (
+        <Modal contentLabel="New Task"
+          overlayClassName="NewTask-overlay" className="NewTask-content"
+          shouldCloseOnOverlayClick={true}
+          {...this.props}>
+          <form onSubmit={this.onSubmit}>
+            <div className="form-group">
+              <label htmlFor="name">Task Name</label>
+              <input type="text" name="name" className="form-control"
+                value={this.state.newTaskName}
+                onChange={this.setTaskName} />
+            </div>
+            <div className="form-group">
+              <label htmlFor="parent">Parent Task</label>
+              <TaskField isEditing={true} taskId={this.state.newTaskParentId}
+                onChange={this.setParentTask} />
+            </div>
+            <div className="NewTask-control-container">
+              <button className="NewTask-control btn btn-danger" onClick={this.props.requestClose}>Cancel</button>
+              <input className="NewTask-control btn btn-primary" type="submit" value="Create Task" />
+            </div>
+          </form>
+        </Modal>
+      );
+    } else {
+      return null;
+    }
   }
 }
 

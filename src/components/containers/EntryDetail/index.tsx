@@ -57,6 +57,12 @@ export class EntryDetailComponent extends React.Component<EntryDetailProps, Entr
     });
   }
 
+  closeNewTaskDialog = () => {
+    this.setState({
+      isNewTaskDialogOpen: false
+    });
+  }
+
   render() {
     const props = this.props;
     const header = (
@@ -85,7 +91,8 @@ export class EntryDetailComponent extends React.Component<EntryDetailProps, Entr
                 <TaskField taskId={entry.taskId} isEditing={props.isEditing} selectableTasks={props.selectableTasks}
                   onChange={({ value }: Option) => { if (value) { props.setTask(entry._id, value as string); } }}
                   onCreateTask={this.openNewTaskDialog} />
-                <NewTask isOpen={this.state.isNewTaskDialogOpen} defaultName={this.state.newTaskName} />
+                <NewTask isOpen={this.state.isNewTaskDialogOpen} defaultName={this.state.newTaskName}
+                  requestClose={this.closeNewTaskDialog} />
               </td>
             </tr>
             <tr>
