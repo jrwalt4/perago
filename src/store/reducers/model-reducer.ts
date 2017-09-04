@@ -1,7 +1,7 @@
-import { PgModel, PgEntry } from '../models';
+import { PgModel, PgEntry, PgTask } from '../models';
 import { PgModelRecord } from '../models/pg-model';
 import {
-  PgAction, createEntry, deleteEntry, setEntryTask,
+  PgAction, createEntry, deleteEntry, createTask, setEntryTask,
   setTaskName, setTaskJob, startTask, setEntryStartTime, setEntryEndTime, setEntryDate
 } from '../actions';
 import { PgModelState, initialModelState } from './initial-model';
@@ -16,6 +16,8 @@ export function modelReducer(
       return PgModel.addEntry(PgModel.stopAllEntries(model), PgEntry.from(action.payload));
     case deleteEntry.type:
       return PgModel.deleteEntry(model, action.payload);
+    case createTask.type:
+      return PgModel.addTask(model, PgTask.from(action.payload));
     case setTaskName.type:
       return PgModel.setTaskName(model as PgModelRecord, action.payload._id, name);
     case setTaskJob.type:

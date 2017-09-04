@@ -1,9 +1,10 @@
 import { MomentInput } from 'moment';
 
-import { PgEntry } from '../models';
+import { PgEntry, PgTask } from '../models';
 
 export type PgModelAction =
   createEntry.Action |
+  createTask.Action |
   deleteEntry.Action |
   setTaskName.Action |
   setTaskJob.Action |
@@ -41,6 +42,21 @@ export namespace deleteEntry {
     payload: string
   };
   export const type = 'DELETE_ENTRY';
+}
+
+export function createTask(task: Partial<PgTask>): createTask.Action {
+  return {
+    type: 'CREATE_TASK',
+    payload: task
+  };
+}
+
+export namespace createTask {
+  export type Action = {
+    type: 'CREATE_TASK',
+    payload: Partial<PgTask>
+  };
+  export const type = 'CREATE_TASK';
 }
 
 export function setTaskName(taskId: string, name: string): setTaskName.Action {

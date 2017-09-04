@@ -13,10 +13,10 @@ export type PgViewState = {
 
 export let initialViewState: PgViewState = {
   selectedTask: '',
-  selectedEntry: '',
+  selectedEntry: '2',
   recentTasks: ['1', '5'],
   filter: '',
-  isEditing: false
+  isEditing: true
 };
 
 export function viewReducer(

@@ -82,7 +82,7 @@ export class TimecardComponent extends React.Component<TimecardComponentProps, {
               data-id={entry._id} title={entry._id}
               className={this.props.selectedEntry === entry._id ? 'table-info' : ''}>
               <td>Lookup Job</td>
-              <td><TaskField task={this.props.model.tasks.get(entry.taskId)}/></td>
+              <td><TaskField taskId={entry.taskId}/></td>
               <td><TimeField value={entry.start} format="h:mm a" /></td>
               <td><TimeField value={entry.end} format="h:mm a" /></td>
               <td><DurationField from={entry.start} to={entry.end} /></td>
