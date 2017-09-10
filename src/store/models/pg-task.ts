@@ -8,7 +8,7 @@ export interface PgTask extends PgBase {
   jobId: string;
   duration: number;
   name: string;
-};
+}
 
 const defaultTask: PgTask = {
   _id: '',

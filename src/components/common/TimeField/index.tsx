@@ -53,4 +53,4 @@ export class TimeField extends React.Component<TimeFieldProps, { value?: string 
       );
     }
   }
-};
+}

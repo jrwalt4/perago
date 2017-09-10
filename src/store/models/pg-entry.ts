@@ -47,7 +47,7 @@ export namespace PgEntry {
     start: moment.MomentInput;
     end: moment.MomentInput;
     notes: string;
-  };
+  }
 
   export function from(props: Partial<PgEntry> | Partial<PgEntryAlternates>): PgEntryRecord {
     let _id = props._id || cuid();

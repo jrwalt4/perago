@@ -138,7 +138,7 @@ export class EntryDetailComponent extends React.Component<EntryDetailProps, Entr
         {body}
       </div>
     );
-  };
+  }
 }
 
 export let EntryDetail = connect<EntryDetailStateProps, EntryDetailDispatchProps, {}>(

@@ -55,4 +55,4 @@ export class DateField extends React.Component<DateFieldProps, { value: string }
       );
     }
   }
-};
+}
