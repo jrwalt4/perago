@@ -2,22 +2,22 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Options, Option } from 'react-select';
 
-import { PgAppState, PgModelState } from '../../../store';
+import { PgAppState, PgModelState } from '../../../../store';
 import {
   toggleEditing,
   setEntryTask,
   setEntryStartTime,
   setEntryEndTime,
   setEntryDate
-} from '../../../store/actions';
-import { PgEntry, PgTask } from '../../../store/models';
-import { DateField } from '../../common/DateField';
-import { TimeField } from '../../common/TimeField';
-import { TaskField } from '../../common/TaskField';
-import { DurationField } from '../../common/DurationField';
+} from '../../../../store/actions';
+import { PgEntry, PgTask } from '../../../../store/models';
+import { DateField } from '../../../../components/DateField';
+import { TimeField } from '../../../../components/TimeField';
+import { TaskField } from '../../../../components/TaskField';
+import { DurationField } from '../../../../components/DurationField';
+import { NewTask } from '../NewTask';
 
 import './EntryDetail.css';
-import { NewTask } from '../../common/NewTask';
 
 type EntryDetailStateProps = {
   selectedEntry: string

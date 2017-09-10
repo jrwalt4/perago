@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import { shallow } from 'enzyme';
 
-import { DateField } from '.';
+import { DateField } from './DateField';
 
 it('renders a Date', () => {
   let renderDate = () => <DateField value={new Date()} />;

@@ -1,16 +1,16 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 
-import { PgAppState, PgModelState } from '../../../store';
-import { PgEntry } from '../../../store/models';
-import { PropertyMap } from '../../../store/models/pg-types';
-import { selectEntry, stopEditing, startTask, createEntry, deleteEntry } from '../../../store/actions';
+import { PgAppState, PgModelState } from '../../../../store';
+import { PgEntry } from '../../../../store/models';
+import { PropertyMap } from '../../../../store/models/pg-types';
+import { selectEntry, stopEditing, startTask, createEntry, deleteEntry } from '../../../../store/actions';
 
-import { TimeField } from '../../common/TimeField';
-import { DurationField } from '../../common/DurationField';
-import { TaskField } from '../../common/TaskField';
+import { TimeField } from '../../../../components/TimeField';
+import { DurationField } from '../../../../components/DurationField';
+import { TaskField } from '../../../../components/TaskField';
 
-import './Timecard.css';
+import './EntryList.css';
 
 import 'font-awesome/css/font-awesome.min.css';
 
@@ -45,7 +45,7 @@ interface DataElement extends HTMLElement {
   };
 }
 
-type TimecardComponentProps = {
+type EntryListComponentProps = {
   model: PgModelState
   selectedEntry: string
   deselectEntry: () => void
@@ -56,7 +56,7 @@ type TimecardComponentProps = {
   onDeleteEntry: React.MouseEventHandler<DataElement>
 } & React.HTMLAttributes<HTMLTableElement>;
 
-export class TimecardComponent extends React.Component<TimecardComponentProps, {}> {
+export class EntryListComponent extends React.Component<EntryListComponentProps, {}> {
   componentWillMount() {
     document.addEventListener('keyup', this.handleKeyPress);
   }
@@ -70,7 +70,7 @@ export class TimecardComponent extends React.Component<TimecardComponentProps, {
   }
   render() {
     return (
-      <table className="Timecard table table-sm table-hover table-striped">
+      <table className="EntryList table table-sm table-hover table-striped">
         <thead>
           <tr>
             {propertyMap.map(({ name, alias }, i) => <th key={name}>{alias}</th>)}
@@ -86,7 +86,7 @@ export class TimecardComponent extends React.Component<TimecardComponentProps, {
               <td><TimeField value={entry.start} format="h:mm a" /></td>
               <td><TimeField value={entry.end} format="h:mm a" /></td>
               <td><DurationField from={entry.start} to={entry.end} /></td>
-              <td className="Timecard-controls">
+              <td className="EntryList-controls">
                 <span className="fa fa-retweet" data-task-id={entry.taskId} onClick={this.props.onContinueEntry} />
                 <span className="fa fa-trash" data-id={entry._id} onClick={this.props.onDeleteEntry} />
               </td>
@@ -103,7 +103,7 @@ export class TimecardComponent extends React.Component<TimecardComponentProps, {
   }
 }
 
-export let Timecard = connect(
+export let EntryList = connect(
   (state: PgAppState) => ({
     model: state.model,
     selectedEntry: state.view.selectedEntry
@@ -136,4 +136,4 @@ export let Timecard = connect(
     onNewEntry: (ev) => {
       dispatch(createEntry({ start: Date.now() }));
     }
-  }))(TimecardComponent);
+  }))(EntryListComponent);

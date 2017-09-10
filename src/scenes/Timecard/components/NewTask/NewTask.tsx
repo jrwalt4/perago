@@ -3,12 +3,12 @@ import { connect, Dispatch } from 'react-redux';
 import { Option } from 'react-select';
 import Modal, { ReactModalProps } from 'react-modal';
 
-import { PgAppState } from '../../../store';
-import { PgTask } from '../../../store/models';
-import { PgAction, createTask } from '../../../store/actions';
+import { PgAppState } from '../../../../store';
+import { PgTask } from '../../../../store/models';
+import { PgAction, createTask } from '../../../../store/actions';
+import { TaskField } from '../../../../components/TaskField';
 
 import './NewTask.css';
-import { TaskField } from '../TaskField';
 
 interface NewTaskStateProps {
 

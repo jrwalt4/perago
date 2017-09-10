@@ -1,39 +1,39 @@
-.Timecard {
+.EntryList {
   width:100%;
   max-width:100%;
 }
-.Timecard td, .Timecard th {
+.EntryList td, .EntryList th {
   text-align: center;
 }
 
-.Timecard td {
+.EntryList td {
   font-size: 0.75rem;
 }
 
-.Timecard tr td {
+.EntryList tr td {
   cursor: pointer
 }
 
-.Timecard-controls {
+.EntryList-controls {
   visibility: hidden;
   width: 6em;
   max-width: 6em;
 }
 
-.Timecard-controls * {
+.EntryList-controls * {
   padding: 0 0.3em;
 }
 
-.Timecard tr:hover .Timecard-controls {
+.EntryList tr:hover .EntryList-controls {
   visibility: visible;
 }
 
-.Timecard-controls *:hover {
+.EntryList-controls *:hover {
   position: relative;
   font-size: 1.2em;
   font-weight: bold;
 }
 
-.Timecard button {
+.EntryList button {
   cursor: pointer;
 }

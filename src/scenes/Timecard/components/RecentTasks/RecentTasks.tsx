@@ -1,18 +1,18 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 
-import { PgTask } from '../../../store/models';
-import { startTask } from '../../../store/actions';
-import { PgAppState } from '../../../store';
+import { PgTask } from '../../../../store/models';
+import { startTask } from '../../../../store/actions';
+import { PgAppState } from '../../../../store';
 
 import './RecentEntries.css';
 
-type RecentEntryProps = {
+type RecentTaskProps = {
   recentTasks: PgTask[];
   continueTask: (taskId: string) => void;
 };
 
-let RecentEntriesComponent = ({ recentTasks, continueTask }: RecentEntryProps) => (
+let RecentTasksComponent = ({ recentTasks, continueTask }: RecentTaskProps) => (
   <ul className="RecentEntries">
     {
       recentTasks.map((task) => (
@@ -25,7 +25,7 @@ let RecentEntriesComponent = ({ recentTasks, continueTask }: RecentEntryProps) =
   </ul>
 );
 
-export let RecentEntries = connect(
+export let RecentTasks = connect(
   ({ model, view }: PgAppState) => {
     return {
       recentTasks: view.recentTasks.map((taskId) => model.tasks.get(taskId))
@@ -35,4 +35,4 @@ export let RecentEntries = connect(
     continueTask: (taskId: string) => {
       dispatch(startTask(taskId));
     }
-  }))(RecentEntriesComponent);
+  }))(RecentTasksComponent);

@@ -3,8 +3,8 @@ import { connect } from 'react-redux';
 import * as Select from 'react-select';
 import 'react-select/dist/react-select.css';
 
-import { PgTask } from '../../../store/models';
-import { PgAppState } from '../../../store';
+import { PgTask } from '../../store/models';
+import { PgAppState } from '../../store';
 
 export type TaskFieldProps = {
   taskId?: string;
