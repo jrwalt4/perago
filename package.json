@@ -32,13 +32,13 @@
   "devDependencies": {
     "@types/enzyme": "^2.8.6",
     "enzyme": "^2.8.2",
-    "react-scripts-ts": "^2.6.0",
+    "react-scripts-ts": "^2.8.0",
     "react-test-renderer": "^15.6.1"
   },
   "scripts": {
-    "start": "react-scripts-ts start",
-    "build": "react-scripts-ts build",
-    "test": "react-scripts-ts test --env=jsdom",
+    "start": "set NODE_PATH=src&&react-scripts-ts start",
+    "build": "set NODE_PATH=src&&react-scripts-ts build",
+    "test": "npm run lint && set NODE_PATH=src&&react-scripts-ts test --env=jsdom",
     "lint": "tslint -c tslint.json --project tsconfig.json --type-check || true",
     "type-check": "tsc --noEmit || true",
     "eject": "react-scripts-ts eject"

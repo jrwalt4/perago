@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 
-import { PgTask } from '../../../../store/models';
-import { startTask } from '../../../../store/actions';
-import { PgAppState } from '../../../../store';
+import { PgTask } from 'store/models';
+import { startTask } from 'store/actions';
+import { PgAppState } from 'store';
 
 import './RecentEntries.css';
 

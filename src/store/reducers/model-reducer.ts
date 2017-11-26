@@ -1,9 +1,9 @@
-import { PgModel, PgEntry, PgTask } from '../models';
-import { PgModelRecord } from '../models/pg-model';
+import { PgModel, PgEntry, PgTask } from 'store/models';
+import { PgModelRecord } from 'store/models/pg-model';
 import {
   PgAction, createEntry, deleteEntry, createTask, setEntryTask,
   setTaskName, setTaskJob, startTask, setEntryStartTime, setEntryEndTime, setEntryDate
-} from '../actions';
+} from 'store/actions';
 import { PgModelState, initialModelState } from './initial-model';
 
 export { PgModelState } from './initial-model';

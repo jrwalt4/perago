@@ -3,7 +3,7 @@ import * as React from 'react';
 import { shallow } from 'enzyme';
 
 import { EntryListComponent } from './EntryList';
-import { PgModel } from '../../../../store/models';
+import { PgModel } from 'store/models';
 
 it('renders', () => {
   let noop = () => void 0;

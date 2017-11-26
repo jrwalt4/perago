@@ -6,7 +6,7 @@ import {
 import {
   reducers, routerMiddleware, history,
   PgModelState, PgViewState, PgRouterState
-} from './reducers';
+} from 'store/reducers';
 
 export type PgAppState = {
   model: PgModelState

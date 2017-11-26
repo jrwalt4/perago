@@ -1,14 +1,14 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 
-import { PgAppState, PgModelState } from '../../../../store';
-import { PgEntry } from '../../../../store/models';
-import { PropertyMap } from '../../../../store/models/pg-types';
-import { selectEntry, stopEditing, startTask, createEntry, deleteEntry } from '../../../../store/actions';
+import { PgAppState, PgModelState } from 'store';
+import { PgEntry } from 'store/models';
+import { PropertyMap } from 'store/models/pg-types';
+import { selectEntry, stopEditing, startTask, createEntry, deleteEntry } from 'store/actions';
 
-import { TimeField } from '../../../../components/TimeField';
-import { DurationField } from '../../../../components/DurationField';
-import { TaskField } from '../../../../components/TaskField';
+import { TimeField } from 'components/TimeField';
+import { DurationField } from 'components/DurationField';
+import { TaskField } from 'components/TaskField';
 
 import './EntryList.css';
 

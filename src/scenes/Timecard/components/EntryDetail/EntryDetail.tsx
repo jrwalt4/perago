@@ -2,20 +2,20 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Options, Option } from 'react-select';
 
-import { PgAppState, PgModelState } from '../../../../store';
+import { PgAppState, PgModelState } from 'store';
 import {
   toggleEditing,
   setEntryTask,
   setEntryStartTime,
   setEntryEndTime,
   setEntryDate
-} from '../../../../store/actions';
-import { PgEntry, PgTask } from '../../../../store/models';
-import { DateField } from '../../../../components/DateField';
-import { TimeField } from '../../../../components/TimeField';
-import { TaskField } from '../../../../components/TaskField';
-import { DurationField } from '../../../../components/DurationField';
-import { NewTask } from '../NewTask';
+} from 'store/actions';
+import { PgEntry, PgTask } from 'store/models';
+import { DateField } from 'components/DateField';
+import { TimeField } from 'components/TimeField';
+import { TaskField } from 'components/TaskField';
+import { DurationField } from 'components/DurationField';
+import { NewTask } from 'scenes/Timecard/components/NewTask';
 
 import './EntryDetail.css';
 

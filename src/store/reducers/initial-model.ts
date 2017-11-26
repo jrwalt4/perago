@@ -1,4 +1,4 @@
-import { PgModel } from '../models';
+import { PgModel } from 'store/models';
 
 export type PgModelState = PgModel;
 

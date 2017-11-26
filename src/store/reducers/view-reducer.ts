@@ -1,7 +1,7 @@
 import {
   PgAction, selectEntry, setFilter, startEditing, stopEditing,
   toggleEditing, startTask, setEntryTask, deleteEntry
-} from '../actions';
+} from 'store/actions';
 
 export type PgViewState = {
   selectedTask: string

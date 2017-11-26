@@ -1,10 +1,10 @@
 import * as React from 'react';
 
-import { Header } from '../Header';
-import { Sidebar } from '../Sidebar';
-import { PrimaryWindow } from '../PrimaryWindow';
-import { Rightbar } from '../Rightbar';
-import { Footer } from '../Footer';
+import { Header } from 'components/Header';
+import { Sidebar } from 'components/Sidebar';
+import { PrimaryWindow } from 'components/PrimaryWindow';
+import { Rightbar } from 'components/Rightbar';
+import { Footer } from 'components/Footer';
 
 export interface AppContainerProps {
   sidebarComponent?: JSX.Element;

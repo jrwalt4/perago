@@ -6,8 +6,8 @@ import { ConnectedRouter } from 'react-router-redux';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-import { Timecard } from './scenes/Timecard';
-import { store, history } from './store';
+import { Timecard } from 'scenes/Timecard';
+import { store, history } from 'store';
 import './index.css';
 
 render(
