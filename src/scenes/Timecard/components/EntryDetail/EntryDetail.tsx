@@ -2,7 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Options, Option } from 'react-select';
 
-import { PgAppState, PgModelState } from 'store';
+import { PgAppState } from 'store';
 import {
   toggleEditing,
   setEntryTask,
@@ -20,10 +20,9 @@ import { NewTask } from 'scenes/Timecard/components/NewTask';
 import './EntryDetail.css';
 
 type EntryDetailStateProps = {
-  selectedEntry: string
+  entry: PgEntry
   selectableTasks: Options
   isEditing: boolean
-  model: PgModelState
 };
 
 type EntryDetailDispatchProps = {
@@ -77,8 +76,8 @@ export class EntryDetailComponent extends React.Component<EntryDetailProps, Entr
       </div>
     );
     let body: JSX.Element;
-    if (props.selectedEntry) {
-      let entry = props.model.entries.get(props.selectedEntry);
+    if (props.entry) {
+      let entry = props.entry;
       body = (
         <table className="EntryDetail table table-sm table-bordered">
           <tbody>
@@ -143,10 +142,9 @@ export class EntryDetailComponent extends React.Component<EntryDetailProps, Entr
 
 export let EntryDetail = connect<EntryDetailStateProps, EntryDetailDispatchProps, {}>(
   ({ view, model }: PgAppState) => ({
-    selectedEntry: view.selectedEntry,
+    entry: model.entries.get(view.selectedEntry),
     selectableTasks: model.tasks.toArray().map((task: PgTask) => ({ value: task._id, label: task.name })),
-    isEditing: view.isEditing,
-    model
+    isEditing: view.isEditing
   }),
   (dispatch) => ({
     onToggleEditing: () => {

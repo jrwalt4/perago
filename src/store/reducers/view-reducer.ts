@@ -24,7 +24,13 @@ export function viewReducer(
   action: PgAction): PgViewState {
   switch (action.type) {
     case selectEntry.type:
-      return Object.assign({}, state, { selectedEntry: action.payload });
+      if (action.payload === state.selectedEntry) {
+        return state;
+      }
+      return Object.assign({}, state, {
+        isEditing: false,
+        selectedEntry: action.payload
+      });
     case startTask.type:
     case setEntryTask.type:
       let newTask = typeof action.payload === 'string' ? action.payload : action.payload.taskId;
