@@ -70,35 +70,38 @@ export class EntryListComponent extends React.Component<EntryListComponentProps,
   }
   render() {
     return (
-      <table className="EntryList table table-sm table-hover table-striped">
-        <thead>
-          <tr>
-            {propertyMap.map(({ name, alias }, i) => <th key={name}>{alias}</th>)}
-          </tr>
-        </thead>
-        <tbody>
-          {this.props.model.entries.map((entry: PgEntry, i) => (
-            <tr key={entry._id} onClick={this.props.onSelectEntry}
-              data-id={entry._id} title={entry._id}
-              className={this.props.selectedEntry === entry._id ? 'table-info' : ''}>
-              <td>Lookup Job</td>
-              <td><TaskField taskId={entry.taskId}/></td>
-              <td><TimeField value={entry.start} format="h:mm a" /></td>
-              <td><TimeField value={entry.end} format="h:mm a" /></td>
-              <td><DurationField from={entry.start} to={entry.end} /></td>
-              <td className="EntryList-controls">
-                <span className="fa fa-retweet" data-task-id={entry.taskId} onClick={this.props.onContinueEntry} />
-                <span className="fa fa-trash" data-id={entry._id} onClick={this.props.onDeleteEntry} />
-              </td>
+      <div className="col-12">
+        <h4>Timecard</h4>
+        <table className="EntryList table table-sm table-hover table-striped">
+          <thead>
+            <tr>
+              {propertyMap.map(({ name, alias }, i) => <th key={name}>{alias}</th>)}
             </tr>
-          )).toArray()}
-        </tbody>
-        <tfoot>
-          <tr>
-            <td><button className="btn btn-sm btn-primary fa fa-plus" onClick={this.props.onNewEntry} /></td>
-          </tr>
-        </tfoot>
-      </table>
+          </thead>
+          <tbody>
+            {this.props.model.entries.map((entry: PgEntry, i) => (
+              <tr key={entry._id} onClick={this.props.onSelectEntry}
+                data-id={entry._id} title={entry._id}
+                className={this.props.selectedEntry === entry._id ? 'table-info' : ''}>
+                <td>Lookup Job</td>
+                <td><TaskField taskId={entry.taskId} /></td>
+                <td><TimeField value={entry.start} format="h:mm a" /></td>
+                <td><TimeField value={entry.end} format="h:mm a" /></td>
+                <td><DurationField from={entry.start} to={entry.end} /></td>
+                <td className="EntryList-controls">
+                  <span className="fa fa-retweet" data-task-id={entry.taskId} onClick={this.props.onContinueEntry} />
+                  <span className="fa fa-trash" data-id={entry._id} onClick={this.props.onDeleteEntry} />
+                </td>
+              </tr>
+            )).toArray()}
+          </tbody>
+          <tfoot>
+            <tr>
+              <td><button className="btn btn-sm btn-primary fa fa-plus" onClick={this.props.onNewEntry} /></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
     );
   }
 }

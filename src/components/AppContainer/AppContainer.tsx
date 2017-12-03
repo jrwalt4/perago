@@ -17,10 +17,10 @@ export const AppContainer = (props: AppContainerProps) => (
     <Header />
     <div className="container-fluid">
       <div className="row">
-        <Sidebar className="col-2 bg-info" title="Recent Tasks">
+        <Sidebar className="col-2 bg-info">
           {props.sidebarComponent}
         </Sidebar>
-        <PrimaryWindow className="col-7" title="Timecard">
+        <PrimaryWindow className="col-7">
           <div className="row">
             {props.primaryComponent}
           </div>

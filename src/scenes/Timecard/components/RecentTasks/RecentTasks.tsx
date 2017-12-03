@@ -13,16 +13,19 @@ type RecentTaskProps = {
 };
 
 let RecentTasksComponent = ({ recentTasks, continueTask }: RecentTaskProps) => (
-  <ul className="RecentEntries">
-    {
-      recentTasks.map((task) => (
-        <li key={task._id}>
-          <span>{task.name || 'Unknown'}</span>
-          <span className="RecentEntries-controls fa fa-retweet" onClick={() => continueTask(task._id)} />
-        </li>
-      ))
-    }
-  </ul>
+  <div className="col-12">
+    <h4>Recent Tasks</h4>
+    <ul className="RecentEntries">
+      {
+        recentTasks.map((task) => (
+          <li key={task._id}>
+            <span>{task.name || 'Unknown'}</span>
+            <span className="RecentEntries-controls fa fa-retweet" onClick={() => continueTask(task._id)} />
+          </li>
+        ))
+      }
+    </ul>
+  </div>
 );
 
 export let RecentTasks = connect(
