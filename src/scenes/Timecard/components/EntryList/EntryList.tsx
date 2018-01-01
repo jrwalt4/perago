@@ -1,42 +1,18 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 
-import { PgAppState, PgModelState } from 'store';
+import { PgAppState } from 'store';
 import { PgEntry } from 'store/models';
-import { PropertyMap } from 'store/models/pg-types';
 import { selectEntry, stopEditing, startTask, createEntry, deleteEntry } from 'store/actions';
 
 import { TimeField } from 'components/TimeField';
 import { DurationField } from 'components/DurationField';
 import { TaskField } from 'components/TaskField';
+import { Table, Column, RowRenderProps } from 'components/Table';
 
 import './EntryList.css';
 
 import 'font-awesome/css/font-awesome.min.css';
-
-let propertyMap: PropertyMap<PgEntry, 'job' | 'duration'>[] = [
-  {
-    name: 'job',
-    alias: 'Job',
-    render: (e) => <span>Job</span>
-  },
-  {
-    name: 'taskId',
-    alias: 'Task'
-  },
-  {
-    name: 'start',
-    alias: 'Start'
-  },
-  {
-    name: 'end',
-    alias: 'End'
-  },
-  {
-    name: 'duration',
-    alias: 'Duration'
-  }
-];
 
 interface DataElement extends HTMLElement {
   dataset: {
@@ -45,18 +21,63 @@ interface DataElement extends HTMLElement {
   };
 }
 
-type EntryListComponentProps = {
-  model: PgModelState
-  selectedEntry: string
-  deselectEntry: () => void
-  onSelectEntry: React.MouseEventHandler<DataElement & HTMLTableRowElement>
-  onCopyEntry: React.MouseEventHandler<DataElement>
-  onContinueEntry: React.MouseEventHandler<DataElement>
-  onNewEntry: React.MouseEventHandler<HTMLButtonElement>
-  onDeleteEntry: React.MouseEventHandler<DataElement>
-} & React.HTMLAttributes<HTMLTableElement>;
+interface EntryListComponentProps {
+  entries: PgEntry[];
+  selectedEntry: string;
+  deselectEntry: () => void;
+  onSelectEntry: React.MouseEventHandler<DataElement & HTMLTableRowElement>;
+  onCopyEntry: React.MouseEventHandler<DataElement>;
+  onContinueEntry: React.MouseEventHandler<DataElement>;
+  onNewEntry: React.MouseEventHandler<HTMLButtonElement>;
+  onDeleteEntry: React.MouseEventHandler<DataElement>;
+}
 
-export class EntryListComponent extends React.Component<EntryListComponentProps, {}> {
+interface EntryListComponentState {
+  data: PgEntry[];
+  columns: Column[];
+}
+
+export class EntryListComponent extends React.Component<EntryListComponentProps, EntryListComponentState> {
+  constructor(props: EntryListComponentProps) {
+    super(props);
+    this.state = {
+      data: props.entries,
+      columns: [
+        {
+          Header: 'Job',
+          Cell: 'Lookup'
+        },
+        {
+          id: 'task',
+          Header: 'Task',
+          accessor: (entry: PgEntry) => entry.taskId,
+          Cell: (rowProps: RowRenderProps) => {
+            return <TaskField taskId={rowProps.value} />;
+          }
+        },
+        {
+          Header: 'Start',
+          accessor: 'start',
+          Cell: (rowProps: RowRenderProps) => <TimeField value={rowProps.value} format="h:mm a" />
+        },
+        {
+          Header: 'End',
+          accessor: 'end',
+          Cell: (rowProps: RowRenderProps) => <TimeField value={rowProps.value} format="h:mm a" />
+        },
+        {
+          Header: 'Duration',
+          id: 'duration',
+          accessor: (entry: PgEntry) => entry,
+          Cell: (rowProps: RowRenderProps) => {
+            // tslint:disable-next-line:no-console
+            console.log(rowProps);
+            return <DurationField from={(rowProps.value as PgEntry).start} to={(rowProps.value as PgEntry).end} />;
+          }
+        }
+      ]
+    };
+  }
   componentWillMount() {
     document.addEventListener('keyup', this.handleKeyPress);
   }
@@ -68,7 +89,15 @@ export class EntryListComponent extends React.Component<EntryListComponentProps,
       this.props.deselectEntry();
     }
   }
-  render() {
+  render(): JSX.Element {
+    return (
+      <div className="col-12">
+        <h4>Timecard</h4>
+        <Table data={this.state.data}
+          columns={this.state.columns} />
+      </div>
+    );
+    /*
     return (
       <div className="col-12">
         <h4>Timecard</h4>
@@ -103,12 +132,13 @@ export class EntryListComponent extends React.Component<EntryListComponentProps,
         </table>
       </div>
     );
+    // */
   }
 }
 
 export let EntryList = connect(
   (state: PgAppState) => ({
-    model: state.model,
+    entries: state.model.entries.toArray(),
     selectedEntry: state.view.selectedEntry
   }),
   (dispatch) => ({

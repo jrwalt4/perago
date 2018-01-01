@@ -10,7 +10,7 @@ it('renders', () => {
   let render = () => shallow(
     (
       <EntryListComponent
-        model={PgModel.create()}
+        entries={PgModel.create().entries.toArray()}
         selectedEntry="1"
         deselectEntry={noop}
         onSelectEntry={noop}
