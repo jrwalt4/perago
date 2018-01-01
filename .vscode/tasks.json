@@ -6,6 +6,7 @@
   "isShellCommand": true,
   "showOutput": "always",
   "suppressTaskName": true,
+  "runner": "terminal",
   "tasks": [
     {
       "taskName": "install",
