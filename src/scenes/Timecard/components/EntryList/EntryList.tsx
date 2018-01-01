@@ -8,7 +8,7 @@ import { selectEntry, stopEditing, startTask, createEntry, deleteEntry } from 's
 import { TimeField } from 'components/TimeField';
 import { DurationField } from 'components/DurationField';
 import { TaskField } from 'components/TaskField';
-import { Table, Column, RowRenderProps } from 'components/Table';
+import { Table, Column, RowRenderProps, FinalState, RowInfo } from 'components/Table';
 
 import './EntryList.css';
 
@@ -25,7 +25,7 @@ interface EntryListComponentProps {
   entries: PgEntry[];
   selectedEntry: string;
   deselectEntry: () => void;
-  onSelectEntry: React.MouseEventHandler<DataElement & HTMLTableRowElement>;
+  selectEntry: (entryId: string) => void;
   onCopyEntry: React.MouseEventHandler<DataElement>;
   onContinueEntry: React.MouseEventHandler<DataElement>;
   onNewEntry: React.MouseEventHandler<HTMLButtonElement>;
@@ -33,7 +33,6 @@ interface EntryListComponentProps {
 }
 
 interface EntryListComponentState {
-  data: PgEntry[];
   columns: Column[];
 }
 
@@ -41,8 +40,13 @@ export class EntryListComponent extends React.Component<EntryListComponentProps,
   constructor(props: EntryListComponentProps) {
     super(props);
     this.state = {
-      data: props.entries,
       columns: [
+        // add '_id' column so entry._id can be accessed from row onClick handler
+        {
+          Header: 'Id',
+          accessor: '_id',
+          show: false
+        },
         {
           Header: 'Job',
           Cell: 'Lookup'
@@ -50,7 +54,7 @@ export class EntryListComponent extends React.Component<EntryListComponentProps,
         {
           id: 'task',
           Header: 'Task',
-          accessor: (entry: PgEntry) => entry.taskId,
+          accessor: 'taskId',
           Cell: (rowProps: RowRenderProps) => {
             return <TaskField taskId={rowProps.value} />;
           }
@@ -69,11 +73,9 @@ export class EntryListComponent extends React.Component<EntryListComponentProps,
           Header: 'Duration',
           id: 'duration',
           accessor: (entry: PgEntry) => entry,
-          Cell: (rowProps: RowRenderProps) => {
-            // tslint:disable-next-line:no-console
-            console.log(rowProps);
-            return <DurationField from={(rowProps.value as PgEntry).start} to={(rowProps.value as PgEntry).end} />;
-          }
+          Cell: (rowProps: RowRenderProps) => (
+            <DurationField from={(rowProps.value as PgEntry).start} to={(rowProps.value as PgEntry).end} />
+          )
         }
       ]
     };
@@ -90,49 +92,24 @@ export class EntryListComponent extends React.Component<EntryListComponentProps,
     }
   }
   render(): JSX.Element {
+    let selectFn = this.props.selectEntry;
     return (
       <div className="col-12">
         <h4>Timecard</h4>
-        <Table data={this.state.data}
-          columns={this.state.columns} />
+        <Table data={this.props.entries}
+          pageSize={this.props.entries.length}
+          showPagination={false}
+          columns={this.state.columns}
+          getTrProps={(state: FinalState, rowInfo: RowInfo) => ({
+            onClick: function (e: Event, handleOriginal: () => void) {
+              selectFn((rowInfo.row as PgEntry)._id);
+              if (handleOriginal && typeof handleOriginal === 'function') {
+                handleOriginal();
+              }
+            }
+          })} />
       </div>
     );
-    /*
-    return (
-      <div className="col-12">
-        <h4>Timecard</h4>
-        <table className="EntryList table table-sm table-hover table-striped">
-          <thead>
-            <tr>
-              {propertyMap.map(({ name, alias }, i) => <th key={name}>{alias}</th>)}
-            </tr>
-          </thead>
-          <tbody>
-            {this.props.model.entries.map((entry: PgEntry, i) => (
-              <tr key={entry._id} onClick={this.props.onSelectEntry}
-                data-id={entry._id} title={entry._id}
-                className={this.props.selectedEntry === entry._id ? 'table-info' : ''}>
-                <td>Lookup Job</td>
-                <td><TaskField taskId={entry.taskId} /></td>
-                <td><TimeField value={entry.start} format="h:mm a" /></td>
-                <td><TimeField value={entry.end} format="h:mm a" /></td>
-                <td><DurationField from={entry.start} to={entry.end} /></td>
-                <td className="EntryList-controls">
-                  <span className="fa fa-retweet" data-task-id={entry.taskId} onClick={this.props.onContinueEntry} />
-                  <span className="fa fa-trash" data-id={entry._id} onClick={this.props.onDeleteEntry} />
-                </td>
-              </tr>
-            )).toArray()}
-          </tbody>
-          <tfoot>
-            <tr>
-              <td><button className="btn btn-sm btn-primary fa fa-plus" onClick={this.props.onNewEntry} /></td>
-            </tr>
-          </tfoot>
-        </table>
-      </div>
-    );
-    // */
   }
 }
 
@@ -146,9 +123,8 @@ export let EntryList = connect(
       dispatch(selectEntry(''));
       dispatch(stopEditing());
     },
-    onSelectEntry: (ev: React.MouseEvent<DataElement>) => {
-      ev.stopPropagation();
-      dispatch(selectEntry(ev.currentTarget.dataset.id));
+    selectEntry: (entryId: string) => {
+      dispatch(selectEntry(entryId));
     },
     onContinueEntry: (ev: React.MouseEvent<DataElement>) => {
       // prevent row from being selected
