@@ -15,9 +15,9 @@ it('renders', () => {
         deselectEntry={noop}
         selectEntry={noop}
         onCopyEntry={noop}
-        onContinueEntry={noop}
+        continueTask={noop}
         onNewEntry={noop}
-        onDeleteEntry={noop}
+        deleteEntry={noop}
       />
     )
   );

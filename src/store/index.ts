@@ -14,6 +14,9 @@ export type PgAppState = {
   router: PgRouterState
 };
 
+// 'history' is used by index.tsx to create the ConnectedRouter component
+export { PgModelState, PgViewState, PgRouterState, history } from './reducers';
+
 interface Window {
   __REDUX_DEVTOOLS_EXTENSION__: typeof applyMiddleware;
   __REDUX_DEVTOOLS_EXTENSION_COMPOSE__: typeof compose;
@@ -32,6 +35,3 @@ export let store: Store<PgAppState> = createStore<PgAppState>(
     )
   )
 );
-
-// 'history' is used by index.tsx to create the ConnectedRouter component
-export { PgModelState, PgViewState, PgRouterState, history } from './reducers';

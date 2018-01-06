@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { PgAppState } from 'store';
 import { PgEntry } from 'store/models';
 import { selectEntry, stopEditing, startTask, createEntry, deleteEntry } from 'store/actions';
+import { getEntries } from 'store/selectors';
 
 import { TimeField } from 'components/TimeField';
 import { DurationField } from 'components/DurationField';
@@ -27,13 +28,17 @@ interface EntryListComponentProps {
   deselectEntry: () => void;
   selectEntry: (entryId: string) => void;
   onCopyEntry: React.MouseEventHandler<DataElement>;
-  onContinueEntry: React.MouseEventHandler<DataElement>;
+  continueTask: (taskId: string) => void;
   onNewEntry: React.MouseEventHandler<HTMLButtonElement>;
-  onDeleteEntry: React.MouseEventHandler<DataElement>;
+  deleteEntry: (entryId: string) => void;
 }
 
 interface EntryListComponentState {
   columns: Column[];
+}
+
+function stopPropagation<ElementType>(e: React.MouseEvent<ElementType>) {
+  e.stopPropagation();
 }
 
 export class EntryListComponent extends React.Component<EntryListComponentProps, EntryListComponentState> {
@@ -52,7 +57,6 @@ export class EntryListComponent extends React.Component<EntryListComponentProps,
           Cell: 'Lookup'
         },
         {
-          id: 'task',
           Header: 'Task',
           accessor: 'taskId',
           Cell: (rowProps: RowRenderProps) => {
@@ -92,7 +96,6 @@ export class EntryListComponent extends React.Component<EntryListComponentProps,
     }
   }
   render(): JSX.Element {
-    let selectFn = this.props.selectEntry;
     return (
       <div className="col-12 EntryList">
         <h4>Timecard</h4>
@@ -101,21 +104,32 @@ export class EntryListComponent extends React.Component<EntryListComponentProps,
           pageSize={this.props.entries.length}
           showPagination={false}
           columns={this.state.columns}
-          getTrProps={(state: FinalState, rowInfo: RowInfo) => ({
+          SubComponent={(rowInfo: RowInfo) => (
+            <div className="EntryList-controls-container" onClick={stopPropagation}>
+              <span className="EntryList-control-block">hello</span>
+              <span className="EntryList-control fa fa-retweet" onClick={() => {
+                this.props.continueTask((rowInfo.row as PgEntry).taskId);
+              }} />
+              <span className="EntryList-control fa fa-trash" onClick={() => {
+                this.props.deleteEntry((rowInfo.row as PgEntry)._id);
+              }} />
+            </div>
+          )}
+          getTrProps={() => ({
+            className: 'EntryList-row'
+          })}
+          getTdProps={(state: FinalState, rowInfo: RowInfo) => ({
             onClick: (e: Event, handleOriginal: () => void) => {
-              selectFn((rowInfo.row as PgEntry)._id);
-              if (handleOriginal && typeof handleOriginal === 'function') {
+              this.props.selectEntry((rowInfo.row as PgEntry)._id);
+              if (handleOriginal) {
                 handleOriginal();
               }
             },
-            className: 'EntryListRow'
-          })}
-          getTdProps={() => ({
-            className: 'EntryListData'
+            className: 'EntryList-data'
           })}
           getTheadThProps={() => ({
-            style: {outline: 'none'}
-          })}/>
+            style: { outline: 'none' }
+          })} />
       </div>
     );
   }
@@ -123,7 +137,7 @@ export class EntryListComponent extends React.Component<EntryListComponentProps,
 
 export let EntryList = connect(
   (state: PgAppState) => ({
-    entries: state.model.entries.toArray(),
+    entries: getEntries(state),
     selectedEntry: state.view.selectedEntry
   }),
   (dispatch) => ({
@@ -134,21 +148,11 @@ export let EntryList = connect(
     selectEntry: (entryId: string) => {
       dispatch(selectEntry(entryId));
     },
-    onContinueEntry: (ev: React.MouseEvent<DataElement>) => {
-      // prevent row from being selected
-      ev.stopPropagation();
-      let taskId = ev.currentTarget.dataset.taskId;
-      if (taskId) {
-        dispatch(startTask(taskId));
-      }
+    continueTask: (taskId: string) => {
+      dispatch(startTask(taskId));
     },
-    onDeleteEntry: (ev: React.MouseEvent<DataElement>) => {
-      // prevent row from being selected
-      ev.stopPropagation();
-      let entryId = ev.currentTarget.dataset.id;
-      if (entryId) {
-        dispatch(deleteEntry(entryId));
-      }
+    deleteEntry: (entryId: string) => {
+      dispatch(deleteEntry(entryId));
     },
     onNewEntry: (ev) => {
       dispatch(createEntry({ start: Date.now() }));

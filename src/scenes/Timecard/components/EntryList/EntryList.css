@@ -1,7 +1,27 @@
-.EntryListData {
+.EntryList-data {
   text-align: center;
 }
 
-.EntryListRow {
-  cursor: pointer
+.EntryList-row {
+  cursor: pointer;
+}
+
+.Entrylist-control-container {
+  height: 1.2em;
+  vertical-align: middle;
+}
+
+.EntryList-control-block {
+  visibility: hidden;
+  font-size: 1.3em;
+}
+
+.EntryList-control {
+  font-size: 5px;
+  padding: 0.5em;
+}
+
+.EntryList-control:hover {
+  font-weight: bold;
+  font-size: 1.1em;
 }
