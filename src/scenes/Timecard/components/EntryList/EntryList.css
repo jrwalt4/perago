@@ -1,39 +1,7 @@
-.EntryList {
-  width:100%;
-  max-width:100%;
-}
-.EntryList td, .EntryList th {
+.EntryListData {
   text-align: center;
 }
 
-.EntryList td {
-  font-size: 0.75rem;
-}
-
-.EntryList tr td {
+.EntryListRow {
   cursor: pointer
-}
-
-.EntryList-controls {
-  visibility: hidden;
-  width: 6em;
-  max-width: 6em;
-}
-
-.EntryList-controls * {
-  padding: 0 0.3em;
-}
-
-.EntryList tr:hover .EntryList-controls {
-  visibility: visible;
-}
-
-.EntryList-controls *:hover {
-  position: relative;
-  font-size: 1.2em;
-  font-weight: bold;
-}
-
-.EntryList button {
-  cursor: pointer;
 }

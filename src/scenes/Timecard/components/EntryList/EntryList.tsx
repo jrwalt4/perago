@@ -94,20 +94,28 @@ export class EntryListComponent extends React.Component<EntryListComponentProps,
   render(): JSX.Element {
     let selectFn = this.props.selectEntry;
     return (
-      <div className="col-12">
+      <div className="col-12 EntryList">
         <h4>Timecard</h4>
         <Table data={this.props.entries}
+          className="-striped -highlight"
           pageSize={this.props.entries.length}
           showPagination={false}
           columns={this.state.columns}
           getTrProps={(state: FinalState, rowInfo: RowInfo) => ({
-            onClick: function (e: Event, handleOriginal: () => void) {
+            onClick: (e: Event, handleOriginal: () => void) => {
               selectFn((rowInfo.row as PgEntry)._id);
               if (handleOriginal && typeof handleOriginal === 'function') {
                 handleOriginal();
               }
-            }
-          })} />
+            },
+            className: 'EntryListRow'
+          })}
+          getTdProps={() => ({
+            className: 'EntryListData'
+          })}
+          getTheadThProps={() => ({
+            style: {outline: 'none'}
+          })}/>
       </div>
     );
   }
