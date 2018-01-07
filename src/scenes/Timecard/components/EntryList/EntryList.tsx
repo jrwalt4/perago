@@ -104,19 +104,20 @@ export class EntryListComponent extends React.Component<EntryListComponentProps,
           pageSize={this.props.entries.length}
           showPagination={false}
           columns={this.state.columns}
+          ExpanderComponent={() => <span className="EntryList-expander fa fa-ellipsis-v" />}
           SubComponent={(rowInfo: RowInfo) => (
-            <div className="EntryList-controls-container" onClick={stopPropagation}>
-              <span className="EntryList-control-block">hello</span>
-              <span className="EntryList-control fa fa-retweet" onClick={() => {
+            <div className="EntryList-control-container btn-group" onClick={stopPropagation}>
+              <span className="EntryList-control btn btn-sm btn-primary fa fa-retweet" onClick={() => {
                 this.props.continueTask((rowInfo.row as PgEntry).taskId);
               }} />
-              <span className="EntryList-control fa fa-trash" onClick={() => {
+              <span className="EntryList-control btn btn-sm btn-danger fa fa-trash" onClick={() => {
                 this.props.deleteEntry((rowInfo.row as PgEntry)._id);
               }} />
             </div>
           )}
-          getTrProps={() => ({
-            className: 'EntryList-row'
+          getTrProps={(state: FinalState, { row }: RowInfo) => ({
+            className: 'EntryList-row' + (row._id === this.props.selectedEntry ? ' EntryList-selected' : ''),
+            style: (row._id === this.props.selectedEntry ? { background: 'rgba(173,216,230,0.5)' } : null)
           })}
           getTdProps={(state: FinalState, rowInfo: RowInfo) => ({
             onClick: (e: Event, handleOriginal: () => void) => {
@@ -130,6 +131,9 @@ export class EntryListComponent extends React.Component<EntryListComponentProps,
           getTheadThProps={() => ({
             style: { outline: 'none' }
           })} />
+        <div className="EntryList-control-container btn-group">
+          <span className="EntryList-control btn btn-sm btn-primary fa fa-plus" onClick={this.props.onNewEntry} />
+        </div>
       </div>
     );
   }
