@@ -15,19 +15,11 @@ import './EntryList.css';
 
 import 'font-awesome/css/font-awesome.min.css';
 
-interface DataElement extends HTMLElement {
-  dataset: {
-    id: string,
-    taskId?: string
-  };
-}
-
 interface EntryListComponentProps {
   entries: PgEntry[];
   selectedEntry: string;
   deselectEntry: () => void;
   selectEntry: (entryId: string) => void;
-  onCopyEntry: React.MouseEventHandler<DataElement>;
   continueTask: (taskId: string) => void;
   onNewEntry: React.MouseEventHandler<HTMLButtonElement>;
   deleteEntry: (entryId: string) => void;
