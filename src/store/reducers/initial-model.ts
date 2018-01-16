@@ -27,11 +27,23 @@ export const initialModelState: PgModelState = PgModel.from({
   tasks: [
     {
       _id: '1',
-      name: 'Task 1'
+      name: 'Task 1',
+      parentId: '10'
     },
     {
       _id: '5',
-      name: 'Task 2'
+      name: 'Task 2',
+      parentId: '11'
+    }
+  ],
+  projects: [
+    {
+      _id: '10',
+      name: 'Do Something'
+    },
+    {
+      _id: '11',
+      name: 'Do Something Else'
     }
   ]
 });

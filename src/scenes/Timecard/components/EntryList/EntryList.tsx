@@ -4,11 +4,12 @@ import { connect } from 'react-redux';
 import { PgAppState } from 'store';
 import { PgEntry } from 'store/models';
 import { selectEntry, stopEditing, startTask, createEntry, deleteEntry } from 'store/actions';
-import { getEntries } from 'store/selectors';
+import { entriesArraySelector } from 'store/selectors';
 
 import { TimeField } from 'components/TimeField';
 import { DurationField } from 'components/DurationField';
 import { TaskField } from 'components/TaskField';
+import { ConnectedProjectField } from 'components/ProjectField';
 import { Table, Column, RowRenderProps, FinalState, RowInfo } from 'components/Table';
 
 import './EntryList.css';
@@ -46,7 +47,9 @@ export class EntryListComponent extends React.Component<EntryListComponentProps,
         },
         {
           Header: 'Job',
-          Cell: 'Lookup'
+          id: 'project',
+          accessor: 'taskId',
+          Cell: (rowProps: RowRenderProps) => <ConnectedProjectField taskId={rowProps.value} />
         },
         {
           Header: 'Task',
@@ -133,7 +136,7 @@ export class EntryListComponent extends React.Component<EntryListComponentProps,
 
 export let EntryList = connect(
   (state: PgAppState) => ({
-    entries: getEntries(state),
+    entries: entriesArraySelector(state),
     selectedEntry: state.view.selectedEntry
   }),
   (dispatch) => ({

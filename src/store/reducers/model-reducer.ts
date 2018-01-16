@@ -21,7 +21,7 @@ export function modelReducer(
     case setTaskName.type:
       return PgModel.setTaskName(model as PgModelRecord, action.payload._id, name);
     case setTaskJob.type:
-      return PgModel.setTaskProject(model as PgModelRecord, action.payload._id, action.payload.jobId);
+      return PgModel.setTaskParent(model as PgModelRecord, action.payload._id, action.payload.jobId);
     case startTask.type:
       let stoppedModel = PgModel.stopAllEntries(model as PgModelRecord);
       let newEntry = PgEntry.createAndStart().set('taskId', action.payload);

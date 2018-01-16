@@ -1,21 +1,26 @@
 import * as cuid from 'cuid';
 import { Record } from 'immutable';
 
-import { RecordType, RecordTypeConstructor, PgBase } from './pg-types';
+import { PgBase } from './pg-types';
+import { RecordType, RecordTypeConstructor } from './pg-types';
 
 export interface PgTask extends PgBase {
-  parentTaskId: string;
-  jobId: string;
-  duration: number;
+  parentId: string;
+  duration: number | undefined;
   name: string;
+  number: string;
+  description: string;
+  _isPgTask: boolean;
 }
 
 const defaultTask: PgTask = {
   _id: '',
-  parentTaskId: '',
-  jobId: '',
+  parentId: '',
   duration: 0,
-  name: ''
+  name: '',
+  number: '',
+  description: '',
+  _isPgTask: true
 };
 
 // There is an error in the type definitnions for Immutable.Record,
@@ -38,7 +43,11 @@ export namespace PgTask {
   export function setParent(task: PgTaskRecord, parentTaskId: string): PgTaskRecord;
   export function setParent(task: PgTaskRecord, parentTask: PgTaskRecord): PgTaskRecord;
   export function setParent(task: PgTaskRecord, taskOrId: string | PgTaskRecord): PgTaskRecord {
-    let taskId = typeof taskOrId === 'string' ? taskOrId : taskOrId.parentTaskId;
-    return (PgTask.from(task) as PgTaskRecord).set('parentTaskId', taskId);
+    let taskId = typeof taskOrId === 'string' ? taskOrId : taskOrId.parentId;
+    return (PgTask.from(task) as PgTaskRecord).set('parentId', taskId);
+  }
+
+  export function isTask(maybeTask: {}): maybeTask is PgTask {
+    return maybeTask && (maybeTask as PgTask)._isPgTask;
   }
 }

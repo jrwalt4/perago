@@ -18,6 +18,7 @@ import { DurationField } from 'components/DurationField';
 import { NewTask } from 'scenes/Timecard/components/NewTask';
 
 import './EntryDetail.css';
+import { ConnectedProjectField } from 'components/ProjectField';
 
 type EntryDetailStateProps = {
   entry: PgEntry
@@ -82,7 +83,7 @@ export class EntryDetailComponent extends React.Component<EntryDetailProps, Entr
         <table className="EntryDetail table table-sm table-bordered">
           <tbody>
             <tr>
-              <th>Job:</th><td>Lookup Job</td>
+              <th>Job:</th><td><ConnectedProjectField taskId={entry.taskId}/></td>
             </tr>
             <tr>
               <th>Task:</th>

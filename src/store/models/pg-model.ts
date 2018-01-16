@@ -69,10 +69,34 @@ export namespace PgModel {
     return (model as PgModelRecord).setIn(['tasks', taskId, 'name'], name);
   }
 
-  export function setTaskProject(model: PgModelRecord, task: string | PgTask, project: string | PgTask): PgModelRecord {
+  export function setTaskParent(model: PgModelRecord, task: string | PgTask, project: string | PgTask): PgModelRecord {
     let taskId = typeof task === 'string' ? task : task._id;
     let projectId = typeof project === 'string' ? project : project._id;
     return (model as PgModelRecord).setIn(['tasks', taskId, 'parentTask'], projectId || project);
+  }
+
+  export function getTaskParent(model: PgModel, taskId: string): PgTask | PgProject;
+  export function getTaskParent(model: PgModel, task: PgTask): PgTask | PgProject;
+  export function getTaskParent(model: PgModel, taskOrId: string | PgTask): PgTask | PgProject {
+    let task = typeof taskOrId === 'string' ? model.tasks.get(taskOrId) : taskOrId;
+    if (PgTask.isTask(task)) {
+      let parentId = task.parentId;
+      return model.tasks.get(parentId) || model.projects.get(parentId);
+    } else {
+      throw new Error(`Task ${task} does not exist`);
+    }
+  }
+
+  export function getTaskProject(model: PgModel, taskId: string): PgProject | undefined;
+  export function getTaskProject(model: PgModel, task: PgTask): PgProject | undefined;
+  export function getTaskProject(model: PgModel, taskOrId: string | PgTask): PgProject | undefined {
+    let task: PgTask = typeof taskOrId === 'string' ? model.tasks.get(taskOrId) : taskOrId;
+    let parent: PgTask | PgProject = task;
+    while (PgTask.isTask(parent)) {
+      task = parent;
+      parent = getTaskParent(model, task);
+    }
+    return PgProject.isProject(parent) ? parent : void 0;
   }
 
   export function addEntry(model: PgModelRecord, entry: PgEntry): PgModelRecord {

@@ -6,13 +6,15 @@ export interface PgProject extends PgBase {
   name: string;
   number: string;
   description: string;
+  clientId: string;
 }
 
 export const defaultProject: PgProject = {
   _id: '',
   name: '',
   number: '',
-  description: ''
+  description: '',
+  clientId: ''
 };
 
 // tslint:disable-next-line:no-any
@@ -31,5 +33,8 @@ export namespace PgProject {
       ...props,
       _id
     });
+  }
+  export function isProject(maybeProject: {}): maybeProject is PgProject {
+    return maybeProject && typeof (maybeProject as PgProject).clientId === 'string';
   }
 }

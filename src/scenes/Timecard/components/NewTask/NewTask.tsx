@@ -57,7 +57,7 @@ export class NewTaskComponent extends React.Component<NewTaskOwnProps, NewTaskSt
     event.preventDefault();
     this.props.createNewTask({
       name: this.state.newTaskName,
-      parentTaskId: this.state.newTaskParentId
+      parentId: this.state.newTaskParentId
     });
     if (this.props.requestClose) {
       this.props.requestClose();
