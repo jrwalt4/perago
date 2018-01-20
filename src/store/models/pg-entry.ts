@@ -105,6 +105,10 @@ export namespace PgEntry {
     return entry;
   }
 
+  export function getDuration({ start, end }: PgEntry): number {
+    return (typeof end === 'undefined' ? Date.now() : end) - start;
+  }
+
   // const dateExp = /(\d{1,2})?[\\/-\s]+(\d{1,2})?[\\/-\s]+(\d{1,2})?/;
 
   export function parseDateString(dateString: string): Date {

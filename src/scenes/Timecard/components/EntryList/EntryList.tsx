@@ -9,9 +9,10 @@ import { entriesArraySelector } from 'store/selectors';
 import { TimeField } from 'components/TimeField';
 import { DurationField } from 'components/DurationField';
 import { TaskField } from 'components/TaskField';
+import { DateField } from 'components/DateField';
 import { ConnectedProjectField } from 'components/ProjectField';
 import { Table, Column, RowRenderProps, FinalState, RowInfo } from 'components/Table';
-
+import { getFullDate } from 'util/time';
 import './EntryList.css';
 
 import 'font-awesome/css/font-awesome.min.css';
@@ -46,35 +47,58 @@ export class EntryListComponent extends React.Component<EntryListComponentProps,
           show: false
         },
         {
+          Header: 'Date',
+          id: 'date',
+          accessor: (entry: PgEntry) => getFullDate(entry.start),
+          pivot: true,
+          PivotValue: (rowProps: RowRenderProps) => {
+            // rowProps.value will return the date timestamp as a string
+            let timestamp = parseInt(rowProps.value, 10);
+            return <DateField value={timestamp} format="MMM D" />;
+          },
+          Cell: (rowProps: RowRenderProps) => <DateField value={rowProps.value} />,
+          Aggregated: (rowProps: RowRenderProps) => <DateField value={rowProps.value} />
+        },
+        {
           Header: 'Job',
           id: 'project',
           accessor: 'taskId',
-          Cell: (rowProps: RowRenderProps) => <ConnectedProjectField taskId={rowProps.value} />
+          Cell: (rowProps: RowRenderProps) => <ConnectedProjectField taskId={rowProps.value} />,
+          // Aggregated: () => <i>Multiple</i>
         },
         {
           Header: 'Task',
           accessor: 'taskId',
           Cell: (rowProps: RowRenderProps) => {
             return <TaskField taskId={rowProps.value} />;
-          }
+          },
+          // Aggregated: () => <i>Multiple</i>
         },
         {
           Header: 'Start',
           accessor: 'start',
-          Cell: (rowProps: RowRenderProps) => <TimeField value={rowProps.value} format="h:mm a" />
+          Cell: (rowProps: RowRenderProps) => <TimeField value={rowProps.value} format="h:mm a" />,
+          Aggregated: (rowProps: RowRenderProps) => <i>Multiple</i>
         },
         {
           Header: 'End',
           accessor: 'end',
-          Cell: (rowProps: RowRenderProps) => <TimeField value={rowProps.value} format="h:mm a" />
+          Cell: (rowProps: RowRenderProps) => <TimeField value={rowProps.value} format="h:mm a" />,
+          Aggregated: (rowProps: RowRenderProps) => <i>Multiple</i>
         },
         {
           Header: 'Duration',
           id: 'duration',
-          accessor: (entry: PgEntry) => entry,
-          Cell: (rowProps: RowRenderProps) => (
-            <DurationField from={(rowProps.value as PgEntry).start} to={(rowProps.value as PgEntry).end} />
-          )
+          accessor: (entry: PgEntry) => PgEntry.getDuration(entry),
+          aggregate: (values: number[]) => {
+            return values.reduce((total: number, duration: number) => {
+              return duration + total;
+              // tslint:disable-next-line:align
+            }, 0);
+          },
+          Cell: function (rowProps: RowRenderProps) {
+            return <DurationField value={rowProps.value} />;
+          }
         }
       ]
     };
@@ -96,7 +120,8 @@ export class EntryListComponent extends React.Component<EntryListComponentProps,
         <h4>Timecard</h4>
         <Table data={this.props.entries}
           className="-striped -highlight"
-          pageSize={this.props.entries.length}
+          defaultPageSize={10}
+          collapseOnDataChange={false}
           showPagination={false}
           columns={this.state.columns}
           ExpanderComponent={() => <span className="EntryList-expander fa fa-ellipsis-v" />}
@@ -110,14 +135,29 @@ export class EntryListComponent extends React.Component<EntryListComponentProps,
               }} />
             </div>
           )}
-          getTrProps={(state: FinalState, { row }: RowInfo) => ({
-            className: 'EntryList-row' + (row._id === this.props.selectedEntry ? ' EntryList-selected' : ''),
-            style: (row._id === this.props.selectedEntry ? { background: 'rgba(173,216,230,0.5)' } : null)
-          })}
+          getTrProps={(state: FinalState, rowInfo: RowInfo) => {
+            if (rowInfo && rowInfo.row) {
+              let { row } = rowInfo;
+              let _id = row && row._id;
+              if (_id && (_id === this.props.selectedEntry)) {
+                return {
+                  className: 'EntryList-row' + ' EntryList-selected',
+                  style: { background: 'rgba(173,216,230,0.5)' }
+                };
+              }
+            }
+            return {
+              className: 'EntryList-row'
+            };
+          }}
           getTdProps={(state: FinalState, rowInfo: RowInfo) => ({
             onClick: (e: Event, handleOriginal: () => void) => {
-              this.props.selectEntry((rowInfo.row as PgEntry)._id);
-              if (handleOriginal) {
+              if (rowInfo && rowInfo.row) {
+                this.props.selectEntry((rowInfo.row as PgEntry)._id);
+              } else {
+                this.props.deselectEntry();
+              }
+              if (handleOriginal && typeof handleOriginal === 'function') {
                 handleOriginal();
               }
             },
@@ -125,7 +165,9 @@ export class EntryListComponent extends React.Component<EntryListComponentProps,
           })}
           getTheadThProps={() => ({
             style: { outline: 'none' }
-          })} />
+          })}
+          pivotBy={['date']}
+        />
         <div className="EntryList-control-container btn-group">
           <span className="EntryList-control btn btn-sm btn-primary fa fa-plus" onClick={this.props.onNewEntry} />
         </div>
