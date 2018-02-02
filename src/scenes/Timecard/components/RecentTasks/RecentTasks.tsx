@@ -4,17 +4,20 @@ import { connect } from 'react-redux';
 import { PgTask } from 'store/models';
 import { startTask } from 'store/actions';
 import { PgAppState } from 'store';
+import { recentTasksArraySelector } from 'store/selectors';
+import { loadModel } from 'store/actions';
 
 import './RecentEntries.css';
 
 type RecentTaskProps = {
   recentTasks: PgTask[];
   continueTask: (taskId: string) => void;
+  load: () => void;
 };
 
-let RecentTasksComponent = ({ recentTasks, continueTask }: RecentTaskProps) => (
+let RecentTasksComponent = ({ recentTasks, continueTask, load }: RecentTaskProps) => (
   <div className="col-12">
-    <h4>Recent Tasks</h4>
+    <h4 onClick={load}>Recent Tasks</h4>
     <ul className="RecentEntries">
       {
         recentTasks.map((task) => (
@@ -29,13 +32,16 @@ let RecentTasksComponent = ({ recentTasks, continueTask }: RecentTaskProps) => (
 );
 
 export let RecentTasks = connect(
-  ({ model, view }: PgAppState) => {
+  (state: PgAppState) => {
     return {
-      recentTasks: view.recentTasks.map((taskId) => model.tasks.get(taskId))
+      recentTasks: recentTasksArraySelector(state)
     };
   },
   (dispatch) => ({
     continueTask: (taskId: string) => {
       dispatch(startTask(taskId));
+    },
+    load: () => {
+      dispatch(loadModel());
     }
   }))(RecentTasksComponent);

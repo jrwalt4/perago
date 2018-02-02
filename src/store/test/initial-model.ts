@@ -2,7 +2,7 @@ import { PgModel } from 'store/models';
 
 export type PgModelState = PgModel;
 
-export const initialModelState: PgModelState = PgModel.from({
+export const initialModel: PgModelState = PgModel.from({
   entries: [
     {
       taskId: '1',

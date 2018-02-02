@@ -2,6 +2,7 @@ import {
   applyMiddleware, combineReducers,
   compose, createStore, Store
 } from 'redux';
+import thunk from 'redux-thunk';
 
 import {
   reducers, routerMiddleware, history,
@@ -31,7 +32,8 @@ export let store: Store<PgAppState> = createStore<PgAppState>(
   }),
   composeEnhancers(
     applyMiddleware(
-      routerMiddleware(history)
+      routerMiddleware(history),
+      thunk
     )
   )
 );

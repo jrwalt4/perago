@@ -1,8 +1,12 @@
 import { MomentInput } from 'moment';
+import { ThunkAction } from 'redux-thunk';
 
-import { PgEntry, PgTask } from '../models';
+import { PgAppState } from 'store';
+import { PgModel, PgEntry, PgTask } from 'store/models';
+import { loadModelFromStore } from 'store/data';
 
 export type PgModelAction =
+  loadModelSuccess.Action |
   createEntry.Action |
   createTask.Action |
   deleteEntry.Action |
@@ -13,6 +17,29 @@ export type PgModelAction =
   setEntryStartTime.Action |
   setEntryEndTime.Action |
   setEntryDate.Action;
+
+export function loadModel(): ThunkAction<void, PgAppState, {}> {
+  return (dispatch, getState) => {
+    loadModelFromStore().then((model) => {
+      dispatch(loadModelSuccess(model));
+    });
+  };
+}
+
+export function loadModelSuccess(model: PgModel.PgModelInputs): loadModelSuccess.Action {
+  return {
+    type: 'LOAD_MODEL',
+    payload: model
+  };
+}
+
+export namespace loadModelSuccess {
+  export type Action = {
+    type: 'LOAD_MODEL',
+    payload: PgModel.PgModelInputs
+  };
+  export const type = 'LOAD_MODEL';
+}
 
 export function createEntry(entry: Partial<PgEntry>): createEntry.Action {
   return {

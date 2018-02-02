@@ -24,5 +24,10 @@ export const taskIdSelector = (state: PgAppState, props: { taskId: string }) => 
 
 export const taskProjectSelector = createSelector(
   [modelSelector, taskIdSelector],
-  (model: PgModel, taskId: string ) => PgModel.getTaskProject(model, taskId)
+  (model: PgModel, taskId: string) => PgModel.getTaskProject(model, taskId)
+);
+
+export const recentTasksArraySelector = createSelector(
+  [modelSelector],
+  (model: PgModel) => PgModel.getRecentTasks(model).toArray()
 );

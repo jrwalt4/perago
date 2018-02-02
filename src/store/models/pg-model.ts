@@ -1,4 +1,4 @@
-import { Map, Record } from 'immutable';
+import { Map, Record, Iterable } from 'immutable';
 
 import * as moment from 'moment';
 
@@ -29,13 +29,13 @@ export namespace PgModel {
     return new PgModelConstructor();
   }
 
-  type PgModelInputs = {
+  export type PgModelInputs = {
     tasks: Partial<PgTask>[],
     entries: Partial<PgEntry>[],
     projects?: Partial<PgProject>[]
-  };
+  } | PgModel;
 
-  export function from(model: PgModelInputs | PgModel): PgModelRecord {
+  export function from(model: PgModelInputs): PgModelRecord {
     let { tasks, entries, projects } = model;
     projects = projects || [];
     if (Array.isArray(tasks) && Array.isArray(entries) && Array.isArray(projects)) {
@@ -97,6 +97,15 @@ export namespace PgModel {
       parent = getTaskParent(model, task);
     }
     return PgProject.isProject(parent) ? parent : void 0;
+  }
+
+  export function getRecentTasks(model: PgModel, maxCount: number = 5): Map<string, PgTask> {
+    return model.entries.groupBy((entry: PgEntry) => entry.taskId)
+      .sortBy((entryIterable: Iterable<string, PgEntry>) => {
+        return entryIterable.sortBy((entry: PgEntry) => entry.start).first().start;
+      })
+      .take(maxCount)
+      .map((entryIterable, taskId: string) => model.tasks.get(taskId)).toMap();
   }
 
   export function addEntry(model: PgModelRecord, entry: PgEntry): PgModelRecord {
