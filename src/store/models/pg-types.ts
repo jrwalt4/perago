@@ -19,6 +19,7 @@ export interface RecordInstance<RType> {
   withMutations(mutator: (p: this) => any): this;
   asMutable(): this;
   asImmutable(): this;
+  toJS(): RType;
 }
 
 export type RecordType<RType> = Readonly<RType> & RecordInstance<RType>;
