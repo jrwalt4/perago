@@ -36,10 +36,10 @@ export class IdbModelStore implements ModelStore {
   }
 
   getAll<S extends StoreName>(store: S): Promise<StoreSchema[S][]> {
-    return this._getDb().then<PgObject[]>((db) => {
-      let objectStore = db.transaction(store, 'readonly').objectStore(store);
-      if (objectStore.getAll) {
+    if (IDBObjectStore.prototype.getAll) {
+      return this._getDb().then<PgObject[]>((db) => {
         return new Promise((getAllResolve, getAllReject) => {
+          let objectStore = db.transaction(store, 'readonly').objectStore(store);
           let getAllRequest = (objectStore.getAll as () => IDBRequest)();
           getAllRequest.onsuccess = (ev) => {
             getAllResolve(getAllRequest.result);
@@ -48,23 +48,13 @@ export class IdbModelStore implements ModelStore {
             getAllReject(getAllRequest.error);
           };
         });
-      }
-      return new Promise((getAllResolve, getAllReject) => {
-        let results: StoreSchema[S][] = [];
-        let cursorRequest = objectStore.openCursor();
-        cursorRequest.onsuccess = (ev) => {
-          let cursor: IDBCursorWithValue = cursorRequest.result;
-          if (cursor && cursor.value) {
-            results.push(cursor.value);
-            cursor.continue();
-          } else {
-            getAllResolve(results);
-          }
-        };
-        cursorRequest.onerror = (ev) => {
-          getAllReject(cursorRequest.error);
-        };
       });
+    }
+    let items: StoreSchema[S][] = [];
+    return this.iterate(store, (item, id, count) => {
+      items.push(item);
+    }).then((count) => {
+      return items;
     });
   }
 
@@ -84,27 +74,100 @@ export class IdbModelStore implements ModelStore {
   }
 
   updateItem<S extends StoreName>(store: S, value: StoreSchema[S]): Promise<StoreSchema[S]> {
-    throw new Error('not implemented');
+    return this._getDb().then<PgObject>((db) => {
+      return new Promise<PgObject>((putResolve, putReject) => {
+        let jsValue = IdbModelStore._sanitize(value);
+        let putRequest = db.transaction(store, 'readwrite').objectStore(store).put(jsValue);
+        putRequest.onsuccess = (ev) => {
+          putResolve(jsValue);
+        };
+        putRequest.onerror = (ev) => {
+          putReject(putRequest.error);
+        };
+      });
+    });
   }
 
   removeItem<S extends StoreName>(store: S, id: string): Promise<string> {
-    throw new Error('not implemented');
+    return this._getDb().then<string>((db) => {
+      return new Promise<string>((putResolve, putReject) => {
+        let deleteRequest = db.transaction(store, 'readwrite').objectStore(store).delete(id);
+        deleteRequest.onsuccess = (ev) => {
+          putResolve(id);
+        };
+        deleteRequest.onerror = (ev) => {
+          putReject(deleteRequest.error);
+        };
+      });
+    });
   }
 
   clear<S extends StoreName>(store: S): Promise<void> {
     throw new Error('not implemented');
   }
 
+  clearAll(): Promise<void> {
+    return new Promise((clearResolve, clearReject) => {
+      let deleteRequest = idb.deleteDatabase(this._dbName);
+      deleteRequest.onsuccess = (ev) => {
+        clearResolve();
+      };
+      deleteRequest.onerror = (ev) => {
+        clearReject(deleteRequest.error);
+      };
+    });
+  }
+
   getKeys<S extends StoreName>(store: S): Promise<string[]> {
-    throw new Error('not implemented');
+    return this._getDb().then<string[]>((db) => {
+      return new Promise((getKeysResolve, getKeysReject) => {
+        let keys: string[] = [];
+        this.iterate(store, (val, id, count) => {
+          keys.push(id);
+        }).then((count) => {
+          return keys;
+        });
+      });
+    });
   }
 
   count<S extends StoreName>(store: S): Promise<number> {
-    throw new Error('not implemented');
+    return this._getDb().then<number>((db) => {
+      return new Promise((countResolve, countReject) => {
+        let countRequest = db.transaction(store, 'readonly').objectStore(store).count();
+        countRequest.onsuccess = (ev) => {
+          countResolve(countRequest.result);
+        };
+        countRequest.onerror = (ev) => {
+          countReject(countRequest.error);
+        };
+      });
+    });
   }
 
-  iterate<S extends StoreName>(store: S, callback: IteratorCallback<StoreSchema[S]>): Promise<number> {
-    throw new Error('not implemented');
+  iterate<S extends StoreName>(
+    store: S,
+    callback: IteratorCallback<StoreSchema[S]>,
+    withMutations: boolean = false
+  ): Promise<number> {
+    return this._getDb().then<number>((db) => {
+      return new Promise<number>((iterateResolve, iterateReject) => {
+        let iterationCount = 0;
+        let mode: IDBTransactionMode = withMutations ? 'readwrite' : 'readonly';
+        let cursorRequest = db.transaction(store, mode).objectStore(store).openCursor();
+        cursorRequest.onsuccess = (ev) => {
+          let cursor: IDBCursorWithValue = cursorRequest.result;
+          if (cursor && cursor.value) {
+            callback(cursor.value, cursor.primaryKey, iterationCount++);
+          } else {
+            iterateResolve(iterationCount);
+          }
+        };
+        cursorRequest.onerror = (ev) => {
+          iterateReject(cursorRequest.error);
+        };
+      });
+    });
   }
 
   private _getDb(): Promise<IDBDatabase> {
@@ -127,7 +190,7 @@ export class IdbModelStore implements ModelStore {
 
   private _upgradeDb(db: IDBDatabase): void {
     db.createObjectStore('entries', {
-      keyPath: '_id'
+      keyPath: '_id',
     }).createIndex('taskIndex', 'taskId');
     db.createObjectStore('tasks', {
       keyPath: '_id'

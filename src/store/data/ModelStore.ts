@@ -12,6 +12,8 @@ export interface ModelStore {
   removeItem<S extends StoreName>(store: S, id: string): Promise<string>;
 
   clear<S extends StoreName>(store: S): Promise<void>;
+  
+  clearAll(): Promise<void>;
 
   getKeys<S extends StoreName>(store: S): Promise<string[]>;
 
@@ -29,5 +31,5 @@ export interface StoreSchema {
 export type StoreName = keyof StoreSchema;
 
 export interface IteratorCallback<T> {
-  (value: T, key: string, index: number): undefined | {};
+  (value: T, key: string, index: number): void | {};
 }
