@@ -10,7 +10,7 @@ export function modelReducer(
   switch (action.type) {
     case actions.loadModelSuccess.type:
       return PgModel.from(action.payload);
-    case actions.createEntry.type:
+    case actions.createEntrySuccess.type:
       return PgModel.addEntry(PgModel.stopAllEntries(model), PgEntry.from(action.payload));
     case actions.deleteEntry.type:
       return PgModel.deleteEntry(model, action.payload);

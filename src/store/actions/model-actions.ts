@@ -3,11 +3,13 @@ import { ThunkAction } from 'redux-thunk';
 
 import { PgAppState } from 'store';
 import { PgModel, PgEntry, PgTask } from 'store/models';
-import { loadModelFromStore } from 'store/data';
+import * as data from 'store/data';
 
 export type PgModelAction =
   loadModelSuccess.Action |
-  createEntry.Action |
+  loadModelError.Action |
+  createEntrySuccess.Action |
+  createEntryError.Action |
   createTask.Action |
   deleteEntry.Action |
   setTaskName.Action |
@@ -20,40 +22,82 @@ export type PgModelAction =
 
 export function loadModel(): ThunkAction<void, PgAppState, {}> {
   return (dispatch, getState) => {
-    loadModelFromStore().then((model) => {
+    data.loadModelFromStore().then((model) => {
       dispatch(loadModelSuccess(model));
+    }).catch((err) => {
+      dispatch(loadModelError(err));
     });
   };
 }
 
 export function loadModelSuccess(model: PgModel.PgModelInputs): loadModelSuccess.Action {
   return {
-    type: 'LOAD_MODEL',
+    type: 'LOAD_MODEL_SUCCESS',
     payload: model
   };
 }
 
 export namespace loadModelSuccess {
   export type Action = {
-    type: 'LOAD_MODEL',
+    type: 'LOAD_MODEL_SUCCESS',
     payload: PgModel.PgModelInputs
   };
-  export const type = 'LOAD_MODEL';
+  export const type = 'LOAD_MODEL_SUCCESS';
 }
 
-export function createEntry(entry: Partial<PgEntry>): createEntry.Action {
+export function loadModelError(err: string): loadModelError.Action {
   return {
-    type: 'CREATE_ENTRY',
+    type: 'LOAD_MODEL_ERROR',
+    payload: err
+  };
+}
+
+export namespace loadModelError {
+  export type Action = {
+    type: 'LOAD_MODEL_ERROR',
+    payload: string
+  };
+  export const type = 'LOAD_MODEL_ERROR';
+}
+
+export function createEntry(entry: Partial<PgEntry>): ThunkAction<void, PgAppState, {}> {
+  return (dispatch, getState) => {
+    data.addEntryToStore(entry).then((result) => {
+      dispatch(createEntrySuccess(result));
+    }).catch((err) => {
+      dispatch(createEntryError(err));
+    });
+  };
+}
+
+export function createEntrySuccess(entry: Partial<PgEntry>): createEntrySuccess.Action {
+  return {
+    type: 'CREATE_ENTRY_SUCCESS',
     payload: entry
   };
 }
 
-export namespace createEntry {
+export namespace createEntrySuccess {
   export type Action = {
-    type: 'CREATE_ENTRY',
+    type: 'CREATE_ENTRY_SUCCESS',
     payload: Partial<PgEntry>
   };
-  export const type = 'CREATE_ENTRY';
+  export const type = 'CREATE_ENTRY_SUCCESS';
+}
+
+export function createEntryError(entry: Partial<PgEntry>): createEntryError.Action {
+  return {
+    type: 'CREATE_ENTRY_ERROR',
+    payload: entry
+  };
+}
+
+export namespace createEntryError {
+  export type Action = {
+    type: 'CREATE_ENTRY_ERROR',
+    payload: Partial<PgEntry>
+  };
+  export const type = 'CREATE_ENTRY_ERROR';
 }
 
 export function deleteEntry(entryId: string): deleteEntry.Action {
