@@ -105,7 +105,9 @@ export namespace PgModel {
         return entryIterable.sortBy((entry: PgEntry) => entry.start).first().start;
       })
       .take(maxCount)
-      .map((entryIterable, taskId: string) => model.tasks.get(taskId)).toMap();
+      .map((_, taskId: string) => model.tasks.get(taskId))
+      .filter((task) => task != null)
+      .toMap();
   }
 
   export function addEntry(model: PgModelRecord, entry: PgEntry): PgModelRecord {
