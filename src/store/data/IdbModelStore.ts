@@ -1,7 +1,10 @@
 import { ModelStore, IteratorCallback, StoreName, StoreSchema } from './ModelStore';
 import { PgObject, isRecord, RecordType } from 'store/models';
 
-const idb: IDBFactory = indexedDB;
+let idb: IDBFactory;
+if (typeof indexedDB !== 'undefined') {
+  idb = indexedDB;
+}
 
 export class IdbModelStore implements ModelStore {
 

@@ -1,7 +1,4 @@
-import {
-  PgAction, selectEntry, setFilter, startEditing, stopEditing,
-  toggleEditing, deleteEntry
-} from 'store/actions';
+import * as actions from 'store/actions';
 
 export type PgViewState = {
   selectedTask: string
@@ -19,9 +16,9 @@ export let initialViewState: PgViewState = {
 
 export function viewReducer(
   state: PgViewState = initialViewState,
-  action: PgAction): PgViewState {
+  action: actions.PgAction): PgViewState {
   switch (action.type) {
-    case selectEntry.type:
+    case actions.selectEntry.type:
       if (action.payload === state.selectedEntry) {
         return state;
       }
@@ -29,15 +26,15 @@ export function viewReducer(
         isEditing: false,
         selectedEntry: action.payload
       });
-    case setFilter.type:
+    case actions.setFilter.type:
       return Object.assign({}, state, { filter: action.payload });
-    case startEditing.type:
+    case actions.startEditing.type:
       return Object.assign({}, state, { isEditing: true });
-    case stopEditing.type:
+    case actions.stopEditing.type:
       return Object.assign({}, state, { isEditing: false });
-    case toggleEditing.type:
+    case actions.toggleEditing.type:
       return Object.assign({}, state, { isEditing: !state.isEditing });
-    case deleteEntry.type:
+    case actions.deleteEntry.type:
       return Object.assign({}, state, { selectedEntry: '' });
     default:
       return state;
