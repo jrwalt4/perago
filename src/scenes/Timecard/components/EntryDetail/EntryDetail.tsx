@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { Options, Option } from 'react-select';
+import * as moment from 'moment';
 
 import { PgAppState } from 'store';
 import {
@@ -31,7 +32,7 @@ type EntryDetailDispatchProps = {
   setTask: (entry: string, task: string) => void
   onSetStart?: React.FormEventHandler<HTMLInputElement>
   onSetEnd?: React.FormEventHandler<HTMLInputElement>
-  onSetDate?: React.FormEventHandler<HTMLInputElement>
+  onSetDate?: (entryId: string, value: moment.MomentInput) => void
 };
 
 export type EntryDetailProps = EntryDetailStateProps & EntryDetailDispatchProps;
@@ -63,6 +64,12 @@ export class EntryDetailComponent extends React.Component<EntryDetailProps, Entr
     });
   }
 
+  handleDateChange = (newDate: moment.Moment) => {
+    if (this.props.onSetDate) {
+      this.props.onSetDate(this.props.entry._id, newDate);
+    }
+  }
+
   render() {
     const props = this.props;
     const header = (
@@ -83,7 +90,7 @@ export class EntryDetailComponent extends React.Component<EntryDetailProps, Entr
         <table className="EntryDetail table table-sm table-bordered">
           <tbody>
             <tr>
-              <th>Job:</th><td><ConnectedProjectField taskId={entry.taskId}/></td>
+              <th>Job:</th><td><ConnectedProjectField taskId={entry.taskId} /></td>
             </tr>
             <tr>
               <th>Task:</th>
@@ -99,7 +106,7 @@ export class EntryDetailComponent extends React.Component<EntryDetailProps, Entr
               <th>Date:</th>
               <td>
                 <DateField value={entry.start} isEditing={props.isEditing}
-                  onSetDate={props.onSetDate} _id={entry._id} format="MMM D" />
+                  onSetDate={this.handleDateChange} format="MMM D" />
               </td>
             </tr>
             <tr>
@@ -168,10 +175,9 @@ export let EntryDetail = connect<EntryDetailStateProps, EntryDetailDispatchProps
         dispatch(setEntryEndTime(_id, hour, minute));
       }
     },
-    onSetDate: (ev: React.FormEvent<HTMLInputElement>) => {
-      let _id = ev.currentTarget.dataset.id;
-      if (_id && PgEntry.isValidDateTime(ev.currentTarget.value)) { // make sure we have a valid date
-        dispatch(setEntryDate(_id, ev.currentTarget.value));
+    onSetDate: (entryId: string, newDate: moment.MomentInput) => {
+      if (entryId && PgEntry.isValidDateTime(newDate)) { // make sure we have a valid date
+        dispatch(setEntryDate(entryId, newDate));
       }
     }
   })
