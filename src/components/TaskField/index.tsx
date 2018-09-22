@@ -37,6 +37,8 @@ export class TaskFieldComponent extends React.Component<TaskFieldOwnProps, TaskF
     this.setState({
       currentSearchTaskName: name
     });
+    // return unchanged value
+    return name;
   }
 
   onClickCreateTask = () => {
@@ -51,12 +53,16 @@ export class TaskFieldComponent extends React.Component<TaskFieldOwnProps, TaskF
     if (this.props.isEditing) {
       return (
         <div>
-          <Select value={taskId} options={this.props.selectableTasks} clearable={false}
+          <Select.default
+            value={taskId}
+            options={this.props.selectableTasks}
+            clearable={false}
             noResultsText={(
               <i onClick={this.onClickCreateTask}>Create Task: {this.state.currentSearchTaskName}</i>
             )}
             onChange={this.props.onChange} ignoreCase={true}
-            onInputChange={this.updateSearchTaskName} />
+            onInputChange={this.updateSearchTaskName}
+          />
         </div>
       );
     }
