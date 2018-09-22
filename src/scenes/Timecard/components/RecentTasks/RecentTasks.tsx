@@ -44,4 +44,5 @@ export let RecentTasks = connect(
     load: () => {
       dispatch(loadModel());
     }
-  }))(RecentTasksComponent);
+  })
+)(RecentTasksComponent);

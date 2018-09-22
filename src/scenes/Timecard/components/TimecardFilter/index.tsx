@@ -23,4 +23,5 @@ export let TimecardFilter = connect(
     onFilterChange: (ev: React.ChangeEvent<HTMLInputElement>) => {
       dispatch(setFilter(ev.target.value));
     }
-  }))(TimecardFilterComponent);
+  })
+)(TimecardFilterComponent);

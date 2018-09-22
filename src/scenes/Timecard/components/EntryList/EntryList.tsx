@@ -198,4 +198,5 @@ export let EntryList = connect(
     onNewEntry: (ev) => {
       dispatch(createEntry({ start: Date.now() }));
     }
-  }))(EntryListComponent);
+  })
+)(EntryListComponent);
