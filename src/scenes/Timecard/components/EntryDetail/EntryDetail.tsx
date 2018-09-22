@@ -12,6 +12,7 @@ import {
   setEntryDate
 } from 'store/actions';
 import { PgEntry, PgTask } from 'store/models';
+import { parseTimeString } from 'util/time';
 import { DateField } from 'components/DateField';
 import { TimeField } from 'components/TimeField';
 import { TaskField } from 'components/TaskField';
@@ -164,14 +165,14 @@ export let EntryDetail = connect<EntryDetailStateProps, EntryDetailDispatchProps
     onSetStart: (ev: React.FormEvent<HTMLInputElement>) => {
       let _id = ev.currentTarget.dataset.id;
       if (_id) {
-        let { hour, minute } = PgEntry.parseTimeString(ev.currentTarget.value);
+        let { hour, minute } = parseTimeString(ev.currentTarget.value);
         dispatch(setEntryStartTime(_id, hour, minute));
       }
     },
     onSetEnd: (ev: React.FormEvent<HTMLInputElement>) => {
       let _id = ev.currentTarget.dataset.id;
       if (_id) {
-        let { hour, minute } = PgEntry.parseTimeString(ev.currentTarget.value);
+        let { hour, minute } = parseTimeString(ev.currentTarget.value);
         dispatch(setEntryEndTime(_id, hour, minute));
       }
     },

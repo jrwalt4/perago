@@ -19,21 +19,6 @@ it('Should return a new PgEntry with the provided start date', () => {
   expect(e.start).toEqual(newStart);
 });
 
-it('Should parse a string representation of date and/or time', () => {
-  let testStrings = [
-    { pattern: '1:30', expectation: { hour: 13, minute: 30 } },
-    { pattern: '130', expectation: { hour: 13, minute: 30 } },
-    { pattern: '130a', expectation: { hour: 1, minute: 30 } },
-    { pattern: '13', expectation: { hour: 13, minute: 0 } },
-    { pattern: '730', expectation: { hour: 7, minute: 30 } },
-    { pattern: '730p', expectation: { hour: 19, minute: 30 } },
-    { pattern: '1200', expectation: { hour: 12, minute: 0 } }
-  ];
-  testStrings.forEach(({ pattern, expectation }) => {
-    expect(PgEntry.parseTimeString(pattern)).toEqual(expectation);
-  });
-});
-
 it('Sets entry date', () => {
   let start = moment('2017-07-07T04:00-04:00');
   let end = start.clone().add(2, 'h');
