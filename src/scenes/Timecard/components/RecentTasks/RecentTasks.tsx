@@ -5,7 +5,6 @@ import { PgTask } from 'store/models';
 import { startTask } from 'store/actions';
 import { PgAppState } from 'store';
 import { recentTasksArraySelector } from 'store/selectors';
-import { loadModel } from 'store/actions';
 
 import './RecentEntries.css';
 
@@ -15,9 +14,9 @@ type RecentTaskProps = {
   load: () => void;
 };
 
-let RecentTasksComponent = ({ recentTasks, continueTask, load }: RecentTaskProps) => (
+let RecentTasksComponent = ({ recentTasks, continueTask }: RecentTaskProps) => (
   <div className="col-12">
-    <h4 onClick={load}>Recent Tasks</h4>
+    <h4>Recent Tasks</h4>
     <ul className="RecentEntries">
       {
         recentTasks.map((task) => (
@@ -40,9 +39,6 @@ export let RecentTasks = connect(
   (dispatch) => ({
     continueTask: (taskId: string) => {
       dispatch(startTask(taskId));
-    },
-    load: () => {
-      dispatch(loadModel());
     }
   })
 )(RecentTasksComponent);

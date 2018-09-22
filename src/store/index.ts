@@ -37,3 +37,9 @@ export let store: Store<PgAppState> = createStore<PgAppState>(
     )
   )
 );
+
+// user selecting and opening a model isn't implemented
+// yet (i.e. open from file, indexedDb, server, etc.),
+// so bootstrap test model here during development
+import { loadModel } from './actions';
+store.dispatch(loadModel());
