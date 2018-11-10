@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { connect, Dispatch } from 'react-redux';
-import { Option } from 'react-select';
 import Modal, { ReactModalProps } from 'react-modal';
 
 import { PgAppState } from 'store';
@@ -48,9 +47,9 @@ export class NewTaskComponent extends React.Component<NewTaskOwnProps, NewTaskSt
       newTaskName: currentTarget.value
     });
   }
-  setParentTask = ({ value }: Option) => {
+  setParentTask = ( taskId: string) => {
     this.setState({
-      newTaskParentId: value as string
+      newTaskParentId: taskId
     });
   }
   onSubmit = (event: React.FormEvent<HTMLFormElement>) => {

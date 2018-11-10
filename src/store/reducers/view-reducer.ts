@@ -26,6 +26,8 @@ export function viewReducer(
         isEditing: false,
         selectedEntry: action.payload
       });
+    case actions.clearSelection.type:
+      return Object.assign({}, state, {selectedEntry: ''});
     case actions.setFilter.type:
       return Object.assign({}, state, { filter: action.payload });
     case actions.startEditing.type:
@@ -35,7 +37,11 @@ export function viewReducer(
     case actions.toggleEditing.type:
       return Object.assign({}, state, { isEditing: !state.isEditing });
     case actions.deleteEntry.type:
-      return Object.assign({}, state, { selectedEntry: '' });
+      // respond to deleting an entry by deselecting it (if it was previously selected)
+      if (state.selectedEntry === action.payload) {
+        return Object.assign({}, state, { selectedEntry: '' });
+      }
+      return state;
     default:
       return state;
   }

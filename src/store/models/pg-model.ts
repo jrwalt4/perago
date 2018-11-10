@@ -168,10 +168,8 @@ export namespace PgModel {
   }
 
   export function setEntryDate(model: PgModelRecord, entryId: string, date: moment.MomentInput): PgModelRecord {
-    let entry = (model.entries.get(entryId) as PgEntryRecord).withMutations((e) => {
-      return PgEntry.setEndDate(PgEntry.setStartDate(e, date), date);
-    });
-    return model.setIn(['entries', entryId], entry);
+    let entry = model.entries.get(entryId) as PgEntryRecord;
+    return model.setIn(['entries', entryId], PgEntry.setDate(entry, date));
   }
 
   // tslint:disable-next-line:no-any

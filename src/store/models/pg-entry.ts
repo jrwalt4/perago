@@ -105,6 +105,15 @@ export namespace PgEntry {
     return entry;
   }
 
+  export function setDate(entry: PgEntryRecord, newDate: moment.MomentInput): PgEntryRecord {
+    let mutableEntry = entry.asMutable();
+    return setStartDate(setEndDate(mutableEntry, newDate), newDate).asImmutable();
+  }
+
+  export function setTask(entry: PgEntryRecord, taskId: string): PgEntryRecord {
+    return entry.set('taskId', taskId);
+  }
+
   export function getDuration({ start, end }: PgEntry): number {
     return (typeof end === 'undefined' ? Date.now() : end) - start;
   }

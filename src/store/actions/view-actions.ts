@@ -1,6 +1,15 @@
+/**
+ * View Actions (i.e. actions that impact the display but not the model)
+ * 
+ * When adding new actions, create the action-creator function and the 
+ * namespace to hold type information (used for type checking in reducer),
+ * then add the Action to the union type PgViewAction.
+ */
+
 export type PgViewAction =
   selectEntry.Action |
   selectTask.Action |
+  clearSelection.Action |
   setFilter.Action |
   startEditing.Action |
   stopEditing.Action |
@@ -34,6 +43,19 @@ export namespace selectTask {
     payload: string
   };
   export const type = 'SELECT_TASK';
+}
+
+export function clearSelection(): clearSelection.Action {
+  return {
+    type: 'CLEAR_SELECTION'
+  };
+}
+
+export namespace clearSelection {
+  export type Action = {
+    type: 'CLEAR_SELECTION'
+  };
+  export const type = 'CLEAR_SELECTION';
 }
 
 export function setFilter(filter: string): setFilter.Action {

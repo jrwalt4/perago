@@ -20,7 +20,7 @@ it('renders with provided format', () => {
 it('calls callback when editing', () => {
   let dateTime = '2017-06-17T10:00';
   let onSetTimeSpy = jest.fn();
-  let timeFieldElement = shallow(<TimeField value={dateTime} isEditing={true} onSetTime={onSetTimeSpy} />);
-  timeFieldElement.find('input').simulate('blur');
+  let timeFieldElement = shallow(<TimeField value={dateTime} isEditing={true} onTimeChange={onSetTimeSpy} />);
+  timeFieldElement.find('input').simulate('change');
   expect(onSetTimeSpy).toBeCalled();
 });

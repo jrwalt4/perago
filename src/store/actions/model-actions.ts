@@ -5,6 +5,14 @@ import { PgAppState } from 'store';
 import { PgModel, PgEntry, PgTask } from 'store/models';
 import * as data from 'store/data';
 
+/**
+ * Model Actions (i.e. actions that change the model)
+ * 
+ * When adding new actions, create the action-creator function and the 
+ * namespace to hold type information (used for type checking in reducer),
+ * then add the Action to the union type PgModelAction.
+ */
+
 export type PgModelAction =
   loadModelSuccess.Action |
   loadModelError.Action |

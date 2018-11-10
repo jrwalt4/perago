@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 
 import { PgAppState } from 'store';
 import { PgEntry } from 'store/models';
-import { selectEntry, stopEditing, startTask, createEntry, deleteEntry } from 'store/actions';
+import { selectEntry, stopEditing, startTask, createEntry, deleteEntry, clearSelection } from 'store/actions';
 import { entriesArraySelector } from 'store/selectors';
 
 import { TimeField } from 'components/TimeField';
@@ -183,7 +183,7 @@ export let EntryList = connect(
   }),
   (dispatch) => ({
     deselectEntry: () => {
-      dispatch(selectEntry(''));
+      dispatch(clearSelection());
       dispatch(stopEditing());
     },
     selectEntry: (entryId: string) => {

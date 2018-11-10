@@ -10,7 +10,7 @@ export type TaskFieldProps = {
   taskId?: string;
   isEditing?: boolean;
   selectableTasks?: Select.Options;
-  onChange?: Select.OnChangeHandler;
+  onChange?(taskId?: string): void;
   onCreateTask?(name?: string): void;
 };
 
@@ -41,6 +41,12 @@ export class TaskFieldComponent extends React.Component<TaskFieldOwnProps, TaskF
     return name;
   }
 
+  handleTaskChange: Select.OnChangeHandler = ({ value }: Select.Option<string>) => {
+    if (this.props.onChange) {
+      this.props.onChange(value);
+    }
+  }
+
   onClickCreateTask = () => {
     if (this.props.onCreateTask) {
       this.props.onCreateTask(this.state.currentSearchTaskName);
@@ -60,7 +66,7 @@ export class TaskFieldComponent extends React.Component<TaskFieldOwnProps, TaskF
             noResultsText={(
               <i onClick={this.onClickCreateTask}>Create Task: {this.state.currentSearchTaskName}</i>
             )}
-            onChange={this.props.onChange} ignoreCase={true}
+            onChange={this.handleTaskChange} ignoreCase={true}
             onInputChange={this.updateSearchTaskName}
           />
         </div>

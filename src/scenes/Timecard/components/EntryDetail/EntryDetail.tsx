@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Options, Option } from 'react-select';
+import { Options } from 'react-select';
 import * as moment from 'moment';
 
 import { PgAppState } from 'store';
@@ -11,8 +11,8 @@ import {
   setEntryEndTime,
   setEntryDate
 } from 'store/actions';
+import { selectedEntrySelector, tasksArraySelector, isEditingSelector } from 'store/selectors';
 import { PgEntry, PgTask } from 'store/models';
-import { parseTimeString } from 'util/time';
 import { DateField } from 'components/DateField';
 import { TimeField } from 'components/TimeField';
 import { TaskField } from 'components/TaskField';
@@ -22,25 +22,26 @@ import { NewTask } from 'scenes/Timecard/components/NewTask';
 import './EntryDetail.css';
 import { ConnectedProjectField } from 'components/ProjectField';
 
-type EntryDetailStateProps = {
-  entry: PgEntry
-  selectableTasks: Options
-  isEditing: boolean
-};
+interface EntryDetailStateProps {
+  entry?: PgEntry;
+  selectableTasks: Options;
+  isEditing: boolean;
+}
 
-type EntryDetailDispatchProps = {
-  onToggleEditing: React.MouseEventHandler<HTMLButtonElement>
-  setTask: (entry: string, task: string) => void
-  onSetStart?: React.FormEventHandler<HTMLInputElement>
-  onSetEnd?: React.FormEventHandler<HTMLInputElement>
-  onSetDate?: (entryId: string, value: moment.MomentInput) => void
-};
+interface EntryDetailDispatchProps {
+  onToggleEditing: React.MouseEventHandler<HTMLButtonElement>;
+  onSetTask: (entryId: string, taskId: string) => void;
+  onSetStart?: (entryId: string, newStartTime: moment.MomentInput) => void;
+  onSetEnd?: (entryId: string, newEndTime: moment.MomentInput) => void;
+  onSetDate?: (entryId: string, value: moment.MomentInput) => void;
+}
 
 export type EntryDetailProps = EntryDetailStateProps & EntryDetailDispatchProps;
 
 interface EntryDetailState {
   isNewTaskDialogOpen: boolean;
   newTaskName?: string;
+  tempEntry?: PgEntry;
 }
 
 export class EntryDetailComponent extends React.Component<EntryDetailProps, EntryDetailState> {
@@ -48,8 +49,45 @@ export class EntryDetailComponent extends React.Component<EntryDetailProps, Entr
     super(props);
     this.state = {
       isNewTaskDialogOpen: false,
-      newTaskName: ''
+      newTaskName: '',
+      tempEntry: props.entry
     };
+  }
+
+  componentWillReceiveProps(nextProps: EntryDetailProps) {
+    if (nextProps !== this.props) {
+      this.setState({
+        tempEntry: nextProps.entry
+      });
+      if (!nextProps.isEditing && this.props.isEditing) {
+        // end editing mode
+        this.commitEdits();
+      }
+    }
+  }
+
+  commitEdits() {
+    if (null != this.state.tempEntry) {
+      const entry = this.state.tempEntry;
+      if (this.props.onSetDate) {
+        this.props.onSetDate(entry._id, entry.start);
+      }
+      if (this.props.onSetStart) {
+        this.props.onSetStart(entry._id, entry.start);
+      }
+      if (this.props.onSetEnd) {
+        this.props.onSetEnd(entry._id, entry.end);
+      }
+      if (this.props.onSetTask) {
+        this.props.onSetTask(entry._id, entry.taskId);
+      }
+    }
+  }
+
+  clearEdits() {
+    this.setState({
+      tempEntry: this.props.entry
+    });
   }
 
   openNewTaskDialog = (taskName?: string) => {
@@ -65,10 +103,40 @@ export class EntryDetailComponent extends React.Component<EntryDetailProps, Entr
     });
   }
 
-  handleDateChange = (newDate: moment.Moment) => {
-    if (this.props.onSetDate) {
-      this.props.onSetDate(this.props.entry._id, newDate);
+  getTempEntry(): PgEntry {
+    const entry = this.state.tempEntry;
+    if (!entry) {
+      throw new Error('Cannot edit undefined entry');
     }
+    return entry;
+  }
+
+  handleTaskChange = (newTask: string) => {
+    const entry = PgEntry.from(this.getTempEntry());
+    this.setState({
+      tempEntry: PgEntry.setTask(entry, newTask)
+    });
+  }
+
+  handleDateChange = (newDate: moment.Moment) => {
+    const entry = PgEntry.from(this.getTempEntry());
+    this.setState({
+      tempEntry: PgEntry.setDate(entry, newDate)
+    });
+  }
+
+  handleStartTimeChange = (newStartTime: moment.Moment) => {
+    const entry = PgEntry.from(this.getTempEntry());
+    this.setState({
+      tempEntry: PgEntry.setStart(entry, newStartTime.valueOf())
+    });
+  }
+
+  handleEndTimeChange = (newEndTime: moment.Moment) => {
+    const entry = PgEntry.from(this.getTempEntry());
+    this.setState({
+      tempEntry: PgEntry.setEnd(entry, newEndTime.valueOf())
+    });
   }
 
   render() {
@@ -85,8 +153,8 @@ export class EntryDetailComponent extends React.Component<EntryDetailProps, Entr
       </div>
     );
     let body: JSX.Element;
-    if (props.entry) {
-      let entry = props.entry;
+    if (this.state.tempEntry) {
+      let entry = this.state.tempEntry;
       body = (
         <table className="EntryDetail table table-sm table-bordered">
           <tbody>
@@ -97,7 +165,7 @@ export class EntryDetailComponent extends React.Component<EntryDetailProps, Entr
               <th>Task:</th>
               <td>
                 <TaskField taskId={entry.taskId} isEditing={props.isEditing} selectableTasks={props.selectableTasks}
-                  onChange={({ value }: Option) => { if (value) { props.setTask(entry._id, value as string); } }}
+                  onChange={this.handleTaskChange}
                   onCreateTask={this.openNewTaskDialog} />
                 <NewTask isOpen={this.state.isNewTaskDialogOpen} defaultName={this.state.newTaskName}
                   requestClose={this.closeNewTaskDialog} />
@@ -113,15 +181,17 @@ export class EntryDetailComponent extends React.Component<EntryDetailProps, Entr
             <tr>
               <th>Start:</th>
               <td>
-                <TimeField value={entry.start} isEditing={props.isEditing}
-                  onSetTime={props.onSetStart} _id={entry._id} format="h:mm a" />
+                <TimeField value={entry.start} _id={entry._id}
+                  isEditing={props.isEditing} format="h:mm a"
+                  onTimeChange={this.handleStartTimeChange} />
               </td>
             </tr>
             <tr>
               <th>End:</th>
               <td>
-                <TimeField value={entry.end} isEditing={props.isEditing}
-                  onSetTime={props.onSetEnd} _id={entry._id} format="h:mm a" />
+                <TimeField value={entry.end} _id={entry._id}
+                  isEditing={props.isEditing} format="h:mm a"
+                  onTimeChange={this.handleEndTimeChange} />
               </td>
             </tr>
             <tr>
@@ -150,30 +220,32 @@ export class EntryDetailComponent extends React.Component<EntryDetailProps, Entr
 }
 
 export let EntryDetail = connect<EntryDetailStateProps, EntryDetailDispatchProps, {}>(
-  ({ view, model }: PgAppState) => ({
-    entry: model.entries.get(view.selectedEntry),
-    selectableTasks: model.tasks.toArray().map((task: PgTask) => ({ value: task._id, label: task.name })),
-    isEditing: view.isEditing
+  (state: PgAppState) => ({
+    entry: selectedEntrySelector(state),
+    selectableTasks: tasksArraySelector(state).map((task: PgTask) => ({ value: task._id, label: task.name })),
+    isEditing: isEditingSelector(state)
   }),
-  (dispatch) => ({
+  (dispatch, ownProps: EntryDetailProps) => ({
     onToggleEditing: () => {
       dispatch(toggleEditing());
     },
-    setTask: (entry: string, task: string) => {
-      dispatch(setEntryTask(entry, task));
+    onSetTask: (entryId: string, taskId: string) => {
+      dispatch(setEntryTask(entryId, taskId));
     },
-    onSetStart: (ev: React.FormEvent<HTMLInputElement>) => {
-      let _id = ev.currentTarget.dataset.id;
-      if (_id) {
-        let { hour, minute } = parseTimeString(ev.currentTarget.value);
-        dispatch(setEntryStartTime(_id, hour, minute));
+    onSetStart: (entryId: string, newStartTime: moment.MomentInput) => {
+      if (entryId) {
+        const newStart = moment(newStartTime);
+        let hour = newStart.get('hour');
+        let minute = newStart.get('minute');
+        dispatch(setEntryStartTime(entryId, hour, minute));
       }
     },
-    onSetEnd: (ev: React.FormEvent<HTMLInputElement>) => {
-      let _id = ev.currentTarget.dataset.id;
-      if (_id) {
-        let { hour, minute } = parseTimeString(ev.currentTarget.value);
-        dispatch(setEntryEndTime(_id, hour, minute));
+    onSetEnd: (entryId: string, newEndTime: moment.MomentInput) => {
+      if (entryId) {
+        const newEnd = moment(newEndTime);
+        let hour = newEnd.get('hour');
+        let minute = newEnd.get('minute');
+        dispatch(setEntryEndTime(entryId, hour, minute));
       }
     },
     onSetDate: (entryId: string, newDate: moment.MomentInput) => {
