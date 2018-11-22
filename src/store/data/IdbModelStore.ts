@@ -159,9 +159,9 @@ export class IdbModelStore implements ModelStore {
         let mode: IDBTransactionMode = withMutations ? 'readwrite' : 'readonly';
         let cursorRequest = db.transaction(store, mode).objectStore(store).openCursor();
         cursorRequest.onsuccess = (ev) => {
-          let cursor: IDBCursorWithValue = cursorRequest.result;
+          let cursor: IDBCursorWithValue = cursorRequest.result as IDBCursorWithValue;
           if (cursor && cursor.value) {
-            callback(cursor.value, cursor.primaryKey, iterationCount++);
+            callback(cursor.value, cursor.primaryKey as string, iterationCount++);
           } else {
             iterateResolve(iterationCount);
           }
