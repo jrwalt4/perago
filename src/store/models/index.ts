@@ -1,4 +1,3 @@
-import { Record } from 'immutable';
 
 export { PgEntry } from './pg-entry';
 export { PgModel } from './pg-model';
@@ -13,7 +12,3 @@ import { RecordType } from './pg-types';
 
 export type PgObject = PgEntry | PgTask | PgProject;
 export type PgObjectRecord = RecordType<PgObject>;
-
-export function isRecord<T = {}>(maybeObject: {}): maybeObject is RecordType<T> {
-  return maybeObject instanceof Record;
-}

@@ -13,6 +13,20 @@ it('Should create a new PgEntry with the provided _id', () => {
   expect(e._id).toEqual(_id);
 });
 
+it('Should copy all fields from provided PgEntry', () => {
+  let e = PgEntry.create();
+  let start = moment('2017-07-07T04:00-04:00');
+  e = PgEntry.setStart(e, start.valueOf());
+  let end = start.add(2, 'h');
+  e = PgEntry.setEnd(e, end.valueOf());
+  e = PgEntry.setTask(e, '1');
+
+  let e2 = PgEntry.from(e);
+  expect(e2.start).toEqual(e.start);
+  expect(e2.end).toEqual(e.end);
+  expect(e2.taskId).toEqual(e.taskId);
+});
+
 it('Should return a new PgEntry with the provided start date', () => {
   let newStart = Date.now();
   let e = PgEntry.from({ start: newStart });

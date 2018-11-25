@@ -3,7 +3,7 @@ import { Record } from 'immutable';
 
 import * as moment from 'moment';
 
-import { RecordType, RecordTypeConstructor, PgBase } from './pg-types';
+import { RecordType, RecordTypeConstructor, isRecord, PgBase } from './pg-types';
 
 export interface PgEntry extends PgBase {
   taskId: string;
@@ -41,21 +41,10 @@ export namespace PgEntry {
     });
   }
 
-  // Same as PgEntry, but allows for MomentInputs to be used in PgEntry.from constructor
-  interface PgEntryAlternates extends PgBase {
-    taskId: string;
-    start: moment.MomentInput;
-    end: moment.MomentInput;
-    notes: string;
-  }
-
-  export function from(props: Partial<PgEntry> | Partial<PgEntryAlternates>): PgEntryRecord {
+  export function from(props: Partial<PgEntry>): PgEntryRecord {
     let _id = props._id || cuid();
-    let start: number = typeof props.start === 'number' ? props.start : moment(props.start).valueOf();
-    let end: number | undefined = props.end === void 0 ? void 0 : (
-      typeof props.end === 'number' ? props.end : moment(props.end).valueOf()
-    );
-    return new PgEntryConstructor(Object.assign({}, props, { _id, start, end }));
+    let oldProps = isRecord(props) ? props.toJS() : {...props};
+    return new PgEntryConstructor(Object.assign({}, oldProps, { _id}));
   }
 
   export function formatDateTimeString(date: moment.MomentInput): string {

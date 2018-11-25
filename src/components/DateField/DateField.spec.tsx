@@ -26,6 +26,6 @@ it('calls callback when editing', () => {
   let dateTime = '2017-06-17T10:00';
   let onSetDateSpy = jest.fn();
   let dateFieldElement = shallow(<DateField value={dateTime} isEditing={true} onSetDate={onSetDateSpy} />);
-  dateFieldElement.find('input').simulate('blur');
+  dateFieldElement.find('DatePicker').simulate('change');
   expect(onSetDateSpy).toBeCalled();
 });

@@ -1,3 +1,5 @@
+import { Record } from 'immutable';
+
 export interface PgBase {
   _id: string;
 }
@@ -27,6 +29,10 @@ export type RecordType<RType> = Readonly<RType> & RecordInstance<RType>;
 export interface RecordTypeConstructor<RType> {
   new(props?: Partial<RType>): RecordType<RType>;
   (props?: Partial<RType>): RecordType<RType>;
+}
+
+export function isRecord<T = {}>(maybeObject: {}): maybeObject is RecordType<T> {
+  return maybeObject instanceof Record;
 }
 
 export interface PropertyMap<RType, XTypes> {
