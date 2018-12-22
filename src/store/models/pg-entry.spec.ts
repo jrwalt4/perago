@@ -36,7 +36,7 @@ it('Should return a new PgEntry with the provided start date', () => {
 it('Sets entry date', () => {
   let start = moment('2017-07-07T04:00-04:00');
   let end = start.clone().add(2, 'h');
-  let entry = PgEntry.from({ start, end });
+  let entry = PgEntry.from({ start: start.valueOf(), end: end.valueOf() });
   let newDate = moment('2017-07-06');
   expect(moment(PgEntry.setStartDate(entry, newDate).start).toISOString())
     .toEqual(moment('2017-07-06T04:00-04:00').toISOString());

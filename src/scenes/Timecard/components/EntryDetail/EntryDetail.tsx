@@ -132,10 +132,29 @@ export class EntryDetailComponent extends React.Component<EntryDetailProps, Entr
     });
   }
 
-  handleEndTimeChange = (newEndTime: moment.Moment) => {
+  getStartTimeOptions = () => {
+    const entryStart = moment((this.props.entry as PgEntry).start);
+    return ([7, 8, 9, 10, 11, 12, 13, 14, 15, 16]).map((hour) => {
+      return moment({
+        year: entryStart.year(),
+        month: entryStart.month(),
+        date: entryStart.date(),
+        hour
+      }).valueOf();
+    });
+  }
+
+  handleEndTimeChange = (newEndTime: moment.Moment | null) => {
     const entry = PgEntry.from(this.getTempEntry());
     this.setState({
-      tempEntry: PgEntry.setEnd(entry, newEndTime.valueOf())
+      tempEntry: newEndTime ? PgEntry.setEnd(entry, newEndTime.valueOf()) : PgEntry.clearEnd(entry)
+    });
+  }
+
+  getEndTimeOptions = () => {
+    const entryStart = moment((this.props.entry as PgEntry).start);
+    return ([1, 2, 3, 4, 5, 6, 7, 8]).map( (duration) => {
+      return entryStart.clone().add('hours', duration).valueOf();
     });
   }
 
@@ -183,6 +202,7 @@ export class EntryDetailComponent extends React.Component<EntryDetailProps, Entr
               <td>
                 <TimeField value={entry.start} _id={entry._id}
                   isEditing={props.isEditing} format="h:mm a"
+                  timeOptions={this.getStartTimeOptions()}
                   onTimeChange={this.handleStartTimeChange} />
               </td>
             </tr>
@@ -191,6 +211,8 @@ export class EntryDetailComponent extends React.Component<EntryDetailProps, Entr
               <td>
                 <TimeField value={entry.end} _id={entry._id}
                   isEditing={props.isEditing} format="h:mm a"
+                  clearable={true}
+                  timeOptions={this.getEndTimeOptions()}
                   onTimeChange={this.handleEndTimeChange} />
               </td>
             </tr>

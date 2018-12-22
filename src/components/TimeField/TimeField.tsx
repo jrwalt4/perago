@@ -8,37 +8,22 @@ import './TimeField.css';
 interface TimeFieldProps {
   _id?: string;
   value: moment.MomentInput;
+  timeOptions?: moment.MomentInput[];
   format?: string;
   empty?: string;
   isEditing?: boolean;
-  onTimeChange?: (newTime: moment.Moment) => void;
+  clearable?: boolean;
+  onTimeChange?: (newTime: moment.Moment | null) => void;
 }
 
 interface TimeFieldState {
   inputString?: string;
-  timeOptions: number[];
 }
 
 export class TimeField extends React.Component<TimeFieldProps, TimeFieldState> {
 
   static DEFAULT_FORMAT = 'h:mm a';
   static DEFAULT_EMPTY = ' - ';
-  static DEFAULT_TIMES = [
-    '8:00',
-    '9:00',
-    '10:00',
-    '11:00',
-    '12:00',
-    '13:00'
-  ].map((timeString) => moment(timeString, 'h:mm').valueOf());
-
-  constructor(props: TimeFieldProps) {
-    super(props);
-    let timeOptions = props.value ? [moment(props.value).valueOf()] : TimeField.DEFAULT_TIMES;
-    this.state = {
-      timeOptions
-    };
-  }
 
   getValueString(): string {
     let value = this.props.value;
@@ -48,17 +33,26 @@ export class TimeField extends React.Component<TimeFieldProps, TimeFieldState> {
   }
 
   getTimeOptions(): Select.Options<number> {
-    let optionValues = this.state.timeOptions;
+    if (this.props.timeOptions == null) {
+      throw new Error('TimeOptions must be provided for editing');
+    }
+    let optionValues = this.props.timeOptions;
+    if (this.props.value) {
+      // Place the current selected time at the front of the list
+      // TODO: find a way to insert a divider between current selection
+      // and other option values
+      optionValues.unshift(this.props.value);
+    } 
     let format = this.props.format || TimeField.DEFAULT_FORMAT;
     return optionValues.map((time) => ({
-      value: time,
+      value: moment(time).valueOf(),
       label: moment(time).format(format)
     }));
   }
 
-  handleSelect = (option: Select.Option<number>) => {
+  handleSelect = (option: Select.Option<number> | null) => {
     if (this.props.onTimeChange) {
-      this.props.onTimeChange(moment(option.value));
+      this.props.onTimeChange(option && moment(option.value));
     }
   }
 
@@ -79,6 +73,7 @@ export class TimeField extends React.Component<TimeFieldProps, TimeFieldState> {
           onInputChange={this.handleInput}
           options={this.getTimeOptions()}
           onChange={this.handleSelect}
+          clearable={!!this.props.clearable}
           value={moment(this.props.value).valueOf()}
         />
       );
