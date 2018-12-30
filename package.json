@@ -53,5 +53,8 @@
     "test": "npm run lint&&cross-env NODE_PATH=src react-scripts-ts test --env=jsdom",
     "lint": "tslint -c tslint.json --project tsconfig.json || true",
     "eject": "react-scripts-ts eject"
+  },
+  "resolutions": {
+    "@types/react": "16.x.x"
   }
 }
