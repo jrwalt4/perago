@@ -11,49 +11,89 @@ export function parseDateString(dateString: string): Date {
   throw new Error('PgEntry.parseDateString() not implemented yet');
 }
 
-const timeExp = /([\d]{1,4})(:)?([\d]{1,2})?\s*(a|p)?m?/;
+/**
+ * parse a string representing time and return a set of possible autocomplete matches as UNIX timestamps.
+ * @param {string} timeString  string input to parse for possible time matches
+ * @param {number} [seed]  UNIX timestamp to use as the basis for year, month, and date of the return values
+ * @returns {number[]} array of possible timestamps that match the input string
+ */
+export function parseTimeString(timeString: string, seed?: number): number[] {
 
-export function parseTimeString(timeString: string): { hour: number, minute: number } {
-  let execArray = timeExp.exec(timeString);
-  if (execArray) {
-    const [, hr, div, mn, mer] = execArray;
-    var hour = 0, minute = 0, meridian;
-    if (div) {
-      hour = Number.parseInt(hr);
-      minute = Number.parseInt(mn) || 0;
-    } else {
-      switch (hr.length) {
-        case 1:
-        case 2:
-          hour = Number.parseInt(hr);
-          break;
-        case 3:
-          hour = Number.parseInt(hr.substr(0, 1));
-          minute = Number.parseInt(hr.substr(1, 2));
-          break;
-        case 4:
-          hour = Number.parseInt(hr.substr(0, 2));
-          minute = Number.parseInt(hr.substr(2, 2));
-          break;
-        default:
-          hour = 0;
-          minute = 0;
-      }
-    }
-    if (!mer) {
-      if (hour >= 7 && hour < 12) {
-        meridian = 'a';
-      } else {
-        meridian = 'p';
-      }
-    } else {
-      meridian = mer;
-    }
-    if (meridian === 'p' && hour < 12) {
-      hour += 12;
-    }
-    return { hour, minute };
-  } else {
-    throw new Error('Could not parse string: ' + timeString);
+  const nullReturn: number[] = [];
+
+  // capture time with or without colon (e.g. '1', '11:00', '1:00', '100', '130', etc.)
+  const regExResult = (/\s*(\d{0,2})(\s*:?\s*)(\d{0,2})/).exec(timeString);
+  if (null == regExResult) {
+    return nullReturn;
   }
+
+  const [fullMatch, hourInput, delimited, minuteInput] = regExResult;
+
+  const matches: [number, number][] = [];
+
+  if (!!delimited) {
+    // time was input with colon delimiter, representing hh:mm
+    matches.push(
+      [parse(hourInput), parse(minuteInput)]
+    );
+  } else {
+    // time was input without colon delimiter
+    switch (fullMatch.length) {
+      case 1:
+        // input is in the form `h`
+        matches.push(
+          [parse(hourInput), 0]
+        );
+        break;
+      case 2:
+        matches.push(
+          // input could be in the form `hh`
+          [parse(hourInput), 0],
+          // input could be in the form `h:m`
+          [parse(fullMatch[0]), parse(fullMatch[1])],
+          // input could be in the form `h:m0`
+          [parse(fullMatch[0]), parse(fullMatch[1] + '0')]
+        );
+        break;
+      case 3:
+        matches.push(
+          // input could be in the form h:mm
+          [parse(fullMatch[0]), parse(fullMatch.slice(1, 3))],
+          // input could be in the form hh:0m
+          [parse(hourInput), parse(minuteInput)],
+          // input could be ommiting trailing '0' (i.e. hh:m0)
+          [parse(hourInput), parse(minuteInput + '0')]
+        );
+        break;
+      case 4:
+        // input represents hh:mm
+        matches.push(
+          [parse(hourInput), parse(minuteInput)]
+        );
+        break;
+      default:
+        // time cannot be longer than 4 characters
+        return nullReturn;
+    }
+  }
+  return matches
+    // turn hour/minute combonations into timestamps using provided seed
+    .map(([hour, minute]) => buildTimeStamp(hour, minute, seed))
+    // remove invalide timestamps (i.e. 34 o'clock)
+    .filter((timestamp) => !Number.isNaN(timestamp))
+    // remove duplicates (algorithm taken from 
+    // gomakethings.com/removing-duplicates-from-an-array-with-vanilla-javascript/)
+    .filter((timestamp, index, array) => array.indexOf(timestamp) >= index);
+}
+
+/**
+ * Shorthand for Number.parseInt
+ * @param {string} n 
+ */
+function parse(n: string): number {
+  return Number.parseInt(n);
+}
+
+function buildTimeStamp(hour: number, minute: number, seed?: number): number {
+  return moment(seed).startOf('day').set({ hour, minute }).valueOf();
 }

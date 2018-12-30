@@ -14,6 +14,7 @@ interface TimeFieldProps {
   isEditing?: boolean;
   clearable?: boolean;
   onTimeChange?: (newTime: moment.Moment | null) => void;
+  onInputChange?: (input: string) => void;
 }
 
 interface TimeFieldState {
@@ -24,6 +25,9 @@ export class TimeField extends React.Component<TimeFieldProps, TimeFieldState> {
 
   static DEFAULT_FORMAT = 'h:mm a';
   static DEFAULT_EMPTY = ' - ';
+  static filterOptions: Select.FilterOptionsHandler<number> = (options, filter, values) => {
+    return options;
+  }
 
   getValueString(): string {
     let value = this.props.value;
@@ -34,15 +38,17 @@ export class TimeField extends React.Component<TimeFieldProps, TimeFieldState> {
 
   getTimeOptions(): Select.Options<number> {
     if (this.props.timeOptions == null) {
-      throw new Error('TimeOptions must be provided for editing');
+      return [];
     }
     let optionValues = this.props.timeOptions;
     if (this.props.value) {
       // Place the current selected time at the front of the list
       // TODO: find a way to insert a divider between current selection
       // and other option values
-      optionValues.unshift(this.props.value);
-    } 
+      if (optionValues.indexOf(this.props.value) < 0) {
+        optionValues.unshift(this.props.value);
+      }
+    }
     let format = this.props.format || TimeField.DEFAULT_FORMAT;
     return optionValues.map((time) => ({
       value: moment(time).valueOf(),
@@ -57,6 +63,9 @@ export class TimeField extends React.Component<TimeFieldProps, TimeFieldState> {
   }
 
   handleInput = (inputString: string) => {
+    if (this.props.onInputChange) {
+      this.props.onInputChange(inputString);
+    }
     return inputString;
   }
 
@@ -74,6 +83,7 @@ export class TimeField extends React.Component<TimeFieldProps, TimeFieldState> {
           options={this.getTimeOptions()}
           onChange={this.handleSelect}
           clearable={!!this.props.clearable}
+          filterOptions={TimeField.filterOptions}
           value={moment(this.props.value).valueOf()}
         />
       );

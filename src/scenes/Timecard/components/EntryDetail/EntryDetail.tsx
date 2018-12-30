@@ -21,6 +21,7 @@ import { NewTask } from 'scenes/Timecard/components/NewTask';
 
 import './EntryDetail.css';
 import { ConnectedProjectField } from 'components/ProjectField';
+import { parseTimeString } from 'util/time';
 
 interface EntryDetailStateProps {
   entry?: PgEntry;
@@ -42,6 +43,8 @@ interface EntryDetailState {
   isNewTaskDialogOpen: boolean;
   newTaskName?: string;
   tempEntry?: PgEntry;
+  startTimeOptions?: number[];
+  endTimeOptions?: number[];
 }
 
 export class EntryDetailComponent extends React.Component<EntryDetailProps, EntryDetailState> {
@@ -125,6 +128,12 @@ export class EntryDetailComponent extends React.Component<EntryDetailProps, Entr
     });
   }
 
+  handleStartInputChange = (startInput: string) => {
+    this.setState({
+      startTimeOptions: this.parseTimeInput(startInput)
+    });
+  }
+
   handleStartTimeChange = (newStartTime: moment.Moment) => {
     const entry = PgEntry.from(this.getTempEntry());
     this.setState({
@@ -132,7 +141,10 @@ export class EntryDetailComponent extends React.Component<EntryDetailProps, Entr
     });
   }
 
-  getStartTimeOptions = () => {
+  getStartTimeOptions = (): number[] => {
+    if (this.state.startTimeOptions) {
+      return this.state.startTimeOptions;
+    }
     const entryStart = moment((this.props.entry as PgEntry).start);
     return ([7, 8, 9, 10, 11, 12, 13, 14, 15, 16]).map((hour) => {
       return moment({
@@ -144,6 +156,12 @@ export class EntryDetailComponent extends React.Component<EntryDetailProps, Entr
     });
   }
 
+  handleEndInputChange = (endInput: string) => {
+    this.setState({
+      endTimeOptions: this.parseTimeInput(endInput)
+    });
+  }
+
   handleEndTimeChange = (newEndTime: moment.Moment | null) => {
     const entry = PgEntry.from(this.getTempEntry());
     this.setState({
@@ -151,11 +169,15 @@ export class EntryDetailComponent extends React.Component<EntryDetailProps, Entr
     });
   }
 
-  getEndTimeOptions = () => {
+  getEndTimeOptions = (): number[] => {
     const entryStart = moment((this.props.entry as PgEntry).start);
-    return ([1, 2, 3, 4, 5, 6, 7, 8]).map( (duration) => {
-      return entryStart.clone().add('hours', duration).valueOf();
+    return ([1, 2, 3, 4, 5, 6, 7, 8]).map((duration) => {
+      return entryStart.clone().add(duration, 'hours').valueOf();
     });
+  }
+
+  parseTimeInput = (input: string): number[] => {
+    return parseTimeString(input, (this.props.entry as PgEntry).start);
   }
 
   render() {
@@ -203,6 +225,7 @@ export class EntryDetailComponent extends React.Component<EntryDetailProps, Entr
                 <TimeField value={entry.start} _id={entry._id}
                   isEditing={props.isEditing} format="h:mm a"
                   timeOptions={this.getStartTimeOptions()}
+                  onInputChange={this.handleStartInputChange}
                   onTimeChange={this.handleStartTimeChange} />
               </td>
             </tr>
@@ -213,6 +236,7 @@ export class EntryDetailComponent extends React.Component<EntryDetailProps, Entr
                   isEditing={props.isEditing} format="h:mm a"
                   clearable={true}
                   timeOptions={this.getEndTimeOptions()}
+                  onInputChange={this.handleEndInputChange}
                   onTimeChange={this.handleEndTimeChange} />
               </td>
             </tr>
