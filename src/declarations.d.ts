@@ -10,3 +10,7 @@ declare module 'react-modal' {
     static setAppElement(selector: string | HTMLElement): void
   }
 }
+
+interface Function {
+  type: any;
+}

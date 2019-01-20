@@ -1,13 +1,14 @@
 import {
   applyMiddleware, combineReducers,
-  compose, createStore, Store
+  compose, createStore
 } from 'redux';
-import thunk from 'redux-thunk';
+import thunk, { ThunkDispatch } from 'redux-thunk';
 
 import {
   reducers, routerMiddleware, history,
   PgModelState, PgViewState, PgRouterState
 } from 'store/reducers';
+import { loadModel, PgAction } from './actions';
 
 export type PgAppState = {
   model: PgModelState
@@ -26,7 +27,7 @@ interface Window {
 declare let window: Window;
 let composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
-export let store: Store<PgAppState> = createStore<PgAppState>(
+export let store = createStore<PgAppState, PgAction, {dispatch: ThunkDispatch<PgAppState, void, PgAction>}, {}>(
   combineReducers<PgAppState>({
     ...reducers
   }),
@@ -41,5 +42,4 @@ export let store: Store<PgAppState> = createStore<PgAppState>(
 // user selecting and opening a model isn't implemented
 // yet (i.e. open from file, indexedDb, server, etc.),
 // so bootstrap test model here during development
-import { loadModel } from './actions';
 store.dispatch(loadModel());

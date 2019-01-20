@@ -17,15 +17,22 @@ import './EntryList.css';
 
 import 'font-awesome/css/font-awesome.min.css';
 
-interface EntryListComponentProps {
+interface EntryListStateProps {
   entries: PgEntry[];
   selectedEntry: string;
+}
+
+interface EntryListDispatchProps {
   deselectEntry: () => void;
   selectEntry: (entryId: string) => void;
   continueTask: (taskId: string) => void;
   onNewEntry: React.MouseEventHandler<HTMLButtonElement>;
   deleteEntry: (entryId: string) => void;
 }
+
+interface EntryListOwnProps { }
+
+type EntryListComponentProps = EntryListStateProps & EntryListDispatchProps & EntryListOwnProps;
 
 interface EntryListComponentState {
   columns: Column[];
@@ -176,7 +183,7 @@ export class EntryListComponent extends React.Component<EntryListComponentProps,
   }
 }
 
-export let EntryList = connect(
+export let EntryList = connect<EntryListStateProps, EntryListDispatchProps, EntryListOwnProps, PgAppState>(
   (state: PgAppState) => ({
     entries: entriesArraySelector(state),
     selectedEntry: state.view.selectedEntry
@@ -195,7 +202,7 @@ export let EntryList = connect(
     deleteEntry: (entryId: string) => {
       dispatch(deleteEntry(entryId));
     },
-    onNewEntry: (ev) => {
+    onNewEntry: () => {
       dispatch(createEntry({ start: Date.now() }));
     }
   })

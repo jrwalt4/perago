@@ -4,9 +4,10 @@ import * as Select from 'react-select';
 import 'react-select/dist/react-select.css';
 
 import { PgTask } from 'store/models';
+import { tasksArraySelector } from 'store/selectors';
 import { PgAppState } from 'store';
 
-export type TaskFieldProps = {
+export type TaskFieldOwnProps = {
   taskId?: string;
   isEditing?: boolean;
   selectableTasks?: Select.Options;
@@ -16,17 +17,17 @@ export type TaskFieldProps = {
 
 type TaskFieldStateProps = {
   selectableTasks: Select.Options
-  task: PgTask
+  task?: PgTask
 };
 
-type TaskFieldOwnProps = TaskFieldProps & TaskFieldStateProps;
+type TaskFieldProps = TaskFieldOwnProps & TaskFieldStateProps;
 
 export type TaskFieldState = {
   currentSearchTaskName?: string
 };
 
-export class TaskFieldComponent extends React.Component<TaskFieldOwnProps, TaskFieldState> {
-  constructor(props: TaskFieldOwnProps) {
+export class TaskFieldComponent extends React.Component<TaskFieldProps, TaskFieldState> {
+  constructor(props: TaskFieldProps) {
     super(props);
     this.state = {
       currentSearchTaskName: ''
@@ -76,10 +77,10 @@ export class TaskFieldComponent extends React.Component<TaskFieldOwnProps, TaskF
   }
 }
 
-export let TaskField = connect(
-  ({ model }: PgAppState, { taskId }: TaskFieldProps) => ({
-    selectableTasks: model.tasks.toArray().map((pgTask) => ({ value: pgTask._id, label: pgTask.name })),
-    task: taskId && model.tasks.get(taskId)
+export const TaskField = connect<TaskFieldStateProps, null, TaskFieldOwnProps, TaskFieldProps, PgAppState>(
+  (state: PgAppState, { taskId }: TaskFieldOwnProps) => ({
+    selectableTasks: tasksArraySelector(state).map((pgTask) => ({ value: pgTask._id, label: pgTask.name })),
+    task: taskId ? state.model.tasks.get(taskId) : undefined
   }),
   null,
   (state, dispatch, props: TaskFieldProps) => ({

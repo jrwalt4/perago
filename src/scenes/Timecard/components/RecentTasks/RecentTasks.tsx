@@ -11,7 +11,6 @@ import './RecentEntries.css';
 type RecentTaskProps = {
   recentTasks: PgTask[];
   continueTask: (taskId: string) => void;
-  load: () => void;
 };
 
 let RecentTasksComponent = ({ recentTasks, continueTask }: RecentTaskProps) => (

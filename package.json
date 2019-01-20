@@ -9,32 +9,28 @@
     "@types/react": "16.x.x",
     "@types/react-datepicker": "^1.1.5",
     "@types/react-dom": "16.x.x",
-    "@types/react-redux": "^4.4.40",
-    "@types/react-router": "^4.0.9",
-    "@types/react-router-dom": "^4.0.4",
-    "@types/react-router-redux": "^5.0.1",
+    "@types/react-redux": "^6.0.12",
+    "@types/react-router-dom": "4.x",
     "@types/react-select": "1.x",
     "@types/react-table": "^6.7.0",
-    "@types/redux-thunk": "^2.1.0",
     "@types/reselect": "^2.2.0",
     "bootstrap": "^4.0.0-alpha.6",
+    "connected-react-router": "^6.1.0",
     "cuid": "^1.3.8",
     "font-awesome": "^4.7.0",
-    "history": "^4.6.1",
+    "history": "4.x",
     "immutable": "^3.8.1",
     "moment": "^2.18.1",
     "react": "16.x.x",
     "react-datepicker": "^1.5.0",
     "react-dom": "16.x.x",
     "react-modal": "^2.2.3",
-    "react-redux": "^5.0.4",
-    "react-router": "^4.1.1",
-    "react-router-dom": "^4.1.1",
-    "react-router-redux": "^5.0.0-alpha.6",
+    "react-redux": "6.x",
+    "react-router-dom": "4.x",
     "react-select": "1.x",
     "react-table": "^6.7.6",
-    "redux": "^3.6.0",
-    "redux-thunk": "^2.2.0",
+    "redux": "4.x",
+    "redux-thunk": "^2.3.0",
     "reselect": "^3.0.1"
   },
   "devDependencies": {
@@ -45,7 +41,7 @@
     "enzyme-adapter-react-16": "^1.7.0",
     "react-scripts-ts": "2.17",
     "react-test-renderer": "^15.6.1",
-    "typescript": "3.x.x"
+    "typescript": "3.1.6"
   },
   "scripts": {
     "start": "cross-env NODE_PATH=src react-scripts-ts start",
@@ -55,6 +51,8 @@
     "eject": "react-scripts-ts eject"
   },
   "resolutions": {
-    "@types/react": "16.x.x"
+    "@types/react": "16.7.7",
+    "@types/react-router": "4.4.3",
+    "@types/history": "4.7.2"
   }
 }

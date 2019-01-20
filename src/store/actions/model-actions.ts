@@ -1,4 +1,5 @@
 import { MomentInput } from 'moment';
+import { Action as ReduxAction } from 'redux';
 import { ThunkAction } from 'redux-thunk';
 
 import { PgAppState } from 'store';
@@ -28,7 +29,9 @@ export type PgModelAction =
   setEntryEndTime.Action |
   setEntryDate.Action;
 
-export function loadModel(): ThunkAction<void, PgAppState, {}> {
+export type PgThunkAction<R, A extends ReduxAction> = ThunkAction<R, PgAppState, void, A>;
+
+export function loadModel(): PgThunkAction<void, loadModelSuccess.Action | loadModelError.Action> {
   return (dispatch, getState) => {
     data.loadModelFromStore().then((model) => {
       dispatch(loadModelSuccess(model));
@@ -68,8 +71,13 @@ export namespace loadModelError {
   export const type = 'LOAD_MODEL_ERROR';
 }
 
-export function createEntry(entry: Partial<PgEntry>): ThunkAction<void, PgAppState, {}> {
-  return (dispatch, getState) => {
+export function createEntry(entry: Partial<PgEntry>): ThunkAction<
+  void,
+  PgAppState,
+  undefined,
+  createEntrySuccess.Action | createEntryError.Action
+  > {
+  return (dispatch) => {
     data.addEntryToStore(entry).then((result) => {
       dispatch(createEntrySuccess(result));
     }).catch((err) => {

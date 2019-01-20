@@ -1,8 +1,10 @@
-import { RouterState } from 'react-router-redux';
+import { connectRouter, RouterState } from 'connected-react-router';
 import createBrowserHistory from 'history/createBrowserHistory';
 
 export const history = createBrowserHistory();
 
 export type PgRouterState = RouterState;
 
-export * from 'react-router-redux';
+export const routerReducer = connectRouter(history);
+
+export { routerMiddleware } from 'connected-react-router';
