@@ -4,20 +4,33 @@ export type PgViewState = {
   selectedTask: string
   selectedEntry: string
   filter: string
-  isEditing: boolean
+  isEditing: boolean,
+  isFetchingData: boolean
 };
 
 export let initialViewState: PgViewState = {
   selectedTask: '',
   selectedEntry: '',
   filter: '',
-  isEditing: false
+  isEditing: false,
+  isFetchingData: false
 };
 
 export function viewReducer(
   state: PgViewState = initialViewState,
   action: actions.PgAction): PgViewState {
   switch (action.type) {
+    case actions.loadModelBegin.type:
+      return {
+        ...state,
+        isFetchingData: true
+      };
+    case actions.loadModelError.type:
+    case actions.loadModelSuccess.type:
+      return {
+        ...state,
+        isFetchingData: false
+      };
     case actions.selectEntry.type:
       if (action.payload === state.selectedEntry) {
         return state;

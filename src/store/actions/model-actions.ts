@@ -15,6 +15,7 @@ import * as data from 'store/data';
  */
 
 export type PgModelAction =
+  loadModelBegin.Action |
   loadModelSuccess.Action |
   loadModelError.Action |
   createEntrySuccess.Action |
@@ -31,14 +32,29 @@ export type PgModelAction =
 
 export type PgThunkAction<R, A extends ReduxAction> = ThunkAction<R, PgAppState, void, A>;
 
-export function loadModel(): PgThunkAction<void, loadModelSuccess.Action | loadModelError.Action> {
+export function loadModel():
+  PgThunkAction<void, loadModelBegin.Action | loadModelSuccess.Action | loadModelError.Action> {
   return (dispatch, getState) => {
+    dispatch(loadModelBegin());
     data.loadModelFromStore().then((model) => {
       dispatch(loadModelSuccess(model));
     }).catch((err) => {
       dispatch(loadModelError(err));
     });
   };
+}
+
+export function loadModelBegin(): loadModelBegin.Action {
+  return {
+    type: 'LOAD_MODEL_BEGIN'
+  };
+}
+
+export namespace loadModelBegin {
+  export type Action = {
+    type: 'LOAD_MODEL_BEGIN'
+  };
+  export const type = 'LOAD_MODEL_BEGIN';
 }
 
 export function loadModelSuccess(model: PgModel.PgModelInputs): loadModelSuccess.Action {
