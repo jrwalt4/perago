@@ -11,7 +11,7 @@ import { DurationField } from 'components/DurationField';
 import { TaskField } from 'components/TaskField';
 import { DateField } from 'components/DateField';
 import { ConnectedProjectField } from 'components/ProjectField';
-import { Table, Column, RowRenderProps, FinalState, RowInfo } from 'components/Table';
+import { Table, ColumnDef } from 'components/Table';
 import { getFullDate } from 'util/time';
 import './EntryList.css';
 
@@ -35,11 +35,7 @@ interface EntryListOwnProps { }
 type EntryListComponentProps = EntryListStateProps & EntryListDispatchProps & EntryListOwnProps;
 
 interface EntryListComponentState {
-  columns: Column[];
-}
-
-function stopPropagation<ElementType>(e: React.MouseEvent<ElementType>) {
-  e.stopPropagation();
+  columns: ColumnDef<PgEntry>[];
 }
 
 export class EntryListComponent extends React.Component<EntryListComponentProps, EntryListComponentState> {
@@ -47,64 +43,41 @@ export class EntryListComponent extends React.Component<EntryListComponentProps,
     super(props);
     this.state = {
       columns: [
-        // add '_id' column so entry._id can be accessed from row onClick handler
         {
-          Header: 'Id',
-          accessor: '_id',
-          show: false
-        },
-        {
-          Header: 'Date',
+          title: 'Date',
           id: 'date',
           accessor: (entry: PgEntry) => getFullDate(entry.start),
-          pivot: true,
-          PivotValue: (rowProps: RowRenderProps) => {
-            // rowProps.value will return the date timestamp as a string
-            let timestamp = parseInt(rowProps.value, 10);
-            return <DateField value={timestamp} format="MMM D" />;
-          },
-          Cell: (rowProps: RowRenderProps) => <DateField value={rowProps.value} />,
-          Aggregated: (rowProps: RowRenderProps) => <DateField value={rowProps.value} />
+          render: (date: number) => <DateField value={date} />,
         },
         {
-          Header: 'Job',
+          title: 'Job',
           id: 'project',
           accessor: 'taskId',
-          Cell: (rowProps: RowRenderProps) => <ConnectedProjectField taskId={rowProps.value} />,
-          // Aggregated: () => <i>Multiple</i>
+          render: (id: string) => <ConnectedProjectField taskId={id} />,
         },
         {
-          Header: 'Task',
+          title: 'Task',
           accessor: 'taskId',
-          Cell: (rowProps: RowRenderProps) => {
-            return <TaskField taskId={rowProps.value} />;
+          render: (id: string) => {
+            return <TaskField taskId={id} />;
           },
-          // Aggregated: () => <i>Multiple</i>
         },
         {
-          Header: 'Start',
+          title: 'Start',
           accessor: 'start',
-          Cell: (rowProps: RowRenderProps) => <TimeField value={rowProps.value} format="h:mm a" />,
-          Aggregated: (rowProps: RowRenderProps) => <i>Multiple</i>
+          render: (start: number) => <TimeField value={start} format="h:mm a" />,
         },
         {
-          Header: 'End',
+          title: 'End',
           accessor: 'end',
-          Cell: (rowProps: RowRenderProps) => <TimeField value={rowProps.value} format="h:mm a" />,
-          Aggregated: (rowProps: RowRenderProps) => <i>Multiple</i>
+          render: (end: number) => <TimeField value={end} format="h:mm a" />,
         },
         {
-          Header: 'Duration',
+          title: 'Duration',
           id: 'duration',
           accessor: (entry: PgEntry) => PgEntry.getDuration(entry),
-          aggregate: (values: number[]) => {
-            return values.reduce((total: number, duration: number) => {
-              return duration + total;
-              // tslint:disable-next-line:align
-            }, 0);
-          },
-          Cell: function (rowProps: RowRenderProps) {
-            return <DurationField value={rowProps.value} />;
+          render: function (duration: number) {
+            return <DurationField value={duration} />;
           }
         }
       ]
@@ -127,53 +100,7 @@ export class EntryListComponent extends React.Component<EntryListComponentProps,
         <h4>Timecard</h4>
         <Table data={this.props.entries}
           className="-striped -highlight"
-          defaultPageSize={10}
-          collapseOnDataChange={false}
-          showPagination={false}
           columns={this.state.columns}
-          ExpanderComponent={() => <span className="EntryList-expander fa fa-ellipsis-v" />}
-          SubComponent={(rowInfo: RowInfo) => (
-            <div className="EntryList-control-container btn-group" onClick={stopPropagation}>
-              <span className="EntryList-control btn btn-sm btn-primary fa fa-retweet" onClick={() => {
-                this.props.continueTask((rowInfo.row as PgEntry).taskId);
-              }} />
-              <span className="EntryList-control btn btn-sm btn-danger fa fa-trash" onClick={() => {
-                this.props.deleteEntry((rowInfo.row as PgEntry)._id);
-              }} />
-            </div>
-          )}
-          getTrProps={(state: FinalState, rowInfo: RowInfo) => {
-            if (rowInfo && rowInfo.row) {
-              let { row } = rowInfo;
-              let _id = row && row._id;
-              if (_id && (_id === this.props.selectedEntry)) {
-                return {
-                  className: 'EntryList-row' + ' EntryList-selected',
-                  style: { background: 'rgba(173,216,230,0.5)' }
-                };
-              }
-            }
-            return {
-              className: 'EntryList-row'
-            };
-          }}
-          getTdProps={(state: FinalState, rowInfo: RowInfo) => ({
-            onClick: (e: Event, handleOriginal: () => void) => {
-              if (rowInfo && rowInfo.row) {
-                this.props.selectEntry((rowInfo.row as PgEntry)._id);
-              } else {
-                this.props.deselectEntry();
-              }
-              if (handleOriginal && typeof handleOriginal === 'function') {
-                handleOriginal();
-              }
-            },
-            className: 'EntryList-data'
-          })}
-          getTheadThProps={() => ({
-            style: { outline: 'none' }
-          })}
-          pivotBy={['date']}
         />
         <div className="EntryList-control-container btn-group">
           <span className="EntryList-control btn btn-sm btn-primary fa fa-plus" onClick={this.props.onNewEntry} />

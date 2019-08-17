@@ -198,12 +198,6 @@
   dependencies:
     "@types/react" "*"
 
-"@types/react-table@^6.7.0":
-  version "6.7.0"
-  resolved "https://registry.yarnpkg.com/@types/react-table/-/react-table-6.7.0.tgz#4a8bcd6a98276912738d4d2f18719557a476a329"
-  dependencies:
-    "@types/react" "*"
-
 "@types/react-transition-group@2.0.15", "@types/react-transition-group@^2.0.8":
   version "2.0.15"
   resolved "https://registry.yarnpkg.com/@types/react-transition-group/-/react-transition-group-2.0.15.tgz#e5ee3fe558832e141cc6041bdd54caea7b787af8"
@@ -7026,12 +7020,6 @@ react-select@1.x:
     classnames "^2.2.4"
     prop-types "^15.5.8"
     react-input-autosize "^2.1.2"
-
-react-table@^6.7.6:
-  version "6.7.6"
-  resolved "https://registry.yarnpkg.com/react-table/-/react-table-6.7.6.tgz#3f9e3b308328ceb04ef93a47babefaba2619c905"
-  dependencies:
-    classnames "^2.2.5"
 
 react-test-renderer@^15.6.1:
   version "15.6.1"

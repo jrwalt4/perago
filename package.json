@@ -14,7 +14,6 @@
     "@types/react-redux": "^6.0.12",
     "@types/react-router-dom": "4.x",
     "@types/react-select": "1.x",
-    "@types/react-table": "^6.7.0",
     "@types/reselect": "^2.2.0",
     "bootstrap": "^4.0.0-alpha.6",
     "connected-react-router": "^6.1.0",
@@ -30,7 +29,6 @@
     "react-redux": "6.x",
     "react-router-dom": "4.x",
     "react-select": "1.x",
-    "react-table": "^6.7.6",
     "redux": "4.x",
     "redux-thunk": "^2.3.0",
     "reselect": "^3.0.1"
