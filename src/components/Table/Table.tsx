@@ -11,19 +11,22 @@ type RenderFn<T, V> = (value: V, item: T) => React.ReactNode;
 
 type AccessorFn<T, V= {}> = (item: T) => V;
 
-export type ColumnDefAccessor<T, V> = {
-  title: string | React.ReactNode;
+interface ColumnDefCommon<T, V> {
+  title?: React.ReactNode;
   render?: RenderFn<T, V>;
+  primary?: boolean;
+  hidden?: boolean;
+}
+
+export interface ColumnDefAccessor<T, V> extends ColumnDefCommon<T, V> {
   accessor: AccessorFn<T>;
   id: string;
-};
+}
 
-export type ColumnDefField<T, V> = {
-  title: string | React.ReactNode;
-  render?: RenderFn<T, V>;
+export interface ColumnDefField<T, V> extends ColumnDefCommon<T, V> {
   accessor: Extract<keyof T, string>;
   id?: string;
-};
+}
 
 export type ColumnDef<T, V = {}> = ColumnDefAccessor<T, V> | ColumnDefField<T, V>;
 
@@ -41,26 +44,37 @@ class Column<T, V = {}> {
   private _id: string | Extract<keyof T, string | number>;
   private _title: string | React.ReactNode;
   private _accessor: AccessorFn<T, V>;
+  private _hidden: boolean;
 
   private _renderCell: (value: V, item: T) => React.ReactNode;
 
   constructor(def: ColumnDef<T, V>) {
-    this._title = def.title;
+    this._hidden = Boolean(def.hidden);
     if (isColumnDefField(def)) {
-      this._id = def.accessor;
+      this._id = def.id ? def.id : def.accessor;
       this._accessor = (d: T) => (d[def.accessor] as unknown) as V;
     } else {
       this._id = def.id;
       this._accessor = def.accessor as AccessorFn<T, V>;
     }
+    this._title = def.title || this._id;
     if (typeof def.render === 'function') {
       this._renderCell = def.render;
     } else {
       this._renderCell = identity;
     }
   }
+
+  get isHidden(): boolean {
+    return this._hidden;
+  }
+
   get id() {
     return this._id;
+  }
+
+  getValue(item: T): V {
+    return this._accessor(item);
   }
 
   renderTitle() {
@@ -89,16 +103,27 @@ function THead(props: THeadProps) {
   );
 }
 
+interface UserRowProps<T> {
+  isSelected?: boolean;
+}
+
 interface TRowProps<T> {
   rowData: T;
   columns: Column<T>[];
-  key: string | number;
+  rowId: React.ReactText;
+  onClick: (event: React.MouseEvent<HTMLTableRowElement>) => void;
+  userProps: UserRowProps<T>;
 }
 
 function TRow<T>(props: TRowProps<T>) {
-  const { rowData, columns } = props;
+  const { rowData, rowId, columns, onClick, userProps } = props;
   return (
-    <MTableRow>
+    <MTableRow
+      hover={true}
+      selected={userProps.isSelected}
+      data-id={rowId}
+      onClick={onClick}
+    >
       {columns.map(col => (
         <MTableCell key={col.id}>{col.renderCell(rowData)}</MTableCell>
       ))}
@@ -109,41 +134,91 @@ function TRow<T>(props: TRowProps<T>) {
 interface TableProps<T> extends MTableProps {
   data: T[];
   columns: ColumnDef<T>[];
-  rowKey?: (row: T) => string | number;
+  rowProps?: UserRowProps<T> | ((item: T) => UserRowProps<T>);
+  onRowClick?: (rowData: T) => void;
 }
 
 interface TableState<T> {
   columns: Column<T>[];
+  primaryColumnIndex?: number;
 }
 
 export class Table<T> extends React.Component<
   TableProps<T>,
   TableState<T>
   > {
+
+  state: TableState<T> = {
+    columns: [],
+  };
+
   static getDerivedStateFromProps<T>(
     props: TableProps<T>,
     state: TableState<T>
   ): TableState<T> {
+    let primaryColumnIndex: number | undefined;
+    let columns = props.columns.map((colDef, index) => {
+      let isPrimary = Boolean(colDef.primary);
+      if (isPrimary) {
+        if (null != primaryColumnIndex) {
+          throw new Error('Cannot have two primary columns');
+        }
+        primaryColumnIndex = index;
+      }
+      return new Column(colDef);
+    });
     return {
-      columns: props.columns.map(colDef => new Column(colDef))
+      columns,
+      primaryColumnIndex
     };
   }
 
-  getRowKey(item: T) {
-    return this.props.rowKey && this.props.rowKey(item);
+  getDisplayColumns(): Column<T>[] {
+    return this.state.columns.filter((col) => !col.isHidden);
+  }
+
+  getRowKey(item: T, index: number): React.ReactText {
+    let primaryColumnIndex = this.state.primaryColumnIndex;
+    if (null == primaryColumnIndex) {
+      return index;
+    }
+    return this.state.columns[primaryColumnIndex].getValue(item) as React.ReactText;
+  }
+
+  getRowProps(item: T, index: number): UserRowProps<T> {
+    let rowProps = this.props.rowProps;
+    if (null == rowProps) {
+      return {};
+    }
+    return typeof rowProps === 'function' ? rowProps(item) : rowProps;
+  }
+
+  handleRowClick = (event: React.MouseEvent<HTMLTableRowElement>) => {
+    if (typeof this.props.onRowClick === 'function') {
+      let rowId = event.currentTarget.dataset.id;
+      let item = this.props.data.find((val, index) => this.getRowKey(val, index) === rowId);
+      if (null != item) {
+        this.props.onRowClick(item);
+      }
+    }
   }
 
   render() {
+    let displayColumns = this.getDisplayColumns();
     return (
       <MTable>
-        <THead columns={this.state.columns} />
+        <THead columns={displayColumns} />
         <MTableBody>
           {this.props.data.map((item, index) => {
+            let id = this.getRowKey(item, index);
             return (
               <TRow
-                columns={this.state.columns}
+                columns={displayColumns}
                 rowData={item}
-                key={this.getRowKey(item) || index}
+                rowId={id}
+                key={id}
+                onClick={this.handleRowClick}
+                userProps={this.getRowProps(item, index)}
               />
             );
           })}

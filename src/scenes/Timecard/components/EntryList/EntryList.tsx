@@ -44,6 +44,11 @@ export class EntryListComponent extends React.Component<EntryListComponentProps,
     this.state = {
       columns: [
         {
+          accessor: '_id',
+          hidden: true,
+          primary: true
+        },
+        {
           title: 'Date',
           id: 'date',
           accessor: (entry: PgEntry) => getFullDate(entry.start),
@@ -94,6 +99,9 @@ export class EntryListComponent extends React.Component<EntryListComponentProps,
       this.props.deselectEntry();
     }
   }
+  handleRowClick = (rowData: PgEntry) => {
+    this.props.selectEntry(rowData._id);
+  }
   render(): JSX.Element {
     return (
       <div className="col-12 EntryList">
@@ -101,6 +109,8 @@ export class EntryListComponent extends React.Component<EntryListComponentProps,
         <Table data={this.props.entries}
           className="-striped -highlight"
           columns={this.state.columns}
+          rowProps={(entry) => ({ isSelected: this.props.selectedEntry === entry._id })}
+          onRowClick={this.handleRowClick}
         />
         <div className="EntryList-control-container btn-group">
           <span className="EntryList-control btn btn-sm btn-primary fa fa-plus" onClick={this.props.onNewEntry} />
