@@ -1,6 +1,10 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 
+import MICon from '@material-ui/core/Icon';
+import MDeleteIcon from '@material-ui/icons/DeleteForever';
+import MRepeatIcon from '@material-ui/icons/Restore';
+
 import { PgAppState } from 'store';
 import { PgEntry } from 'store/models';
 import { selectEntry, stopEditing, startTask, createEntry, deleteEntry, clearSelection } from 'store/actions';
@@ -102,6 +106,20 @@ export class EntryListComponent extends React.Component<EntryListComponentProps,
   handleRowClick = (rowData: PgEntry) => {
     this.props.selectEntry(rowData._id);
   }
+
+  handleRowAction = (actionType: string) => (item: PgEntry) => {
+    switch (actionType) {
+      case 'delete':
+        this.props.deleteEntry(item._id);
+        break;
+      case 'continue':
+        this.props.continueTask(item._id);
+        break;
+      default:
+        return;
+    }
+  }
+
   render(): JSX.Element {
     return (
       <div className="col-12 EntryList">
@@ -109,8 +127,20 @@ export class EntryListComponent extends React.Component<EntryListComponentProps,
         <Table data={this.props.entries}
           className="-striped -highlight"
           columns={this.state.columns}
-          rowProps={(entry) => ({ isSelected: this.props.selectedEntry === entry._id })}
+          rowProps={(entry) => ({
+            selected: this.props.selectedEntry === entry._id
+          })}
           onRowClick={this.handleRowClick}
+          rowActions={[
+            {
+              icon: <MICon><MDeleteIcon /></MICon>,
+              onClick: this.handleRowAction('delete')
+            },
+            {
+              icon: <MICon><MRepeatIcon /></MICon>,
+              onClick: this.handleRowAction('continue')
+            },
+          ]}
         />
         <div className="EntryList-control-container btn-group">
           <span className="EntryList-control btn btn-sm btn-primary fa fa-plus" onClick={this.props.onNewEntry} />

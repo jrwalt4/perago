@@ -16,6 +16,11 @@ import { store, history } from 'store';
 const pgTheme = createMuiTheme({
   typography: {
     useNextVariants: true
+  },
+  props: {
+    MuiTableRow: {
+      hover: true
+    }
   }
 });
 
