@@ -1,8 +1,8 @@
-import { PgModel } from 'store/models';
+import { PgModel, from } from 'store/models/pg-model';
 
 export type PgModelState = PgModel;
 
-export const initialModel: PgModelState = PgModel.from({
+export const initialModel: PgModelState = from({
   entries: [
     {
       taskId: '1',
@@ -34,16 +34,6 @@ export const initialModel: PgModelState = PgModel.from({
       _id: '5',
       name: 'Task 2',
       parentId: '11'
-    }
-  ],
-  projects: [
-    {
-      _id: '10',
-      name: 'Do Something'
-    },
-    {
-      _id: '11',
-      name: 'Do Something Else'
     }
   ]
 });

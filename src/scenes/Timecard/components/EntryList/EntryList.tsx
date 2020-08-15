@@ -6,7 +6,7 @@ import MDeleteIcon from '@material-ui/icons/DeleteForever';
 import MRepeatIcon from '@material-ui/icons/Restore';
 
 import { PgAppState } from 'store';
-import { PgEntry } from 'store/models';
+import { PgEntry, getDuration } from 'store/models/pg-entry';
 import { selectEntry, stopEditing, startTask, createEntry, deleteEntry, clearSelection } from 'store/actions';
 import { entriesArraySelector } from 'store/selectors';
 
@@ -84,7 +84,7 @@ export class EntryListComponent extends React.Component<EntryListComponentProps,
         {
           title: 'Duration',
           id: 'duration',
-          accessor: (entry: PgEntry) => PgEntry.getDuration(entry),
+          accessor: (entry: PgEntry) => getDuration(entry),
           render: function (duration: number) {
             return <DurationField value={duration} />;
           }

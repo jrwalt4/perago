@@ -1,7 +1,23 @@
 import * as moment from 'moment';
 
+export function isValidDateTime(dateTime: moment.MomentInput): boolean {
+  return Boolean(dateTime) && moment(dateTime).isValid();
+}
+
 export function getFullDate(timestamp: number): number {
   return moment(timestamp).startOf('day').valueOf();
+}
+
+export function formatDateTimeString(date: moment.MomentInput): string {
+  return date ? moment(date).toISOString() : '';
+}
+
+const millisecondsInDay = 86400000; // 24 * 60 * 60 * 1000
+
+export function mergeDateAndTime(date: moment.MomentInput, time: moment.MomentInput): number {
+  let dateValue = moment(date).valueOf();
+  let timeValue = moment(time).valueOf();
+  return dateValue - dateValue % millisecondsInDay + timeValue % millisecondsInDay;
 }
 
 // const dateExp = /(\d{1,2})?[\\/-\s]+(\d{1,2})?[\\/-\s]+(\d{1,2})?/;

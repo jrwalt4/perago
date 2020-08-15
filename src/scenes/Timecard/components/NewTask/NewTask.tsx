@@ -4,7 +4,7 @@ import { Dispatch } from 'redux';
 import Modal, { ReactModalProps } from 'react-modal';
 
 import { PgAppState } from 'store';
-import { PgTask } from 'store/models';
+import { PgTask } from 'store/models/pg-task';
 import { PgAction, createTask } from 'store/actions';
 import { TaskField } from 'components/TaskField';
 

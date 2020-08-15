@@ -1,43 +1,50 @@
-import { PgModel, PgEntry, PgTask } from 'store/models';
-import { PgModelRecord } from 'store/models/pg-model';
+import { createReducer } from '@reduxjs/toolkit';
+
+import * as PgEntry from 'store/models/pg-entry';
+import * as PgTask from 'store/models/pg-task';
+import * as PgModel from 'store/models/pg-model';
 import * as actions from 'store/actions';
 
-export type PgModelState = PgModel;
+export type PgModelState = PgModel.PgModel;
 
-export function modelReducer(
-  model: PgModelRecord = PgModel.create(),
-  action: actions.PgAction): PgModelState {
-  switch (action.type) {
-    case actions.loadModelSuccess.type:
+export const modelReducer = createReducer<PgModelState>(PgModel.create(), {
+    [actions.loadModelSuccess.type]: (model, action: actions.loadModelSuccess) => {
       return PgModel.from(action.payload);
-    case actions.createEntrySuccess.type:
+    },
+    [actions.createEntrySuccess.type]: (model, action) => {
       return PgModel.addEntry(PgModel.stopAllEntries(model), PgEntry.from(action.payload));
-    case actions.deleteEntry.type:
+    },
+    [actions.deleteEntry.type]: (model, action) => {
       return PgModel.deleteEntry(model, action.payload);
-    case actions.createTask.type:
+    },
+    [actions.createTask.type]: (model, action) => {
       return PgModel.addTask(model, PgTask.from(action.payload));
-    case actions.setTaskName.type:
-      return PgModel.setTaskName(model, action.payload._id, name);
-    case actions.setTaskJob.type:
+    },
+    [actions.setTaskName.type]: (model, action: actions.setTaskName) => {
+      const task = action.payload;
+      return PgModel.setTaskName(model, task._id, task.name);
+    },
+    [actions.setTaskJob.type]: (model, action) => {
       return PgModel.setTaskParent(model, action.payload._id, action.payload.jobId);
-    case actions.startTask.type:
+    },
+    [actions.startTask.type]: (model, action: actions.startTask) => {
       let stoppedModel = PgModel.stopAllEntries(model);
-      let newEntry = PgEntry.createAndStart().set('taskId', action.payload);
+      let newEntry = PgEntry.setTask(PgEntry.createAndStart(), action.payload);
       return PgModel.addEntry(stoppedModel, newEntry);
-    case actions.setEntryTask.type:
-      return PgModel.setEntryTask(model, action.payload._id, action.payload.taskId);
-    case actions.setEntryStartTime.type: {
+    },
+    [actions.setEntryTask.type]: (model: PgModelState, action: actions.setEntryTask) => {
+      const args = action.payload;
+      return PgModel.setEntryTask(model, args._id, args.taskId);
+    },
+    [actions.setEntryStartTime.type]: (model, action: actions.setEntryStartTime) => {
       let { _id, hour, minute } = action.payload;
       return PgModel.setEntryStartTime(model, _id, hour, minute);
-    }
-    case actions.setEntryEndTime.type: {
+    },
+    [actions.setEntryEndTime.type]: (model, action: actions.setEntryEndTime) => {
       let { _id, hour, minute } = action.payload;
       return PgModel.setEntryEndTime(model, _id, hour, minute);
+    },
+    [actions.setEntryDate.type]: (model, action) => {
+      PgModel.setEntryDate(model, action.payload._id, action.payload.date);
     }
-    case actions.setEntryDate.type: {
-      return PgModel.setEntryDate(model, action.payload._id, action.payload.date);
-    }
-    default:
-      return model;
-  }
-}
+});

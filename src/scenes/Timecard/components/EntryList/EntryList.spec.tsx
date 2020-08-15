@@ -6,14 +6,14 @@ import * as Adapter from 'enzyme-adapter-react-16';
 configure({adapter: new Adapter});
 
 import { EntryListComponent } from './EntryList';
-import { PgModel } from 'store/models';
+import { create as createModel } from 'store/models/pg-model';
 
 it('renders', () => {
   let noop = () => void 0;
   let render = () => shallow(
     (
       <EntryListComponent
-        entries={PgModel.create().entries.toArray()}
+        entries={Array.from(createModel().entries.values())}
         selectedEntry="1"
         deselectEntry={noop}
         selectEntry={noop}

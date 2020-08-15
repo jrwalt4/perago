@@ -1,6 +1,5 @@
 import * as moment from 'moment';
-
-import { PgEntry } from './pg-entry';
+import * as PgEntry from './pg-entry';
 
 it('Should create a new PgEntry with a cuid', () => {
   let e = PgEntry.create();
@@ -16,10 +15,10 @@ it('Should create a new PgEntry with the provided _id', () => {
 it('Should copy all fields from provided PgEntry', () => {
   let e = PgEntry.create();
   let start = moment('2017-07-07T04:00-04:00');
-  e = PgEntry.setStart(e, start.valueOf());
+  PgEntry.setStart(e, start.valueOf());
   let end = start.add(2, 'h');
-  e = PgEntry.setEnd(e, end.valueOf());
-  e = PgEntry.setTask(e, '1');
+  PgEntry.setEnd(e, end.valueOf());
+  PgEntry.setTask(e, '1');
 
   let e2 = PgEntry.from(e);
   expect(e2.start).toEqual(e.start);

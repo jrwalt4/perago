@@ -1,5 +1,8 @@
 import { ModelStore, IteratorCallback, StoreName, StoreSchema } from './ModelStore';
-import { PgObject, isRecord, RecordType } from 'store/models';
+import { PgEntry } from 'store/models/pg-entry';
+import { PgTask } from 'store/models/pg-task';
+
+type PgObject = PgEntry | PgTask;
 
 let idb: IDBFactory;
 if (typeof indexedDB !== 'undefined') {
@@ -13,9 +16,6 @@ export class IdbModelStore implements ModelStore {
   private _dbCache: IDBDatabase | undefined;
 
   private static _sanitize(obj: PgObject): PgObject {
-    if (isRecord(obj)) {
-      return (obj as RecordType<PgObject>).toJS();
-    }
     return obj;
   }
 

@@ -1,4 +1,5 @@
-import { PgEntry, PgTask, PgProject } from 'store/models';
+import { PgEntry } from 'store/models/pg-entry';
+import { PgTask } from 'store/models/pg-task';
 
 export interface ModelStore {
   getItem<S extends StoreName>(store: S, id: string): Promise<StoreSchema[S]>;
@@ -25,7 +26,6 @@ export interface ModelStore {
 export interface StoreSchema {
   entries: PgEntry;
   tasks: PgTask;
-  projects: PgProject;
 }
 
 export type StoreName = keyof StoreSchema;

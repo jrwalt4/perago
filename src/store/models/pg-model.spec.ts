@@ -1,4 +1,4 @@
-import { PgModel } from './pg-model';
+import { from as modelFrom, getEntry, getTask, getActiveEntries } from './pg-model';
 
 describe('PgModel', () => {
   it('should create a PgModel', () => {
@@ -19,20 +19,20 @@ describe('PgModel', () => {
       }
     ];
 
-    let model = PgModel.from({ tasks, entries });
+    let model = modelFrom({ tasks, entries });
 
-    let pgEntry = model.entries.get(entryId);
+    let pgEntry = getEntry(model, entryId);
     expect(pgEntry).not.toBeUndefined();
     expect(pgEntry.start).toBe(startTime);
 
-    let pgTask = model.tasks.get(taskId);
+    let pgTask = getTask(model, taskId);
     expect(pgTask).not.toBeUndefined();
     expect(pgTask.name).toBe(taskName);
   });
 
   it('Should return the active entries', () => {
     const today = Date.now();
-    let model = PgModel.from({
+    let model = modelFrom({
       entries: [
         { _id: '1', start: today, end: today },
         { _id: '2', start: today },
@@ -40,7 +40,7 @@ describe('PgModel', () => {
       ],
       tasks: []
     });
-    let activeEntries = PgModel.getActiveEntries(model);
+    let activeEntries = getActiveEntries(model);
     expect(activeEntries.size).toEqual(1);
     expect(activeEntries.get('2')).not.toBeUndefined();
   });

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 
-import { PgTask } from 'store/models';
+import { PgTask } from 'store/models/pg-task';
 import { startTask } from 'store/actions';
 import { PgAppState } from 'store';
 import { recentTasksArraySelector } from 'store/selectors';

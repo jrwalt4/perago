@@ -1,7 +1,9 @@
-import { PgModel, PgEntry, PgProject, PgTask } from 'store/models';
+import { PgModel, from as modelFrom } from 'store/models/pg-model';
+import { PgEntry, from as entryFrom } from 'store/models/pg-entry';
+import { PgTask } from 'store/models/pg-task';
 import { IdbModelStore } from './IdbModelStore';
 import { ModelStore } from './ModelStore';
-import { initialModel } from '../test/initial-model';
+import { initialModel } from 'store/test/initial-model';
 
 const _store: ModelStore = new IdbModelStore();
 let _storeIsInitialized = false;
@@ -13,7 +15,7 @@ function getStore(): Promise<ModelStore> {
   return _store.clearAll().then(() => {
     return Promise.all(
       [
-        initialModel.entries.reduce<Promise<void | PgEntry>>(
+        Array.from(initialModel.entries.values()).reduce<Promise<void | PgEntry>>(
           (promise, val: PgEntry) => {
             if (promise) {
               return promise.then(() => _store.addItem('entries', val));
@@ -22,21 +24,12 @@ function getStore(): Promise<ModelStore> {
           },
           Promise.resolve()
         ),
-        initialModel.tasks.reduce<Promise<void | PgTask>>(
+        Array.from(initialModel.tasks.values()).reduce<Promise<void | PgTask>>(
           (promise, val: PgTask) => {
             if (promise) {
               return promise.then(() => _store.addItem('tasks', val));
             }
             return _store.addItem('tasks', val);
-          },
-          Promise.resolve()
-        ),
-        initialModel.projects.reduce<Promise<void | PgProject>>(
-          (promise, val: PgProject) => {
-            if (promise) {
-              return promise.then(() => _store.addItem('projects', val));
-            }
-            return _store.addItem('projects', val);
           },
           Promise.resolve()
         )
@@ -50,20 +43,19 @@ function getStore(): Promise<ModelStore> {
 
 export function loadModelFromStore(): Promise<PgModel> {
   return getStore().then((store) => {
-    return Promise.all<PgEntry[], PgTask[], PgProject[]>(
+    return Promise.all<PgEntry[], PgTask[]>(
       [
         store.getAll('entries'),
         store.getAll('tasks'),
-        store.getAll('projects')
       ]
     );
-  }).then(([entries, tasks, projects]) => {
-    return PgModel.from({ entries, tasks, projects });
+  }).then(([entries, tasks]) => {
+    return modelFrom({ entries, tasks});
   });
 }
 
 export function addEntryToStore(entry: Partial<PgEntry>): Promise<PgEntry> {
   return getStore().then((store) => {
-    return store.addItem('entries', PgEntry.from(entry));
+    return store.addItem('entries', entryFrom(entry));
   });
 }

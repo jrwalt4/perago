@@ -1,9 +1,13 @@
 import { MomentInput } from 'moment';
 import { Action as ReduxAction } from 'redux';
+import { createAction } from '@reduxjs/toolkit';
 import { ThunkAction } from 'redux-thunk';
 
 import { PgAppState } from 'store';
-import { PgModel, PgEntry, PgTask } from 'store/models';
+
+import { PgEntry } from 'store/models/pg-entry';
+import { PgTask } from 'store/models/pg-task';
+import { PgModelInputs } from 'store/models/pg-model';
 import * as data from 'store/data';
 
 /**
@@ -15,25 +19,34 @@ import * as data from 'store/data';
  */
 
 export type PgModelAction =
-  loadModelBegin.Action |
-  loadModelSuccess.Action |
-  loadModelError.Action |
-  createEntrySuccess.Action |
-  createEntryError.Action |
-  createTask.Action |
-  deleteEntry.Action |
-  setTaskName.Action |
-  setTaskJob.Action |
-  startTask.Action |
-  setEntryTask.Action |
-  setEntryStartTime.Action |
-  setEntryEndTime.Action |
-  setEntryDate.Action;
+  loadModelBegin |
+  loadModelSuccess |
+  loadModelError |
+  createEntrySuccess |
+  createEntryError |
+  createTask |
+  deleteEntry |
+  setTaskName |
+  setTaskJob |
+  startTask |
+  setEntryTask |
+  setEntryStartTime |
+  setEntryEndTime |
+  setEntryDate;
 
 export type PgThunkAction<R, A extends ReduxAction> = ThunkAction<R, PgAppState, void, A>;
 
+export const loadModelBegin = createAction<void, 'LOAD_MODEL_BEGIN'>('LOAD_MODEL_BEGIN');
+export type loadModelBegin = ReturnType<typeof loadModelBegin>;
+
+export const loadModelSuccess = createAction<PgModelInputs, 'LOAD_MODEL_SUCCESS'>('LOAD_MODEL_SUCCESS');
+export type loadModelSuccess = ReturnType<typeof loadModelSuccess>;
+
+export const loadModelError = createAction<string, 'LOAD_MODEL_ERROR'>('LOAD_MODEL_ERROR');
+export type loadModelError = ReturnType<typeof loadModelError>;
+
 export function loadModel():
-  PgThunkAction<void, loadModelBegin.Action | loadModelSuccess.Action | loadModelError.Action> {
+  PgThunkAction<void, loadModelBegin | loadModelSuccess | loadModelError> {
   return (dispatch, getState) => {
     dispatch(loadModelBegin());
     data.loadModelFromStore().then((model) => {
@@ -44,54 +57,17 @@ export function loadModel():
   };
 }
 
-export function loadModelBegin(): loadModelBegin.Action {
-  return {
-    type: 'LOAD_MODEL_BEGIN'
-  };
-}
+export const createEntrySuccess = createAction<Partial<PgEntry>, 'CREATE_ENTRY_SUCCESS'>('CREATE_ENTRY_SUCCESS');
+export type createEntrySuccess = ReturnType<typeof createEntrySuccess>;
 
-export namespace loadModelBegin {
-  export type Action = {
-    type: 'LOAD_MODEL_BEGIN'
-  };
-  export const type = 'LOAD_MODEL_BEGIN';
-}
-
-export function loadModelSuccess(model: PgModel.PgModelInputs): loadModelSuccess.Action {
-  return {
-    type: 'LOAD_MODEL_SUCCESS',
-    payload: model
-  };
-}
-
-export namespace loadModelSuccess {
-  export type Action = {
-    type: 'LOAD_MODEL_SUCCESS',
-    payload: PgModel.PgModelInputs
-  };
-  export const type = 'LOAD_MODEL_SUCCESS';
-}
-
-export function loadModelError(err: string): loadModelError.Action {
-  return {
-    type: 'LOAD_MODEL_ERROR',
-    payload: err
-  };
-}
-
-export namespace loadModelError {
-  export type Action = {
-    type: 'LOAD_MODEL_ERROR',
-    payload: string
-  };
-  export const type = 'LOAD_MODEL_ERROR';
-}
+export const createEntryError = createAction<Partial<PgEntry>, 'CREATE_ENTRY_ERROR'>('CREATE_ENTRY_ERROR');
+export type createEntryError = ReturnType<typeof createEntryError>;
 
 export function createEntry(entry: Partial<PgEntry>): ThunkAction<
   void,
   PgAppState,
   undefined,
-  createEntrySuccess.Action | createEntryError.Action
+  createEntrySuccess | createEntryError
   > {
   return (dispatch) => {
     data.addEntryToStore(entry).then((result) => {
@@ -102,67 +78,13 @@ export function createEntry(entry: Partial<PgEntry>): ThunkAction<
   };
 }
 
-export function createEntrySuccess(entry: Partial<PgEntry>): createEntrySuccess.Action {
-  return {
-    type: 'CREATE_ENTRY_SUCCESS',
-    payload: entry
-  };
-}
+export const deleteEntry = createAction<string, 'DELETE_ENTRY'>('DELETE_ENTRY');
+export type deleteEntry = ReturnType<typeof deleteEntry>;
 
-export namespace createEntrySuccess {
-  export type Action = {
-    type: 'CREATE_ENTRY_SUCCESS',
-    payload: Partial<PgEntry>
-  };
-  export const type = 'CREATE_ENTRY_SUCCESS';
-}
+export const createTask = createAction<Partial<PgTask>, 'CREATE_TASK'>('CREATE_TASK');
+export type createTask = ReturnType<typeof createTask>;
 
-export function createEntryError(entry: Partial<PgEntry>): createEntryError.Action {
-  return {
-    type: 'CREATE_ENTRY_ERROR',
-    payload: entry
-  };
-}
-
-export namespace createEntryError {
-  export type Action = {
-    type: 'CREATE_ENTRY_ERROR',
-    payload: Partial<PgEntry>
-  };
-  export const type = 'CREATE_ENTRY_ERROR';
-}
-
-export function deleteEntry(entryId: string): deleteEntry.Action {
-  return {
-    type: 'DELETE_ENTRY',
-    payload: entryId
-  };
-}
-
-export namespace deleteEntry {
-  export type Action = {
-    type: 'DELETE_ENTRY',
-    payload: string
-  };
-  export const type = 'DELETE_ENTRY';
-}
-
-export function createTask(task: Partial<PgTask>): createTask.Action {
-  return {
-    type: 'CREATE_TASK',
-    payload: task
-  };
-}
-
-export namespace createTask {
-  export type Action = {
-    type: 'CREATE_TASK',
-    payload: Partial<PgTask>
-  };
-  export const type = 'CREATE_TASK';
-}
-
-export function setTaskName(taskId: string, name: string): setTaskName.Action {
+function prepareSetTaskname(taskId: string, name: string) {
   return {
     type: 'SET_TASK_NAME',
     payload: {
@@ -171,55 +93,24 @@ export function setTaskName(taskId: string, name: string): setTaskName.Action {
     }
   };
 }
+export const setTaskName =
+  createAction<typeof prepareSetTaskname, 'SET_TASK_NAME'>('SET_TASK_NAME', prepareSetTaskname);
+export type setTaskName = ReturnType<typeof setTaskName>;
 
-export namespace setTaskName {
-  export type Action = {
-    type: 'SET_TASK_NAME',
-    payload: {
-      _id: string
-      name: string
-    }
-  };
-  export const type = 'SET_TASK_NAME';
-}
+const prepareSetTaskJob = (_id: string, jobId: string) => ({
+  type: 'SET_TASK_JOB',
+  payload: {
+    _id,
+    jobId
+  }
+});
+export const setTaskJob = createAction<typeof prepareSetTaskJob, 'SET_TASK_JOB'>('SET_TASK_JOB', prepareSetTaskJob);
+export type setTaskJob = ReturnType<typeof setTaskJob>;
 
-export function setTaskJob(taskId: string, jobId: string): setTaskJob.Action {
-  return {
-    type: 'SET_TASK_JOB',
-    payload: {
-      _id: taskId,
-      jobId: jobId
-    }
-  };
-}
+export const startTask = createAction<string, 'START_TASK'>('START_TASK');
+export type startTask = ReturnType<typeof startTask>;
 
-export namespace setTaskJob {
-  export type Action = {
-    type: 'SET_TASK_JOB'
-    payload: {
-      _id: string
-      jobId: string
-    }
-  };
-  export const type = 'SET_TASK_JOB';
-}
-
-export function startTask(taskId: string): startTask.Action {
-  return {
-    type: 'START_TASK',
-    payload: taskId
-  };
-}
-
-export namespace startTask {
-  export type Action = {
-    type: 'START_TASK'
-    payload: string
-  };
-  export const type = 'START_TASK';
-}
-
-export function setEntryTask(entryId: string, taskId: string): setEntryTask.Action {
+function prepareSetEntryTask(entryId: string, taskId: string) {
   return {
     type: 'SET_ENTRY_TASK',
     payload: {
@@ -228,19 +119,11 @@ export function setEntryTask(entryId: string, taskId: string): setEntryTask.Acti
     }
   };
 }
+export const setEntryTask =
+  createAction<typeof prepareSetEntryTask, 'SET_ENTRY_TASK'>('SET_ENTRY_TASK', prepareSetEntryTask);
+export type setEntryTask = ReturnType<typeof setEntryTask>;
 
-export namespace setEntryTask {
-  export type Action = {
-    type: 'SET_ENTRY_TASK'
-    payload: {
-      _id: string
-      taskId: string
-    }
-  };
-  export const type = 'SET_ENTRY_TASK';
-}
-
-export function setEntryStartTime(entryId: string, hour: number, minute: number = 0): setEntryStartTime.Action {
+export function prepareSetEntryStartTime(entryId: string, hour: number, minute: number = 0) {
   return {
     type: 'SET_ENTRY_START_TIME',
     payload: {
@@ -250,20 +133,14 @@ export function setEntryStartTime(entryId: string, hour: number, minute: number 
     }
   };
 }
+export const setEntryStartTime =
+  createAction<typeof prepareSetEntryStartTime, 'SET_ENTRY_START_TIME'>(
+    'SET_ENTRY_START_TIME',
+    prepareSetEntryStartTime
+  );
+export type setEntryStartTime = ReturnType<typeof setEntryStartTime>;
 
-export namespace setEntryStartTime {
-  export type Action = {
-    type: 'SET_ENTRY_START_TIME'
-    payload: {
-      _id: string
-      hour: number
-      minute?: number
-    }
-  };
-  export const type = 'SET_ENTRY_START_TIME';
-}
-
-export function setEntryEndTime(entryId: string, hour: number, minute: number = 0): setEntryEndTime.Action {
+function prepareSetEntryEndTime(entryId: string, hour: number, minute: number = 0) {
   return {
     type: 'SET_ENTRY_END_TIME',
     payload: {
@@ -273,20 +150,14 @@ export function setEntryEndTime(entryId: string, hour: number, minute: number = 
     }
   };
 }
+export const setEntryEndTime =
+  createAction<typeof prepareSetEntryEndTime, 'SET_ENTRY_END_TIME'>(
+    'SET_ENTRY_END_TIME',
+    prepareSetEntryEndTime
+  );
+export type setEntryEndTime = ReturnType<typeof setEntryEndTime>;
 
-export namespace setEntryEndTime {
-  export type Action = {
-    type: 'SET_ENTRY_END_TIME'
-    payload: {
-      _id: string
-      hour: number
-      minute?: number
-    }
-  };
-  export const type = 'SET_ENTRY_END_TIME';
-}
-
-export function setEntryDate(entryId: string, date: MomentInput): setEntryDate.Action {
+function prepareSetEntryDate(entryId: string, date: MomentInput) {
   return {
     type: 'SET_ENTRY_DATE',
     payload: {
@@ -295,14 +166,9 @@ export function setEntryDate(entryId: string, date: MomentInput): setEntryDate.A
     }
   };
 }
-
-export namespace setEntryDate {
-  export type Action = {
-    type: 'SET_ENTRY_DATE'
-    payload: {
-      _id: string,
-      date: MomentInput
-    }
-  };
-  export const type = 'SET_ENTRY_DATE';
-}
+export const setEntryDate = 
+  createAction<typeof prepareSetEntryDate, 'SET_ENTRY_DATE'>(
+    'SET_ENTRY_DATE',
+    prepareSetEntryDate
+  );
+export type setEntryDate = ReturnType<typeof setEntryDate>;

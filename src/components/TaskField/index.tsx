@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import * as Select from 'react-select';
 import 'react-select/dist/react-select.css';
 
-import { PgTask } from 'store/models';
+import { PgTask } from 'store/models/pg-task';
 import { tasksArraySelector } from 'store/selectors';
 import { PgAppState } from 'store';
 
@@ -79,7 +79,7 @@ export class TaskFieldComponent extends React.Component<TaskFieldProps, TaskFiel
 
 export const TaskField = connect<TaskFieldStateProps, null, TaskFieldOwnProps, TaskFieldProps, PgAppState>(
   (state: PgAppState, { taskId }: TaskFieldOwnProps) => ({
-    selectableTasks: tasksArraySelector(state).map((pgTask) => ({ value: pgTask._id, label: pgTask.name })),
+    selectableTasks: tasksArraySelector(state).map((pgTask: PgTask) => ({ value: pgTask._id, label: pgTask.name })),
     task: taskId ? state.model.tasks.get(taskId) : undefined
   }),
   null,

@@ -1,110 +1,114 @@
-import * as cuid from 'cuid';
-import { Record } from 'immutable';
+/**
+ * Modifiers include mutations, assuming will be used with immer library
+ */
 
+import * as cuid from 'cuid';
 import * as moment from 'moment';
 
-import { RecordType, RecordTypeConstructor, isRecord, PgBase } from './pg-types';
+import { isValidDateTime, mergeDateAndTime } from 'util/time';
 
-export interface PgEntry extends PgBase {
+export interface PgEntry {
+  _id: string;
   taskId: string;
   notes: string;
   start: number; // timestamp
   end: number | undefined;  // timestamp
 }
 
-export const defaultEntry: PgEntry = {
-  _id: '',
-  taskId: '',
-  notes: '',
-  start: 0,
-  end: void 0
-};
+export function create(): PgEntry {
+  return {
+    _id: cuid(),
+    taskId: '',
+    notes: '',
+    start: 0,
+    end: void 0
+  };
+}
 
-// There is an error in the type definitnions for Immutable.Record,
-// so temporarily disable 'no-any' until Immutable v4 is released.
-// tslint:disable-next-line:no-any
-const PgEntryConstructor: RecordTypeConstructor<PgEntry> = Record(defaultEntry, 'PgEntry') as any;
-export type PgEntryRecord = RecordType<PgEntry>;
+export function createAndStart(): PgEntry {
+  const temp = create();
+  temp.start = Date.now();
+  return temp;
+}
 
-export namespace PgEntry {
+export function from(props: Partial<PgEntry>): PgEntry {
+  return Object.assign(create(), props);
+}
 
-  export function create(): PgEntryRecord {
-    return new PgEntryConstructor({
-      _id: cuid()
-    });
-  }
-
-  export function createAndStart(): PgEntryRecord {
-    return new PgEntryConstructor({
-      _id: cuid(),
-      start: Date.now()
-    });
-  }
-
-  export function from(props: Partial<PgEntry>): PgEntryRecord {
-    let _id = props._id || cuid();
-    let oldProps = isRecord(props) ? props.toJS() : {...props};
-    return new PgEntryConstructor(Object.assign({}, oldProps, { _id}));
-  }
-
-  export function formatDateTimeString(date: moment.MomentInput): string {
-    return date ? moment(date).toISOString() : '';
-  }
-
-  export function isValidDateTime(dateTime: moment.MomentInput): boolean {
-    return Boolean(dateTime) && moment(dateTime).isValid();
-  }
-
-  export function setStart(entry: PgEntryRecord, newStart: number): PgEntryRecord {
-    if (isValidDateTime(newStart)) {
-      return entry.set('start', newStart);
-    }
-    throw new TypeError('Not valid PgEntry#start type: ' + newStart);
-  }
-
-  export function setEnd(entry: PgEntryRecord, newEnd: number): PgEntryRecord {
-    if (isValidDateTime(newEnd)) {
-      return entry.set('end', newEnd);
-    }
-    throw new TypeError('Not valid PgEntry#end type: ' + newEnd);
-  }
-
-  export function clearEnd(entry: PgEntryRecord): PgEntryRecord {
-    return entry.set('end', void 0);
-  }
-
-  const millisecondsInDay = 86400000; // 24 * 60 * 60 * 1000
-
-  export function mergeDateAndTime(date: moment.MomentInput, time: moment.MomentInput): number {
-    let dateValue = moment(date).valueOf();
-    let timeValue = moment(time).valueOf();
-    return dateValue - dateValue % millisecondsInDay + timeValue % millisecondsInDay;
-  }
-
-  export function setStartDate(entry: PgEntryRecord, startDate: moment.MomentInput): PgEntryRecord {
-    return entry.set('start', mergeDateAndTime(startDate, entry.start));
-  }
-
-  export function setEndDate(entry: PgEntryRecord, endDate: moment.MomentInput): PgEntryRecord {
-    if (entry.end) {
-      // only set the end date if it already has one
-      return entry.set('end', mergeDateAndTime(endDate, entry.end));
-    }
-    // otherwise return the entry with an empty end date
+export function setStart(entry: PgEntry, newStart: number): PgEntry {
+  if (isValidDateTime(newStart)) {
+    entry.start = newStart;
     return entry;
   }
+  throw new TypeError('Not valid PgEntry#start type: ' + newStart);
+}
 
-  export function setDate(entry: PgEntryRecord, newDate: moment.MomentInput): PgEntryRecord {
-    let mutableEntry = entry.asMutable();
-    return setStartDate(setEndDate(mutableEntry, newDate), newDate).asImmutable();
+export function setEnd(entry: PgEntry, newEnd: number): PgEntry {
+  if (isValidDateTime(newEnd)) {
+    entry.end = newEnd;
+    return entry;
   }
+  throw new TypeError('Not valid PgEntry#end type: ' + newEnd);
+}
 
-  export function setTask(entry: PgEntryRecord, taskId: string): PgEntryRecord {
-    return entry.set('taskId', taskId);
+export function clearEnd(entry: PgEntry): PgEntry {
+  entry.end = void 0;
+  return entry;
+}
+
+export function setStartDate(entry: PgEntry, startDate: moment.MomentInput): PgEntry {
+  entry.start = mergeDateAndTime(startDate, entry.start);
+  return entry;
+}
+
+export function setEndDate(entry: PgEntry, endDate: moment.MomentInput): PgEntry {
+  if (entry.end) {
+    // only set the end date if it already has one
+    entry.end = mergeDateAndTime(endDate, entry.end);
   }
+  // otherwise return the entry with an empty end date
+  return entry;
+}
 
-  export function getDuration({ start, end }: PgEntry): number {
-    return (typeof end === 'undefined' ? Date.now() : end) - start;
+export function setStartTime(entry: PgEntry, hour: number, minute: number = 0): PgEntry {
+  let entryStart = new Date(entry.start);
+  let newStart = moment({
+    year: entryStart.getFullYear(),
+    month: entryStart.getMonth(),
+    date: entryStart.getDate(),
+    hour,
+    minute
+  }).valueOf();
+  entry.start = newStart;
+  return entry;
+}
+
+export function setEndTime(entry: PgEntry, hour: number, minute: number = 0): PgEntry {
+  let entryEnd = entry.end ? new Date(entry.end) : new Date();
+  let newEnd = moment({
+    year: entryEnd.getFullYear(),
+    month: entryEnd.getMonth(),
+    date: entryEnd.getDate(),
+    hour,
+    minute
+  }).valueOf();
+  entry.end = newEnd;
+  return entry;
+}
+
+export function setDate(entry: PgEntry, newDate: moment.MomentInput): PgEntry {
+  setStartDate(entry, newDate);
+  if (entry.end) {
+    setEndDate(entry, newDate);
   }
+  return entry;
+}
 
+export function setTask(entry: PgEntry, taskId: string): PgEntry {
+  entry.taskId = taskId;
+  return entry;
+}
+
+export function getDuration({ start, end }: PgEntry): number {
+  return (typeof end === 'undefined' ? Date.now() : end) - start;
 }

@@ -12,7 +12,8 @@ import {
   setEntryDate
 } from 'store/actions';
 import { selectedEntrySelector, tasksArraySelector, isEditingSelector } from 'store/selectors';
-import { PgEntry, PgTask } from 'store/models';
+import { PgTask } from 'store/models/pg-task';
+import { PgEntry, from as fromEntry, setDate, setEnd, clearEnd, setStart, setTask } from 'store/models/pg-entry';
 import { DateField } from 'components/DateField';
 import { TimeField } from 'components/TimeField';
 import { TaskField } from 'components/TaskField';
@@ -21,7 +22,7 @@ import { NewTask } from 'scenes/Timecard/components/NewTask';
 
 import './EntryDetail.css';
 import { ConnectedProjectField } from 'components/ProjectField';
-import { parseTimeString } from 'util/time';
+import { parseTimeString, isValidDateTime } from 'util/time';
 
 interface EntryDetailStateProps {
   entry?: PgEntry;
@@ -115,16 +116,16 @@ export class EntryDetailComponent extends React.Component<EntryDetailProps, Entr
   }
 
   handleTaskChange = (newTask: string) => {
-    const entry = PgEntry.from(this.getTempEntry());
+    const entry = fromEntry(this.getTempEntry());
     this.setState({
-      tempEntry: PgEntry.setTask(entry, newTask)
+      tempEntry: setTask(entry, newTask)
     });
   }
 
   handleDateChange = (newDate: moment.Moment) => {
-    const entry = PgEntry.from(this.getTempEntry());
+    const entry = fromEntry(this.getTempEntry());
     this.setState({
-      tempEntry: PgEntry.setDate(entry, newDate)
+      tempEntry: setDate(entry, newDate)
     });
   }
 
@@ -135,9 +136,9 @@ export class EntryDetailComponent extends React.Component<EntryDetailProps, Entr
   }
 
   handleStartTimeChange = (newStartTime: moment.Moment) => {
-    const entry = PgEntry.from(this.getTempEntry());
+    const entry = fromEntry(this.getTempEntry());
     this.setState({
-      tempEntry: PgEntry.setStart(entry, newStartTime.valueOf())
+      tempEntry: setStart(entry, newStartTime.valueOf())
     });
   }
 
@@ -163,9 +164,9 @@ export class EntryDetailComponent extends React.Component<EntryDetailProps, Entr
   }
 
   handleEndTimeChange = (newEndTime: moment.Moment | null) => {
-    const entry = PgEntry.from(this.getTempEntry());
+    const entry = fromEntry(this.getTempEntry());
     this.setState({
-      tempEntry: newEndTime ? PgEntry.setEnd(entry, newEndTime.valueOf()) : PgEntry.clearEnd(entry)
+      tempEntry: newEndTime ? setEnd(entry, newEndTime.valueOf()) : clearEnd(entry)
     });
   }
 
@@ -295,7 +296,7 @@ export let EntryDetail = connect<EntryDetailStateProps, EntryDetailDispatchProps
       }
     },
     onSetDate: (entryId: string, newDate: moment.MomentInput) => {
-      if (entryId && PgEntry.isValidDateTime(newDate)) { // make sure we have a valid date
+      if (entryId && isValidDateTime(newDate)) { // make sure we have a valid date
         dispatch(setEntryDate(entryId, newDate));
       }
     }
