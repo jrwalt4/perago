@@ -1,14 +1,9 @@
 import { MomentInput } from 'moment';
-import { Action as ReduxAction } from 'redux';
 import { createAction } from '@reduxjs/toolkit';
-import { ThunkAction } from 'redux-thunk';
-
-import { PgAppState } from 'store';
 
 import { PgEntry } from 'store/models/pg-entry';
 import { PgTask } from 'store/models/pg-task';
 import { PgModelInputs } from 'store/models/pg-model';
-import * as data from 'store/data';
 
 /**
  * Model Actions (i.e. actions that change the model)
@@ -34,8 +29,6 @@ export type PgModelAction =
   setEntryEndTime |
   setEntryDate;
 
-export type PgThunkAction<R, A extends ReduxAction> = ThunkAction<R, PgAppState, void, A>;
-
 export const loadModelBegin = createAction<void, 'LOAD_MODEL_BEGIN'>('LOAD_MODEL_BEGIN');
 export type loadModelBegin = ReturnType<typeof loadModelBegin>;
 
@@ -45,38 +38,14 @@ export type loadModelSuccess = ReturnType<typeof loadModelSuccess>;
 export const loadModelError = createAction<string, 'LOAD_MODEL_ERROR'>('LOAD_MODEL_ERROR');
 export type loadModelError = ReturnType<typeof loadModelError>;
 
-export function loadModel():
-  PgThunkAction<void, loadModelBegin | loadModelSuccess | loadModelError> {
-  return (dispatch, getState) => {
-    dispatch(loadModelBegin());
-    data.loadModelFromStore().then((model) => {
-      dispatch(loadModelSuccess(model));
-    }).catch((err) => {
-      dispatch(loadModelError(err));
-    });
-  };
-}
+export const createEntry = createAction<Partial<PgEntry>, 'CREATE_ENTRY'>('CREATE_ENTRY');
+export type createEntry = ReturnType<typeof createEntry>;
 
 export const createEntrySuccess = createAction<Partial<PgEntry>, 'CREATE_ENTRY_SUCCESS'>('CREATE_ENTRY_SUCCESS');
 export type createEntrySuccess = ReturnType<typeof createEntrySuccess>;
 
-export const createEntryError = createAction<Partial<PgEntry>, 'CREATE_ENTRY_ERROR'>('CREATE_ENTRY_ERROR');
+export const createEntryError = createAction<'CREATE_ENTRY_ERROR'>('CREATE_ENTRY_ERROR');
 export type createEntryError = ReturnType<typeof createEntryError>;
-
-export function createEntry(entry: Partial<PgEntry>): ThunkAction<
-  void,
-  PgAppState,
-  undefined,
-  createEntrySuccess | createEntryError
-  > {
-  return (dispatch) => {
-    data.addEntryToStore(entry).then((result) => {
-      dispatch(createEntrySuccess(result));
-    }).catch((err) => {
-      dispatch(createEntryError(err));
-    });
-  };
-}
 
 export const deleteEntry = createAction<string, 'DELETE_ENTRY'>('DELETE_ENTRY');
 export type deleteEntry = ReturnType<typeof deleteEntry>;

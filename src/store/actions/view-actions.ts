@@ -6,108 +6,34 @@
  * then add the Action to the union type PgViewAction.
  */
 
+import { createAction } from '@reduxjs/toolkit';
+
 export type PgViewAction =
-  selectEntry.Action |
-  selectTask.Action |
-  clearSelection.Action |
-  setFilter.Action |
-  startEditing.Action |
-  stopEditing.Action |
-  toggleEditing.Action;
+  selectEntry |
+  selectTask |
+  clearSelection |
+  setFilter |
+  startEditing |
+  stopEditing |
+  toggleEditing;
 
-export function selectEntry(entryId: string): selectEntry.Action {
-  return {
-    type: 'SELECT_ENTRY',
-    payload: entryId
-  };
-}
+export const selectEntry = createAction<string, 'SELECT_ENTRY'>('SELECT_ENTRY');
+export type selectEntry = ReturnType<typeof selectEntry>;
 
-export namespace selectEntry {
-  export type Action = {
-    type: 'SELECT_ENTRY',
-    payload: string
-  };
-  export const type = 'SELECT_ENTRY';
-}
+export const selectTask = createAction<string, 'SELECT_TASK'>('SELECT_TASK');
+export type selectTask = ReturnType<typeof selectTask>;
 
-export function selectTask(taskId: string): selectTask.Action {
-  return {
-    type: 'SELECT_TASK',
-    payload: taskId
-  };
-}
+export const clearSelection = createAction<void, 'CLEAR_SELECTION'>('CLEAR_SELECTION');
+export type clearSelection = ReturnType<typeof clearSelection>;
 
-export namespace selectTask {
-  export type Action = {
-    type: 'SELECT_TASK',
-    payload: string
-  };
-  export const type = 'SELECT_TASK';
-}
+export const setFilter = createAction<string, 'SET_FILTER'>('SET_FILTER');
+export type setFilter = ReturnType<typeof setFilter>;
 
-export function clearSelection(): clearSelection.Action {
-  return {
-    type: 'CLEAR_SELECTION'
-  };
-}
+export const startEditing = createAction<void, 'START_EDITING'>('START_EDITING');
+export type startEditing = ReturnType<typeof startEditing>;
 
-export namespace clearSelection {
-  export type Action = {
-    type: 'CLEAR_SELECTION'
-  };
-  export const type = 'CLEAR_SELECTION';
-}
+export const stopEditing = createAction<void, 'STOP_EDITING'>('STOP_EDITING');
+export type stopEditing = ReturnType<typeof stopEditing>;
 
-export function setFilter(filter: string): setFilter.Action {
-  return {
-    type: 'SET_FILTER',
-    payload: filter
-  };
-}
-
-export namespace setFilter {
-  export type Action = {
-    type: 'SET_FILTER'
-    payload: string
-  };
-  export const type = 'SET_FILTER';
-}
-
-export function startEditing(): startEditing.Action {
-  return {
-    type: 'START_EDITING'
-  };
-}
-
-export namespace startEditing {
-  export type Action = {
-    type: 'START_EDITING'
-  };
-  export const type = 'START_EDITING';
-}
-
-export function stopEditing(): stopEditing.Action {
-  return {
-    type: 'STOP_EDITING'
-  };
-}
-
-export namespace stopEditing {
-  export type Action = {
-    type: 'STOP_EDITING'
-  };
-  export const type = 'STOP_EDITING';
-}
-
-export function toggleEditing(): toggleEditing.Action {
-  return {
-    type: 'TOGGLE_EDITING'
-  };
-}
-
-export namespace toggleEditing {
-  export type Action = {
-    type: 'TOGGLE_EDITING'
-  };
-  export const type = 'TOGGLE_EDITING';
-}
+export const toggleEditing = createAction<void, 'TOGGLE_EDITING'>('TOGGLE_EDITING');
+export type toggleEditing = ReturnType<typeof toggleEditing>;

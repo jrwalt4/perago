@@ -2,13 +2,13 @@ import {
   applyMiddleware, combineReducers,
   compose, createStore
 } from 'redux';
-import thunk, { ThunkDispatch } from 'redux-thunk';
+import createSagaMiddleware from 'redux-saga';
 
 import {
   reducers, routerMiddleware, history,
   PgModelState, PgViewState, PgRouterState
 } from 'store/reducers';
-import { loadModel, PgAction } from './actions';
+import mainSaga from './sagas';
 
 export type PgAppState = {
   model: PgModelState
@@ -27,19 +27,18 @@ interface Window {
 declare let window: Window;
 let composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
-export let store = createStore<PgAppState, PgAction, {dispatch: ThunkDispatch<PgAppState, void, PgAction>}, {}>(
+const sagaMiddleware = createSagaMiddleware();
+
+export let store = createStore(
   combineReducers<PgAppState>({
     ...reducers
   }),
   composeEnhancers(
     applyMiddleware(
       routerMiddleware(history),
-      thunk
+      sagaMiddleware
     )
   )
 );
 
-// user selecting and opening a model isn't implemented
-// yet (i.e. open from file, indexedDb, server, etc.),
-// so bootstrap test model here during development
-store.dispatch(loadModel());
+sagaMiddleware.run(mainSaga);
