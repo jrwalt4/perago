@@ -1,4 +1,4 @@
-import * as moment from 'moment';
+import moment from 'moment';
 import * as PgEntry from './pg-entry';
 
 it('Should create a new PgEntry with a cuid', () => {

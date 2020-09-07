@@ -7,7 +7,8 @@ import MTableCell from '@material-ui/core/TableCell';
 import { Column } from './Column';
 
 export interface TableHeadProps {
-  columns: Column<{}>[];
+  // tslint:disable-next-line: no-any
+  columns: Column<any, any>[];
 }
 
 export function TableHead(props: TableHeadProps) {

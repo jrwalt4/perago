@@ -16,7 +16,7 @@ interface ConnectedProjectFieldProps {
   taskId: string;
 }
 
-export const ConnectedProjectField = connect<ProjectFieldProps, {}, ConnectedProjectFieldProps>(
+export const ConnectedProjectField = connect<ProjectFieldProps, {}, ConnectedProjectFieldProps, PgAppState>(
   () => (state: PgAppState, props: ConnectedProjectFieldProps) => {
     let project = taskProjectSelector(state, props);
     return {

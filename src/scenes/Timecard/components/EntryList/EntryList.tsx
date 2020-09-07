@@ -39,7 +39,8 @@ interface EntryListOwnProps { }
 type EntryListComponentProps = EntryListStateProps & EntryListDispatchProps & EntryListOwnProps;
 
 interface EntryListComponentState {
-  columns: ColumnDef<PgEntry>[];
+  // tslint:disable-next-line: no-any
+  columns: ColumnDef<PgEntry, any>[];
 }
 
 export class EntryListComponent extends React.Component<EntryListComponentProps, EntryListComponentState> {

@@ -2,23 +2,25 @@ import * as React from 'react';
 import MTable, { TableProps as MTableProps } from '@material-ui/core/Table';
 import MTableBody from '@material-ui/core/TableBody';
 
-import { Column, ColumnDef } from './Column';
+import { Column, ColumnDef as ColumnDefImport } from './Column';
 import { TableRow, UserRowProps } from './TableRow';
 import { TableHead } from './TableHead';
 import { TableRowActions, UserRowAction } from './TableRowActions';
 
-export { ColumnDef } from './Column';
+export type ColumnDef<T, V> = ColumnDefImport<T, V>;
 
 interface TableProps<T> extends MTableProps {
   data: T[];
-  columns: ColumnDef<T>[];
+  // tslint:disable-next-line: no-any
+  columns: ColumnDef<T, any>[];
   rowProps?: UserRowProps | ((item: T) => UserRowProps);
   rowActions?: UserRowAction<T>[];
   onRowClick?: (rowData: T) => void;
 }
 
 interface TableState<T> {
-  columns: Column<T>[];
+  // tslint:disable-next-line: no-any
+  columns: Column<T, any>[];
   primaryColumnIndex?: number;
 }
 
@@ -48,12 +50,12 @@ export class Table<T> extends React.Component<
     });
     const { rowActions } = props;
     if (null != rowActions) {
-      columns.push(new Column<T>({
+      columns.push(new Column<T, T>({
         title: '',
         id: '$$row_actions$$',
         accessor: (item: T) => item,
         props: { padding: 'none' },
-        render: (item: T) => <TableRowActions item={item} actions={rowActions}/>
+        render: (value: {}, item: T) => <TableRowActions item={item} actions={rowActions} />
       }));
     }
     return {
@@ -62,7 +64,8 @@ export class Table<T> extends React.Component<
     };
   }
 
-  getDisplayColumns(): Column<T>[] {
+  // tslint:disable-next-line: no-any
+  getDisplayColumns(): Column<T, any>[] {
     return this.state.columns.filter((col) => !col.isHidden);
   }
 

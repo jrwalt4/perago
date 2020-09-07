@@ -4,7 +4,7 @@ import { TableCellProps as ColumnRenderProps } from '@material-ui/core/TableCell
 
 type RenderFn<T, V> = (value: V, item: T) => ReactNode;
 
-type AccessorFn<T, V= {}> = (item: T) => V;
+type AccessorFn<T, V> = (item: T) => V;
 
 interface ColumnDefCommon<T, V> {
   title?: ReactNode;
@@ -15,7 +15,7 @@ interface ColumnDefCommon<T, V> {
 }
 
 export interface ColumnDefAccessor<T, V> extends ColumnDefCommon<T, V> {
-  accessor: AccessorFn<T>;
+  accessor: AccessorFn<T, V>;
   id: string;
 }
 
@@ -24,7 +24,7 @@ export interface ColumnDefField<T, V> extends ColumnDefCommon<T, V> {
   id?: string;
 }
 
-export type ColumnDef<T, V = {}> = ColumnDefAccessor<T, V> | ColumnDefField<T, V>;
+export type ColumnDef<T, V> = ColumnDefAccessor<T, V> | ColumnDefField<T, V>;
 
 function isColumnDefField<T, V>(
   colDef: ColumnDef<T, V>
@@ -36,7 +36,7 @@ function identity<T>(t: T) {
   return t;
 }
 
-export class Column<T, V = {}> {
+export class Column<T, V> {
   private _id: string | Extract<keyof T, string | number>;
   private _title: string | React.ReactNode;
   private _accessor: AccessorFn<T, V>;

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import * as Select from 'react-select';
+import Select, { OnChangeHandler, Option, Options } from 'react-select';
 import 'react-select/dist/react-select.css';
 
 import { PgTask } from 'store/models/pg-task';
@@ -10,13 +10,13 @@ import { PgAppState } from 'store';
 export type TaskFieldOwnProps = {
   taskId?: string;
   isEditing?: boolean;
-  selectableTasks?: Select.Options;
+  selectableTasks?: Options<string>;
   onChange?(taskId?: string): void;
   onCreateTask?(name?: string): void;
 };
 
 type TaskFieldStateProps = {
-  selectableTasks: Select.Options
+  selectableTasks: Options<string>
   task?: PgTask
 };
 
@@ -42,8 +42,9 @@ export class TaskFieldComponent extends React.Component<TaskFieldProps, TaskFiel
     return name;
   }
 
-  handleTaskChange: Select.OnChangeHandler = ({ value }: Select.Option<string>) => {
-    if (this.props.onChange) {
+  handleTaskChange: OnChangeHandler<string> = (newValue: Option<string> | null) => {
+    if (newValue && this.props.onChange) {
+      const { value } = newValue;
       this.props.onChange(value);
     }
   }
@@ -60,7 +61,7 @@ export class TaskFieldComponent extends React.Component<TaskFieldProps, TaskFiel
     if (this.props.isEditing) {
       return (
         <div>
-          <Select.default
+          <Select<string>
             value={taskId}
             options={this.props.selectableTasks}
             clearable={false}
@@ -83,7 +84,7 @@ export const TaskField = connect<TaskFieldStateProps, null, TaskFieldOwnProps, T
     task: taskId ? state.model.tasks.get(taskId) : undefined
   }),
   null,
-  (state, dispatch, props: TaskFieldProps) => ({
+  (state, dispatch, props: TaskFieldOwnProps) => ({
     ...state,
     ...props
   } as TaskFieldProps)

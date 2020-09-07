@@ -2,8 +2,8 @@
  * Modifiers include mutations, assuming will be used with immer library
  */
 
-import * as cuid from 'cuid';
-import * as moment from 'moment';
+import cuid from 'cuid';
+import moment from 'moment';
 
 import { isValidDateTime, mergeDateAndTime } from 'util/time';
 

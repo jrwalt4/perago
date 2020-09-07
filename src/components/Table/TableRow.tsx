@@ -8,7 +8,8 @@ export type UserRowProps = MTableRowProps;
 
 export interface TableRowProps<T> {
   rowData: T;
-  columns: Column<T>[];
+  // tslint:disable-next-line: no-any
+  columns: Column<T, any>[];
   rowId: React.ReactText;
   onClick: (event: React.MouseEvent<HTMLTableRowElement>) => void;
   userProps: UserRowProps;

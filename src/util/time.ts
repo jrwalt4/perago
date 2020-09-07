@@ -1,4 +1,4 @@
-import * as moment from 'moment';
+import moment from 'moment';
 
 export function isValidDateTime(dateTime: moment.MomentInput): boolean {
   return Boolean(dateTime) && moment(dateTime).isValid();
@@ -107,7 +107,7 @@ export function parseTimeString(timeString: string, seed?: number): number[] {
  * @param {string} n 
  */
 function parse(n: string): number {
-  return Number.parseInt(n);
+  return Number.parseInt(n, 10);
 }
 
 function buildTimeStamp(hour: number, minute: number, seed?: number): number {

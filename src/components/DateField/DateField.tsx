@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import * as moment from 'moment';
+import moment from 'moment';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 
@@ -14,9 +14,6 @@ type DateFieldProps = {
 };
 
 export class DateField extends React.Component<DateFieldProps, {}> {
-  constructor(props: DateFieldProps) {
-    super(props);
-  }
 
   handleDateChange = (value: moment.Moment) => {
     if (this.props.onSetDate) {

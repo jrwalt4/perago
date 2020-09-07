@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { Options } from 'react-select';
-import * as moment from 'moment';
+import moment from 'moment';
 
 import { PgAppState } from 'store';
 import {
@@ -26,7 +26,7 @@ import { parseTimeString, isValidDateTime } from 'util/time';
 
 interface EntryDetailStateProps {
   entry?: PgEntry;
-  selectableTasks: Options;
+  selectableTasks: Options<string>;
   isEditing: boolean;
 }
 
@@ -135,7 +135,10 @@ export class EntryDetailComponent extends React.Component<EntryDetailProps, Entr
     });
   }
 
-  handleStartTimeChange = (newStartTime: moment.Moment) => {
+  handleStartTimeChange = (newStartTime: moment.Moment | null) => {
+    if (!newStartTime) {
+      return;
+    }
     const entry = fromEntry(this.getTempEntry());
     this.setState({
       tempEntry: setStart(entry, newStartTime.valueOf())
@@ -266,13 +269,13 @@ export class EntryDetailComponent extends React.Component<EntryDetailProps, Entr
   }
 }
 
-export let EntryDetail = connect<EntryDetailStateProps, EntryDetailDispatchProps, {}>(
+export let EntryDetail = connect<EntryDetailStateProps, EntryDetailDispatchProps, {}, PgAppState>(
   (state: PgAppState) => ({
     entry: selectedEntrySelector(state),
     selectableTasks: tasksArraySelector(state).map((task: PgTask) => ({ value: task._id, label: task.name })),
     isEditing: isEditingSelector(state)
   }),
-  (dispatch, ownProps: EntryDetailProps) => ({
+  (dispatch) => ({
     onToggleEditing: () => {
       dispatch(toggleEditing());
     },

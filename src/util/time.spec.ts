@@ -1,7 +1,7 @@
 import {
   parseTimeString
 } from './time';
-import * as moment from 'moment';
+import moment from 'moment';
 
 expect.extend({
   toContainTimestamp(this: jest.MatcherUtils, results: number[], expectation: number) {

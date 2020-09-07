@@ -33,6 +33,7 @@
     "react-modal": "^2.2.3",
     "react-redux": "6.x",
     "react-router-dom": "4.x",
+    "react-scripts": "3.4.3",
     "react-select": "1.x",
     "redux": "4.x",
     "redux-saga": "^1.1.3",
@@ -41,24 +42,37 @@
   "devDependencies": {
     "@types/enzyme": "3.x.x",
     "@types/enzyme-adapter-react-16": "^1.0.3",
-    "cross-env": "^5.1.3",
     "enzyme": "3.x.x",
     "enzyme-adapter-react-16": "^1.7.0",
-    "react-scripts-ts": "2.17",
     "react-test-renderer": "^15.6.1",
-    "typescript": "3.1.6"
+    "tslint": "^6.1.3",
+    "tslint-react": "^5.0.0",
+    "typescript": "3.2.1"
   },
   "scripts": {
-    "start": "cross-env NODE_PATH=src react-scripts-ts start",
-    "build": "cross-env NODE_PATH=src react-scripts-ts build",
-    "test": "npm run lint&&cross-env NODE_PATH=src react-scripts-ts test --env=jsdom",
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
     "lint": "tslint -c tslint.json --project tsconfig.json || true",
-    "eject": "react-scripts-ts eject"
+    "watch": "tsc --watch --noEmit",
+    "eject": "react-scripts eject"
   },
   "resolutions": {
     "@types/react": "16.7.7",
     "@types/react-router": "4.4.3",
     "@types/history": "4.7.2",
     "@types/react-transition-group": "2.0.15"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   }
 }

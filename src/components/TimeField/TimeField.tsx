@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as Select from 'react-select';
-import * as moment from 'moment';
+import moment from 'moment';
 
 import 'react-select/dist/react-select.css';
 import './TimeField.css';
