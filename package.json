@@ -23,7 +23,7 @@
     "cuid": "^1.3.8",
     "font-awesome": "^4.7.0",
     "history": "4.x",
-    "immer": "^7.0.5",
+    "immer": "^8.0.1",
     "immutable": "^3.8.1",
     "lodash": "^4.17.19",
     "moment": "^2.18.1",
