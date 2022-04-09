@@ -26,7 +26,7 @@
     "immer": "^7.0.5",
     "immutable": "^3.8.1",
     "lodash": "^4.17.19",
-    "moment": "^2.18.1",
+    "moment": "^2.29.2",
     "react": "16.x.x",
     "react-datepicker": "^1.5.0",
     "react-dom": "16.x.x",
